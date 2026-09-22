@@ -72,6 +72,7 @@
   .spinner{width:15px;height:15px;border-radius:50%;border:2px solid var(--accent-ink);border-top-color:transparent;animation:spin .7s linear infinite}
   @keyframes spin{to{transform:rotate(360deg)}}
   footer.foot{margin-top:18px;text-align:center;font-size:12px;color:var(--muted)}
+  a{color:var(--accent)}
   .success{padding:44px 26px;text-align:center}
   .success .check{width:56px;height:56px;margin:0 auto 16px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:28px}
   .success h2{font-size:19px;margin:0 0 8px}
@@ -238,6 +239,21 @@
         <div class="err" id="err-consentimento">É necessário autorizar o uso dos dados.</div>
       </fieldset>
 
+      <fieldset>
+        <legend>Acesso ao seu cadastro</legend>
+        <div class="field">
+          <label for="senha">Crie uma senha <span class="opt">(para acompanhar seu status e atualizar seus dados depois)</span></label>
+          <input type="text" id="senha" autocomplete="new-password" placeholder="Mínimo 6 caracteres">
+          <div class="hint">Você vai usar seu CPF + essa senha para entrar no portal e editar seu cadastro depois.</div>
+          <div class="err" id="err-senha">A senha deve ter pelo menos 6 caracteres.</div>
+        </div>
+        <div class="field">
+          <label for="senhaConfirma">Confirme a senha</label>
+          <input type="text" id="senhaConfirma" autocomplete="new-password">
+          <div class="err" id="err-senhaConfirma">As senhas não conferem.</div>
+        </div>
+      </fieldset>
+
       <div class="formerr" id="formErr"></div>
       <div class="actions">
         <button type="submit" class="submit" id="submitBtn">
@@ -252,10 +268,11 @@
       <div class="check">&#10003;</div>
       <h2>Cadastro enviado!</h2>
       <p>Recebemos suas informações. Nossa equipe entrará em contato quando houver oportunidades compatíveis.</p>
+      <p style="margin-top:14px">Use seu CPF e a senha que você criou para <a href="portal.html">acompanhar seu status e atualizar seus dados</a> quando quiser.</p>
     </div>
   </div>
 
-  <footer class="foot">NMM Soluções em Serviços</footer>
+  <footer class="foot">NMM Soluções em Serviços &middot; <a href="portal.html" style="color:inherit">Já se cadastrou? Acesse seu portal</a></footer>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
@@ -392,6 +409,8 @@
     var fotoFile = document.getElementById("fotoFile").files[0];
     var declaracao = document.getElementById("declaracao").checked;
     var consentimento = document.getElementById("consentimento").checked;
+    var senha = document.getElementById("senha").value;
+    var senhaConfirma = document.getElementById("senhaConfirma").value;
 
     var ok = true;
     showErr("nome", !nome); if (!nome) ok = false;
@@ -408,6 +427,8 @@
     showErr("fotoFile", !fotoFile); if (!fotoFile) ok = false;
     showErr("declaracao", !declaracao); if (!declaracao) ok = false;
     showErr("consentimento", !consentimento); if (!consentimento) ok = false;
+    var senhaOk = senha && senha.length >= 6; showErr("senha", !senhaOk); if (!senhaOk) ok = false;
+    var senhaConfirmaOk = senhaOk && senha === senhaConfirma; showErr("senhaConfirma", !senhaConfirmaOk); if (!senhaConfirmaOk) ok = false;
 
     if (!ok){
       formErr.textContent = "Verifique os campos destacados acima.";
@@ -424,7 +445,18 @@
     var docPath = id + "/documento." + docExt;
     var fotoPath = id + "/foto." + fotoExt;
 
-    sb.storage.from("candidatos-docs").upload(docPath, docFile, {contentType: docFile.type || "application/octet-stream"})
+    function hashSenha(cpfDigitsIn, senhaIn){
+      var enc = new TextEncoder().encode(cpfDigitsIn + ":" + senhaIn);
+      return crypto.subtle.digest("SHA-256", enc).then(function(buf){
+        return Array.prototype.map.call(new Uint8Array(buf), function(b){ return b.toString(16).padStart(2,"0"); }).join("");
+      });
+    }
+
+    hashSenha(cpfDigits, senha)
+      .then(function(senhaHash){
+        window.__senhaHash = senhaHash;
+        return sb.storage.from("candidatos-docs").upload(docPath, docFile, {contentType: docFile.type || "application/octet-stream"});
+      })
       .then(function(res){
         if (res.error) throw res.error;
         return sb.storage.from("candidatos-docs").upload(fotoPath, fotoFile, {contentType: fotoFile.type || "image/jpeg"});
@@ -446,6 +478,7 @@
           pix_chave: pixChave,
           documento_path: docPath,
           foto_path: fotoPath,
+          senha_hash: window.__senhaHash,
           consentimento_lgpd: true,
           aceite_declaracao_servicos: true
         });

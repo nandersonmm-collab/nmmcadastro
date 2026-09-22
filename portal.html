@@ -1,0 +1,677 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Portal do Profissional - NMM</title>
+<style>
+  :root{
+    --bg:#F4F6F7; --surface:#FFFFFF; --surface-2:#EFF2F3; --border:#D7DEE1;
+    --text:#182126; --muted:#5C6B73; --primary:#1E3A4C; --accent:#0E7C66;
+    --accent-ink:#FFFFFF; --accent-soft:#E4F2EE; --danger:#B3261E; --danger-soft:#FBEAE9;
+    --radius:10px; --shadow:0 1px 2px rgba(20,30,35,.06), 0 8px 24px -12px rgba(20,30,35,.18);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#111718; --surface:#181F21; --surface-2:#1E2628; --border:#313B3E;
+      --text:#EAF0EF; --muted:#9AABAF; --primary:#DCE7EA; --accent:#39B695;
+      --accent-ink:#08211B; --accent-soft:#173029; --danger:#E5837C; --danger-soft:#3A1F1E;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",system-ui,-apple-system,sans-serif;padding:32px 16px}
+  .wrap{max-width:640px;margin:0 auto}
+  header.top{display:flex;align-items:center;gap:12px;margin-bottom:22px}
+  .mark{width:44px;height:44px;flex:none;border-radius:10px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;letter-spacing:.03em}
+  header.top h1{font-size:18px;margin:0;line-height:1.25}
+  header.top p{margin:2px 0 0;font-size:13px;color:var(--muted)}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+  .card + .card{margin-top:16px}
+  .intro{padding:20px 22px;border-bottom:1px solid var(--border);background:var(--surface-2)}
+  .intro h2{font-size:16px;margin:0 0 6px}
+  .intro p{margin:0;font-size:13.5px;color:var(--muted);line-height:1.55}
+  form{padding:6px 22px 22px}
+  fieldset{border:0;margin:0;padding:18px 0;border-bottom:1px solid var(--border)}
+  fieldset:last-of-type{border-bottom:0;padding-bottom:4px}
+  legend{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);padding:0 0 12px}
+  .field{margin-bottom:14px}
+  .field:last-child{margin-bottom:0}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media (max-width:480px){.row2{grid-template-columns:1fr}}
+  label{display:block;font-size:13px;font-weight:600;margin-bottom:5px}
+  label .opt{font-weight:400;color:var(--muted)}
+  .hint{font-size:12px;color:var(--muted);margin-top:5px;line-height:1.45}
+  input[type=text],input[type=tel],input[type=password],textarea,select{width:100%;font:inherit;font-size:14.5px;padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text)}
+  textarea{resize:vertical;min-height:64px;font-family:inherit}
+  input:focus,textarea:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(14,124,102,.2)}
+  input.invalid,textarea.invalid{border-color:var(--danger)}
+  .err{display:none;font-size:12px;color:var(--danger);margin-top:5px}
+  .err.show{display:block}
+  .upload{border:1.5px dashed var(--border);border-radius:9px;padding:14px;display:flex;gap:12px;align-items:center;background:var(--surface-2);cursor:pointer}
+  .upload input{display:none}
+  .thumb{width:52px;height:52px;border-radius:7px;background:var(--surface);border:1px solid var(--border);flex:none;overflow:hidden;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:11px}
+  .thumb img{width:100%;height:100%;object-fit:cover}
+  .u-title{font-size:13.5px;font-weight:600}
+  .u-sub{font-size:12px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .opt-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;max-height:260px;overflow-y:auto;padding:12px;background:var(--surface-2);border:1px solid var(--border);border-radius:9px}
+  @media (max-width:480px){.opt-grid{grid-template-columns:1fr}}
+  .opt-item{display:flex;align-items:flex-start;gap:7px;font-size:13.5px;line-height:1.35;cursor:pointer}
+  .opt-item input{margin-top:3px;flex:none;width:15px;height:15px;accent-color:var(--accent)}
+  .opt-outros-field{margin-top:8px}
+  .actions{margin-top:18px}
+  button.submit{width:100%;padding:13px 18px;border:0;border-radius:9px;background:var(--accent);color:var(--accent-ink);font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+  button.submit:disabled{opacity:.55;cursor:not-allowed}
+  button.link-btn{background:none;border:0;color:var(--accent);font-size:13px;cursor:pointer;padding:0;text-decoration:underline}
+  .formerr{display:none;margin-top:12px;padding:11px 13px;border-radius:8px;background:var(--danger-soft);color:var(--danger);font-size:13px;line-height:1.5}
+  .formerr.show{display:block}
+  .formok{display:none;margin-top:12px;padding:11px 13px;border-radius:8px;background:var(--accent-soft);color:var(--accent);font-size:13px;line-height:1.5}
+  .formok.show{display:block}
+  .spinner{width:15px;height:15px;border-radius:50%;border:2px solid var(--accent-ink);border-top-color:transparent;animation:spin .7s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  footer.foot{margin-top:18px;text-align:center;font-size:12px;color:var(--muted)}
+  a{color:var(--accent)}
+  .toggle-row{text-align:center;padding:14px 22px 20px;font-size:13px;color:var(--muted)}
+  .status-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-size:13px;font-weight:700}
+  .status-dot{width:8px;height:8px;border-radius:50%;background:var(--accent)}
+  .dash-head{padding:20px 22px;border-bottom:1px solid var(--border);background:var(--surface-2);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .dash-head h2{font-size:16px;margin:0 0 8px}
+  [hidden]{display:none !important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="mark">NMM</div>
+    <div>
+      <h1>Portal do Profissional</h1>
+      <p>NMM Soluções em Serviços</p>
+    </div>
+  </header>
+
+  <div id="loginView" class="card">
+    <div class="intro">
+      <h2>Entrar no meu cadastro</h2>
+      <p>Use o CPF e a senha que você criou no cadastro para acompanhar seu status e atualizar seus dados.</p>
+    </div>
+    <form id="loginForm" novalidate>
+      <div class="field">
+        <label for="loginCpf">CPF</label>
+        <input type="text" id="loginCpf" inputmode="numeric" placeholder="000.000.000-00" maxlength="14">
+        <div class="err" id="err-loginCpf">CPF inválido.</div>
+      </div>
+      <div class="field">
+        <label for="loginSenha">Senha</label>
+        <input type="password" id="loginSenha" autocomplete="current-password">
+        <div class="err" id="err-loginSenha">Informe sua senha.</div>
+      </div>
+      <div class="formerr" id="loginErr"></div>
+      <div class="actions">
+        <button type="submit" class="submit" id="loginBtn"><span id="loginBtnLabel">Entrar</span></button>
+      </div>
+    </form>
+    <div class="toggle-row">
+      Primeiro acesso ou esqueceu a senha? <button type="button" class="link-btn" id="showReset">Definir senha</button>
+    </div>
+  </div>
+
+  <div id="resetView" class="card" hidden>
+    <div class="intro">
+      <h2>Definir senha de acesso</h2>
+      <p>Informe seu CPF e seu nome completo exatamente como no cadastro para criar (ou trocar) sua senha.</p>
+    </div>
+    <form id="resetForm" novalidate>
+      <div class="field">
+        <label for="resetCpf">CPF</label>
+        <input type="text" id="resetCpf" inputmode="numeric" placeholder="000.000.000-00" maxlength="14">
+        <div class="err" id="err-resetCpf">CPF inválido.</div>
+      </div>
+      <div class="field">
+        <label for="resetNome">Nome completo (como no cadastro)</label>
+        <input type="text" id="resetNome">
+        <div class="err" id="err-resetNome">Informe seu nome completo.</div>
+      </div>
+      <div class="field">
+        <label for="resetSenha">Nova senha</label>
+        <input type="password" id="resetSenha" autocomplete="new-password" placeholder="Mínimo 6 caracteres">
+        <div class="err" id="err-resetSenha">A senha deve ter pelo menos 6 caracteres.</div>
+      </div>
+      <div class="field">
+        <label for="resetSenhaConfirma">Confirme a nova senha</label>
+        <input type="password" id="resetSenhaConfirma" autocomplete="new-password">
+        <div class="err" id="err-resetSenhaConfirma">As senhas não conferem.</div>
+      </div>
+      <div class="formerr" id="resetErr"></div>
+      <div class="actions">
+        <button type="submit" class="submit" id="resetBtn"><span id="resetBtnLabel">Definir senha e entrar</span></button>
+      </div>
+    </form>
+    <div class="toggle-row">
+      Já tem senha? <button type="button" class="link-btn" id="showLogin">Voltar para o login</button>
+    </div>
+  </div>
+
+  <div id="dashboardView" hidden>
+    <div class="card">
+      <div class="dash-head">
+        <div>
+          <h2>Olá, <span id="dashNome"></span></h2>
+          <span class="status-badge"><span class="status-dot"></span><span id="dashStatus"></span></span>
+        </div>
+        <button type="button" class="link-btn" id="logoutBtn">Sair</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="intro">
+        <h2>Atualizar meus dados</h2>
+        <p>Altere as informações abaixo e clique em salvar. Não é necessário reenviar documento ou foto se não quiser trocá-los.</p>
+      </div>
+      <form id="dashForm" novalidate>
+        <fieldset>
+          <legend>Endereço e local de trabalho</legend>
+          <div class="field">
+            <label for="dEndereco">Endereço completo</label>
+            <textarea id="dEndereco" rows="2"></textarea>
+            <div class="err" id="err-dEndereco">Informe seu endereço.</div>
+          </div>
+          <div class="field">
+            <label for="dCidades">Cidade(s) em que pode atuar</label>
+            <input type="text" id="dCidades">
+            <div class="err" id="err-dCidades">Informe ao menos uma cidade.</div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Experiência profissional</legend>
+          <div class="field">
+            <label>Função com experiência</label>
+            <div class="opt-grid" id="dExpOptions"></div>
+            <div class="field opt-outros-field" id="dExpOutrosWrap" hidden>
+              <input type="text" id="dExpOutrosText" placeholder="Digite a função">
+            </div>
+            <div class="err" id="err-dExperiencia">Selecione ao menos uma função.</div>
+          </div>
+          <div class="field">
+            <label>Quais funções pretende atuar</label>
+            <div class="opt-grid" id="dPreOptions"></div>
+            <div class="field opt-outros-field" id="dPreOutrosWrap" hidden>
+              <input type="text" id="dPreOutrosText" placeholder="Digite a função">
+            </div>
+            <div class="err" id="err-dPretendidas">Selecione ao menos uma função.</div>
+          </div>
+          <div class="field">
+            <label>Quais funções pretende aprender e estudar</label>
+            <div class="opt-grid" id="dAprOptions"></div>
+            <div class="field opt-outros-field" id="dAprOutrosWrap" hidden>
+              <input type="text" id="dAprOutrosText" placeholder="Digite a função">
+            </div>
+            <div class="err" id="err-dAprender">Selecione ao menos uma função.</div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Dados para pagamento</legend>
+          <div class="field">
+            <label for="dPixBanco">Banco em que vai receber</label>
+            <input type="text" id="dPixBanco">
+            <div class="err" id="err-dPixBanco">Informe o banco.</div>
+          </div>
+          <div class="row2">
+            <div class="field">
+              <label for="dPixTipo">Tipo de chave PIX</label>
+              <select id="dPixTipo">
+                <option value="">Selecione</option>
+                <option value="cpf">CPF</option>
+                <option value="email">E-mail</option>
+                <option value="telefone">Telefone</option>
+                <option value="aleatoria">Chave aleatória</option>
+              </select>
+              <div class="err" id="err-dPixTipo">Selecione o tipo.</div>
+            </div>
+            <div class="field">
+              <label for="dPixChave">Chave PIX</label>
+              <input type="text" id="dPixChave">
+              <div class="err" id="err-dPixChave">Chave PIX inválida.</div>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Documentos (opcional)</legend>
+          <div class="field">
+            <label>Documento com foto <span class="opt">(deixe em branco para manter o atual)</span></label>
+            <label class="upload" id="uploadDoc">
+              <input type="file" id="dDocFile" accept="image/*,.pdf">
+              <div class="thumb" id="dDocThumb">DOC</div>
+              <div style="min-width:0">
+                <div class="u-title">Reenviar documento</div>
+                <div class="u-sub" id="dDocName">Nenhum arquivo novo selecionado</div>
+              </div>
+            </label>
+          </div>
+          <div class="field">
+            <label>Foto atual <span class="opt">(deixe em branco para manter a atual)</span></label>
+            <label class="upload" id="uploadFoto">
+              <input type="file" id="dFotoFile" accept="image/*">
+              <div class="thumb" id="dFotoThumb">FOTO</div>
+              <div style="min-width:0">
+                <div class="u-title">Reenviar foto</div>
+                <div class="u-sub" id="dFotoName">Nenhum arquivo novo selecionado</div>
+              </div>
+            </label>
+          </div>
+        </fieldset>
+
+        <div class="formerr" id="dashErr"></div>
+        <div class="formok" id="dashOk">Dados atualizados com sucesso!</div>
+        <div class="actions">
+          <button type="submit" class="submit" id="dashBtn"><span id="dashBtnLabel">Salvar alterações</span></button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer class="foot">NMM Soluções em Serviços &middot; <a href="index.html">Fazer novo cadastro</a></footer>
+</div>
+
+<script>
+(function(){
+  var SUPABASE_URL = "https://ratkhskpvgvlperrtsvv.supabase.co";
+  var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhdGtoc2twdmd2bHBlcnJ0c3Z2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0MTE5MDAsImV4cCI6MjEwNDk4NzkwMH0.INk9i0RZ_n8OYs85Mh77EaW1vUHN6WszfYKSVe_dQgE";
+  var API_URL = SUPABASE_URL + "/functions/v1/atualizar-api";
+  var TOKEN_KEY = "nmm_portal_token";
+
+  function api(acao, extra){
+    var payload = Object.assign({ acao: acao }, extra || {});
+    return fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "apikey": SUPABASE_ANON_KEY, "Authorization": "Bearer " + SUPABASE_ANON_KEY },
+      body: JSON.stringify(payload)
+    }).then(function(res){
+      return res.json().then(function(body){ return { ok: res.ok, status: res.status, body: body }; });
+    });
+  }
+
+  function hashSenha(cpfDigits, senha){
+    var enc = new TextEncoder().encode(cpfDigits + ":" + senha);
+    return crypto.subtle.digest("SHA-256", enc).then(function(buf){
+      return Array.prototype.map.call(new Uint8Array(buf), function(b){ return b.toString(16).padStart(2,"0"); }).join("");
+    });
+  }
+
+  function saveToken(t){
+    try { localStorage.setItem(TOKEN_KEY, t); } catch(e){}
+  }
+  function loadToken(){
+    try { return localStorage.getItem(TOKEN_KEY); } catch(e){ return null; }
+  }
+  function clearToken(){
+    try { localStorage.removeItem(TOKEN_KEY); } catch(e){}
+  }
+
+  function cpfValido(cpf){
+    cpf = (cpf || "").replace(/\D/g,"");
+    if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
+    var soma = 0, i;
+    for (i=0;i<9;i++) soma += parseInt(cpf[i],10) * (10-i);
+    var d1 = (soma*10) % 11; if (d1 === 10) d1 = 0;
+    if (d1 !== parseInt(cpf[9],10)) return false;
+    soma = 0;
+    for (i=0;i<10;i++) soma += parseInt(cpf[i],10) * (11-i);
+    var d2 = (soma*10) % 11; if (d2 === 10) d2 = 0;
+    return d2 === parseInt(cpf[10],10);
+  }
+  function maskCpf(v){
+    v = v.replace(/\D/g,"").slice(0,11);
+    v = v.replace(/(\d{3})(\d)/,"$1.$2");
+    v = v.replace(/(\d{3})(\d)/,"$1.$2");
+    v = v.replace(/(\d{3})(\d{1,2})$/,"$1-$2");
+    return v;
+  }
+  ["loginCpf","resetCpf"].forEach(function(id){
+    document.getElementById(id).addEventListener("input", function(e){ e.target.value = maskCpf(e.target.value); });
+  });
+
+  function pixValido(tipo, valor){
+    valor = (valor||"").trim();
+    if (!valor) return false;
+    if (tipo === "cpf") return cpfValido(valor);
+    if (tipo === "email") return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(valor);
+    if (tipo === "telefone") return /\d{10,11}/.test(valor.replace(/\D/g,""));
+    if (tipo === "aleatoria") return valor.length >= 8;
+    return false;
+  }
+
+  var FUNCOES_OPTIONS = ["Açougueiro","Atendente","Auxiliar de Açougue","Auxiliar de Cozinha","Auxiliar de Padaria","Balconista","Caixa","Carga e Descarga","Chapeiro","Churrasqueiro","Confeiteiro","Conferente","Cozinheira","Degustador","Estoquista","Faxineira","Fiscal de Caixa","FLC (Frios, Laticínios, Congelados)","FLV (Frutas, Legumes, Verduras)","Garçom","Hortifruti","Limpeza","Limpeza Pesada","Mercearia","Motoboy","Motorista AB","Motorista ABC","Motorista ABCD","Padeiro","Panificador","Recepcionista","Repositor","Telefonista","Vendedor"];
+
+  function escAttr(s){
+    return String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;");
+  }
+
+  function buildOptionsGroup(containerId, prefix){
+    var container = document.getElementById(containerId);
+    var html = "";
+    for (var i=0;i<FUNCOES_OPTIONS.length;i++){
+      var id = prefix + "_" + i;
+      html += '<label class="opt-item"><input type="checkbox" class="opt-check" id="' + id + '" value="' + escAttr(FUNCOES_OPTIONS[i]) + '"> ' + FUNCOES_OPTIONS[i] + '</label>';
+    }
+    html += '<label class="opt-item"><input type="checkbox" class="opt-check opt-outros-check" id="' + prefix + '_outros" value="Outros"> Outros</label>';
+    container.innerHTML = html;
+
+    var outrosCheck = document.getElementById(prefix + "_outros");
+    var outrosWrap = document.getElementById(prefix + "OutrosWrap");
+    var outrosText = document.getElementById(prefix + "OutrosText");
+    outrosCheck.addEventListener("change", function(){
+      outrosWrap.hidden = !outrosCheck.checked;
+      if (outrosCheck.checked) { outrosText.focus(); } else { outrosText.value = ""; }
+    });
+  }
+  buildOptionsGroup("dExpOptions","dExp");
+  buildOptionsGroup("dPreOptions","dPre");
+  buildOptionsGroup("dAprOptions","dApr");
+
+  function getSelectedFuncoes(prefix){
+    var vals = [];
+    var checks = document.querySelectorAll("#" + prefix + "Options .opt-check:not(.opt-outros-check)");
+    Array.prototype.forEach.call(checks, function(c){ if (c.checked) vals.push(c.value); });
+    var outrosCheck = document.getElementById(prefix + "_outros");
+    if (outrosCheck && outrosCheck.checked){
+      var t = document.getElementById(prefix + "OutrosText").value.trim();
+      if (t) vals.push(t);
+    }
+    return vals.join(", ");
+  }
+
+  function prefillFuncoes(prefix, existingString){
+    var tokens = (existingString || "").split(",").map(function(t){ return t.trim(); }).filter(Boolean);
+    var leftover = [];
+    tokens.forEach(function(tok){
+      var matched = false;
+      var checks = document.querySelectorAll("#" + prefix + "Options .opt-check:not(.opt-outros-check)");
+      Array.prototype.forEach.call(checks, function(c){
+        if (!matched && c.value.toLowerCase() === tok.toLowerCase()){ c.checked = true; matched = true; }
+      });
+      if (!matched) leftover.push(tok);
+    });
+    if (leftover.length){
+      var outrosCheck = document.getElementById(prefix + "_outros");
+      var outrosWrap = document.getElementById(prefix + "OutrosWrap");
+      var outrosText = document.getElementById(prefix + "OutrosText");
+      outrosCheck.checked = true;
+      outrosWrap.hidden = false;
+      outrosText.value = leftover.join(", ");
+    }
+  }
+
+  function showErr(id, show){
+    var el = document.getElementById("err-" + id);
+    var input = document.getElementById(id);
+    if (el) el.classList.toggle("show", !!show);
+    if (input && input.classList) input.classList.toggle("invalid", !!show);
+  }
+
+  function fileToBase64(file){
+    return new Promise(function(resolve, reject){
+      var r = new FileReader();
+      r.onload = function(){
+        var result = r.result;
+        var comma = result.indexOf(",");
+        resolve(result.slice(comma + 1));
+      };
+      r.onerror = reject;
+      r.readAsDataURL(file);
+    });
+  }
+
+  function wireUploadPreview(inputId, thumbId, nameId){
+    var input = document.getElementById(inputId);
+    var thumb = document.getElementById(thumbId);
+    var nameEl = document.getElementById(nameId);
+    input.addEventListener("change", function(){
+      var f = input.files && input.files[0];
+      if (!f) { nameEl.textContent = "Nenhum arquivo novo selecionado"; return; }
+      nameEl.textContent = f.name;
+      if (f.type && f.type.indexOf("image/") === 0){
+        var reader = new FileReader();
+        reader.onload = function(ev){ thumb.innerHTML = '<img src="' + ev.target.result + '">'; };
+        reader.readAsDataURL(f);
+      }
+    });
+  }
+  wireUploadPreview("dDocFile","dDocThumb","dDocName");
+  wireUploadPreview("dFotoFile","dFotoThumb","dFotoName");
+
+  var loginView = document.getElementById("loginView");
+  var resetView = document.getElementById("resetView");
+  var dashboardView = document.getElementById("dashboardView");
+
+  document.getElementById("showReset").addEventListener("click", function(){
+    loginView.hidden = true; resetView.hidden = false;
+  });
+  document.getElementById("showLogin").addEventListener("click", function(){
+    resetView.hidden = true; loginView.hidden = false;
+  });
+
+  function abrirDashboard(dados){
+    loginView.hidden = true;
+    resetView.hidden = true;
+    dashboardView.hidden = false;
+    document.getElementById("dashNome").textContent = dados.nome_completo;
+    document.getElementById("dashStatus").textContent = dados.status_label;
+    document.getElementById("dEndereco").value = dados.endereco || "";
+    document.getElementById("dCidades").value = dados.cidades_atuacao || "";
+    prefillFuncoes("dExp", dados.funcoes_experiencia);
+    prefillFuncoes("dPre", dados.funcoes_pretendidas);
+    prefillFuncoes("dApr", dados.funcoes_aprender);
+    document.getElementById("dPixBanco").value = dados.pix_banco || "";
+    document.getElementById("dPixTipo").value = dados.pix_tipo || "";
+    document.getElementById("dPixChave").value = dados.pix_chave || "";
+  }
+
+  // Restaura sessão salva, se houver.
+  var existingToken = loadToken();
+  if (existingToken){
+    api("sessao", { token: existingToken }).then(function(r){
+      if (r.ok && r.body.ok){
+        abrirDashboard(r.body.dados);
+      } else {
+        clearToken();
+      }
+    }).catch(function(){});
+  }
+
+  // Login
+  var loginForm = document.getElementById("loginForm");
+  var loginBtn = document.getElementById("loginBtn");
+  var loginBtnLabel = document.getElementById("loginBtnLabel");
+  var loginErr = document.getElementById("loginErr");
+  loginForm.addEventListener("submit", function(e){
+    e.preventDefault();
+    loginErr.classList.remove("show");
+    var cpf = document.getElementById("loginCpf").value;
+    var senha = document.getElementById("loginSenha").value;
+    var cpfDigits = cpf.replace(/\D/g,"");
+    var ok = true;
+    showErr("loginCpf", cpfDigits.length !== 11); if (cpfDigits.length !== 11) ok = false;
+    showErr("loginSenha", !senha); if (!senha) ok = false;
+    if (!ok) return;
+
+    loginBtn.disabled = true;
+    loginBtnLabel.innerHTML = '<span class="spinner"></span> Entrando...';
+    hashSenha(cpfDigits, senha)
+      .then(function(hash){ return api("login", { cpf: cpfDigits, senha_hash: hash }); })
+      .then(function(r){
+        loginBtn.disabled = false;
+        loginBtnLabel.textContent = "Entrar";
+        if (!r.ok || !r.body.ok){
+          loginErr.textContent = (r.body && r.body.erro) || "Não foi possível entrar.";
+          loginErr.classList.add("show");
+          return;
+        }
+        saveToken(r.body.token);
+        abrirDashboard(r.body.dados);
+      })
+      .catch(function(err){
+        loginBtn.disabled = false;
+        loginBtnLabel.textContent = "Entrar";
+        loginErr.textContent = "Não foi possível conectar. Tente novamente.";
+        loginErr.classList.add("show");
+      });
+  });
+
+  // Definir/redefinir senha
+  var resetForm = document.getElementById("resetForm");
+  var resetBtn = document.getElementById("resetBtn");
+  var resetBtnLabel = document.getElementById("resetBtnLabel");
+  var resetErr = document.getElementById("resetErr");
+  resetForm.addEventListener("submit", function(e){
+    e.preventDefault();
+    resetErr.classList.remove("show");
+    var cpf = document.getElementById("resetCpf").value;
+    var nome = document.getElementById("resetNome").value.trim();
+    var senha = document.getElementById("resetSenha").value;
+    var senhaConfirma = document.getElementById("resetSenhaConfirma").value;
+    var cpfDigits = cpf.replace(/\D/g,"");
+
+    var ok = true;
+    showErr("resetCpf", cpfDigits.length !== 11); if (cpfDigits.length !== 11) ok = false;
+    showErr("resetNome", !nome); if (!nome) ok = false;
+    var senhaOk = senha && senha.length >= 6; showErr("resetSenha", !senhaOk); if (!senhaOk) ok = false;
+    var confirmaOk = senhaOk && senha === senhaConfirma; showErr("resetSenhaConfirma", !confirmaOk); if (!confirmaOk) ok = false;
+    if (!ok) return;
+
+    resetBtn.disabled = true;
+    resetBtnLabel.innerHTML = '<span class="spinner"></span> Enviando...';
+    hashSenha(cpfDigits, senha)
+      .then(function(hash){ return api("definir_senha", { cpf: cpfDigits, nome: nome, senha_hash: hash }); })
+      .then(function(r){
+        resetBtn.disabled = false;
+        resetBtnLabel.textContent = "Definir senha e entrar";
+        if (!r.ok || !r.body.ok){
+          resetErr.textContent = (r.body && r.body.erro) || "Não foi possível definir a senha.";
+          resetErr.classList.add("show");
+          return;
+        }
+        saveToken(r.body.token);
+        abrirDashboard(r.body.dados);
+      })
+      .catch(function(){
+        resetBtn.disabled = false;
+        resetBtnLabel.textContent = "Definir senha e entrar";
+        resetErr.textContent = "Não foi possível conectar. Tente novamente.";
+        resetErr.classList.add("show");
+      });
+  });
+
+  // Logout
+  document.getElementById("logoutBtn").addEventListener("click", function(){
+    clearToken();
+    dashboardView.hidden = true;
+    loginView.hidden = false;
+    document.getElementById("loginForm").reset();
+  });
+
+  // Salvar alterações
+  var dashForm = document.getElementById("dashForm");
+  var dashBtn = document.getElementById("dashBtn");
+  var dashBtnLabel = document.getElementById("dashBtnLabel");
+  var dashErr = document.getElementById("dashErr");
+  var dashOk = document.getElementById("dashOk");
+
+  dashForm.addEventListener("submit", function(e){
+    e.preventDefault();
+    dashErr.classList.remove("show");
+    dashOk.classList.remove("show");
+
+    var endereco = document.getElementById("dEndereco").value.trim();
+    var cidades = document.getElementById("dCidades").value.trim();
+    var experiencia = getSelectedFuncoes("dExp");
+    var pretendidas = getSelectedFuncoes("dPre");
+    var aprender = getSelectedFuncoes("dApr");
+    var pixBanco = document.getElementById("dPixBanco").value.trim();
+    var pixTipo = document.getElementById("dPixTipo").value;
+    var pixChave = document.getElementById("dPixChave").value.trim();
+    var docFile = document.getElementById("dDocFile").files[0];
+    var fotoFile = document.getElementById("dFotoFile").files[0];
+
+    var ok = true;
+    showErr("dEndereco", !endereco); if (!endereco) ok = false;
+    showErr("dCidades", !cidades); if (!cidades) ok = false;
+    showErr("dExperiencia", !experiencia); if (!experiencia) ok = false;
+    showErr("dPretendidas", !pretendidas); if (!pretendidas) ok = false;
+    showErr("dAprender", !aprender); if (!aprender) ok = false;
+    showErr("dPixBanco", !pixBanco); if (!pixBanco) ok = false;
+    showErr("dPixTipo", !pixTipo); if (!pixTipo) ok = false;
+    var pixOk = pixValido(pixTipo, pixChave); showErr("dPixChave", !pixOk); if (!pixOk) ok = false;
+    if (!ok){
+      dashErr.textContent = "Verifique os campos destacados acima.";
+      dashErr.classList.add("show");
+      return;
+    }
+
+    var token = loadToken();
+    if (!token){
+      dashErr.textContent = "Sua sessão expirou. Faça login novamente.";
+      dashErr.classList.add("show");
+      dashboardView.hidden = true;
+      loginView.hidden = false;
+      return;
+    }
+
+    dashBtn.disabled = true;
+    dashBtnLabel.innerHTML = '<span class="spinner"></span> Salvando...';
+
+    var payload = {
+      token: token,
+      endereco: endereco,
+      cidades_atuacao: cidades,
+      funcoes_experiencia: experiencia,
+      funcoes_pretendidas: pretendidas,
+      funcoes_aprender: aprender,
+      pix_banco: pixBanco,
+      pix_tipo: pixTipo,
+      pix_chave: pixChave
+    };
+
+    Promise.resolve()
+      .then(function(){
+        if (docFile){
+          return fileToBase64(docFile).then(function(b64){
+            payload.documento_base64 = b64;
+            payload.documento_ext = (docFile.name.split(".").pop() || "jpg").toLowerCase();
+            payload.documento_content_type = docFile.type || "application/octet-stream";
+          });
+        }
+      })
+      .then(function(){
+        if (fotoFile){
+          return fileToBase64(fotoFile).then(function(b64){
+            payload.foto_base64 = b64;
+            payload.foto_ext = (fotoFile.name.split(".").pop() || "jpg").toLowerCase();
+            payload.foto_content_type = fotoFile.type || "image/jpeg";
+          });
+        }
+      })
+      .then(function(){ return api("salvar", payload); })
+      .then(function(r){
+        dashBtn.disabled = false;
+        dashBtnLabel.textContent = "Salvar alterações";
+        if (!r.ok || !r.body.ok){
+          dashErr.textContent = (r.body && r.body.erro) || "Não foi possível salvar.";
+          dashErr.classList.add("show");
+          return;
+        }
+        dashOk.classList.add("show");
+        window.scrollTo(0,0);
+      })
+      .catch(function(){
+        dashBtn.disabled = false;
+        dashBtnLabel.textContent = "Salvar alterações";
+        dashErr.textContent = "Não foi possível conectar. Tente novamente.";
+        dashErr.classList.add("show");
+      });
+  });
+})();
+</script>
+</body>
+</html>
