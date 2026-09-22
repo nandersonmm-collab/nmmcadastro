@@ -118,9 +118,12 @@
           <div class="err" id="err-endereco">Informe seu endereço.</div>
         </div>
         <div class="field">
-          <label for="cidades">Cidade(s) em que pode atuar</label>
-          <input type="text" id="cidades">
-          <div class="err" id="err-cidades">Informe ao menos uma cidade.</div>
+          <label>Cidade(s) em que pode atuar</label>
+          <div class="opt-grid" id="cidadesOptions"></div>
+          <div class="field opt-outros-field" id="cidadesOutrosWrap" hidden>
+            <input type="text" id="cidadesOutrosText" placeholder="Digite a cidade">
+          </div>
+          <div class="err" id="err-cidades">Selecione ao menos uma cidade.</div>
         </div>
       </fieldset>
 
@@ -338,17 +341,18 @@
   wireUpload("fotoFile","fotoThumb","fotoName","Foto atual de rosto");
 
   var FUNCOES_OPTIONS = ["Açougueiro","Atendente","Auxiliar de Açougue","Auxiliar de Cozinha","Auxiliar de Padaria","Balconista","Caixa","Carga e Descarga","Chapeiro","Churrasqueiro","Confeiteiro","Conferente","Cozinheira","Degustador","Estoquista","Faxineira","Fiscal de Caixa","FLC (Frios, Laticínios, Congelados)","FLV (Frutas, Legumes, Verduras)","Garçom","Hortifruti","Limpeza","Limpeza Pesada","Mercearia","Motoboy","Motorista AB","Motorista ABC","Motorista ABCD","Padeiro","Panificador","Recepcionista","Repositor","Telefonista","Vendedor"];
+  var CIDADES_OPTIONS = ["Braço do Norte","Capivari de Baixo","Criciúma","Imbituba","Laguna","Orleans","Sombrio","Tubarão"];
 
   function escAttr(s){
     return String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;");
   }
 
-  function buildOptionsGroup(containerId, prefix){
+  function buildOptionsGroup(containerId, prefix, options){
     var container = document.getElementById(containerId);
     var html = "";
-    for (var i=0;i<FUNCOES_OPTIONS.length;i++){
+    for (var i=0;i<options.length;i++){
       var id = prefix + "_" + i;
-      html += '<label class="opt-item"><input type="checkbox" class="opt-check" id="' + id + '" value="' + escAttr(FUNCOES_OPTIONS[i]) + '"> ' + FUNCOES_OPTIONS[i] + '</label>';
+      html += '<label class="opt-item"><input type="checkbox" class="opt-check" id="' + id + '" value="' + escAttr(options[i]) + '"> ' + options[i] + '</label>';
     }
     html += '<label class="opt-item"><input type="checkbox" class="opt-check opt-outros-check" id="' + prefix + '_outros" value="Outros"> Outros</label>';
     container.innerHTML = html;
@@ -361,9 +365,10 @@
       if (outrosCheck.checked) { outrosText.focus(); } else { outrosText.value = ""; }
     });
   }
-  buildOptionsGroup("expOptions","exp");
-  buildOptionsGroup("preOptions","pre");
-  buildOptionsGroup("aprOptions","apr");
+  buildOptionsGroup("expOptions","exp",FUNCOES_OPTIONS);
+  buildOptionsGroup("preOptions","pre",FUNCOES_OPTIONS);
+  buildOptionsGroup("aprOptions","apr",FUNCOES_OPTIONS);
+  buildOptionsGroup("cidadesOptions","cidades",CIDADES_OPTIONS);
 
   function getSelectedFuncoes(prefix){
     var vals = [];
@@ -397,7 +402,7 @@
     var cpf = document.getElementById("cpf").value;
     var cpfDigits = cpf.replace(/\D/g,"");
     var endereco = document.getElementById("endereco").value.trim();
-    var cidades = document.getElementById("cidades").value.trim();
+    var cidades = getSelectedFuncoes("cidades");
     var experiencia = getSelectedFuncoes("exp");
     var pretendidas = getSelectedFuncoes("pre");
     var aprender = getSelectedFuncoes("apr");
