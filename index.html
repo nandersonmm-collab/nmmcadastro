@@ -73,6 +73,9 @@
   @keyframes spin{to{transform:rotate(360deg)}}
   footer.foot{margin-top:18px;text-align:center;font-size:12px;color:var(--muted)}
   a{color:var(--accent)}
+  .treino-list{display:flex;flex-direction:column;gap:6px}
+  .treino-item{display:flex;align-items:center;gap:8px;background:var(--surface-2);border-radius:8px;padding:9px 12px;font-size:13.5px}
+  .treino-item .tag{font-size:11px;color:var(--muted);text-transform:uppercase;margin-left:4px}
   .success{padding:44px 26px;text-align:center}
   .success .check{width:56px;height:56px;margin:0 auto 16px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:28px}
   .success h2{font-size:19px;margin:0 0 8px}
@@ -152,6 +155,10 @@
             <input type="text" id="aprOutrosText" placeholder="Digite a função">
           </div>
           <div class="err" id="err-aprender">Selecione ao menos uma função.</div>
+        </div>
+        <div class="field" id="treinamentosBox" hidden>
+          <label>Treinamentos disponíveis para as funções selecionadas</label>
+          <div id="treinamentosList" class="treino-list"></div>
         </div>
         <div class="field">
           <label for="observacao">Observação <span class="opt">(opcional)</span></label>
@@ -369,6 +376,46 @@
   buildOptionsGroup("preOptions","pre",FUNCOES_OPTIONS);
   buildOptionsGroup("aprOptions","apr",FUNCOES_OPTIONS);
   buildOptionsGroup("cidadesOptions","cidades",CIDADES_OPTIONS);
+
+  var treinamentosCache = [];
+  sb.from("treinamentos").select("*").then(function(res){
+    if (!res.error) { treinamentosCache = res.data || []; }
+  });
+
+  function esc(s){
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+    });
+  }
+
+  function atualizarTreinamentosVisiveis(){
+    var selecionadas = (getSelectedFuncoes("pre") + ", " + getSelectedFuncoes("apr"))
+      .split(",").map(function(s){ return s.trim().toLowerCase(); }).filter(Boolean);
+    var box = document.getElementById("treinamentosBox");
+    var list = document.getElementById("treinamentosList");
+    if (!selecionadas.length || !treinamentosCache.length){
+      box.hidden = true;
+      return;
+    }
+    var relevantes = treinamentosCache.filter(function(t){
+      return selecionadas.indexOf(t.funcao.toLowerCase()) >= 0;
+    });
+    if (!relevantes.length){
+      box.hidden = true;
+      return;
+    }
+    list.innerHTML = relevantes.map(function(t){
+      return '<div class="treino-item">' +
+        '<a href="' + esc(t.url) + '" target="_blank" rel="noopener">' + esc(t.titulo) + '</a>' +
+        '<span class="tag">' + (t.tipo === "pdf" ? "PDF" : "Vídeo") + ' &middot; ' + esc(t.funcao) + '</span>' +
+      '</div>';
+    }).join("");
+    box.hidden = false;
+  }
+
+  ["preOptions","aprOptions"].forEach(function(id){
+    document.getElementById(id).addEventListener("change", atualizarTreinamentosVisiveis);
+  });
 
   function getSelectedFuncoes(prefix){
     var vals = [];

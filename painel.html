@@ -71,6 +71,18 @@
   .bar-row .bar-track{flex:1;height:8px;background:var(--surface-2);border-radius:99px;overflow:hidden}
   .bar-row .bar-fill{height:100%;background:var(--accent);border-radius:99px}
   .bar-row .bar-n{flex:none;width:22px;text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
+  .treino-body{padding:4px 16px 16px}
+  .treino-form{display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+  @media (min-width:640px){.treino-form{grid-template-columns:1fr 1fr}}
+  .treino-form .field{margin-bottom:0}
+  .treino-form select{width:100%;font:inherit;font-size:14.5px;padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text)}
+  .treino-list{display:flex;flex-direction:column;gap:8px}
+  .treino-group h4{font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin:14px 0 6px}
+  .treino-item{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface-2);border-radius:8px;padding:9px 12px;font-size:13.5px}
+  .treino-item a{color:var(--accent);text-decoration:none}
+  .treino-item a:hover{text-decoration:underline}
+  .treino-item .tag{font-size:11px;color:var(--muted);text-transform:uppercase;margin-left:6px}
+  .treino-item button{background:none;border:0;color:var(--danger);font-size:12.5px;cursor:pointer;padding:4px 6px}
   .overlay{position:fixed;inset:0;background:var(--bg);z-index:20;overflow-y:auto}
   .detailHead{display:flex;align-items:center;gap:12px;padding:16px 20px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0}
   .detailHead h2{font-size:15px;margin:0;flex:1}
@@ -138,6 +150,40 @@
           <h4>Funções que querem aprender</h4>
           <div id="panoramaAprender"></div>
         </div>
+      </div>
+    </details>
+
+    <details class="panorama" id="treinamentosPanel">
+      <summary>Treinamentos por função <span class="chev">&#9656;</span></summary>
+      <div class="treino-body">
+        <form id="treinoForm" class="treino-form">
+          <div class="field">
+            <label for="treinoFuncao">Função</label>
+            <select id="treinoFuncao" required></select>
+          </div>
+          <div class="field">
+            <label for="treinoTitulo">Título do treinamento</label>
+            <input type="text" id="treinoTitulo" required placeholder="Ex.: Como operar o caixa">
+          </div>
+          <div class="field">
+            <label for="treinoTipo">Tipo</label>
+            <select id="treinoTipo">
+              <option value="video">Vídeo (link)</option>
+              <option value="pdf">PDF (arquivo)</option>
+            </select>
+          </div>
+          <div class="field" id="treinoUrlWrap">
+            <label for="treinoUrl">Link do vídeo</label>
+            <input type="text" id="treinoUrl" placeholder="https://...">
+          </div>
+          <div class="field" id="treinoFileWrap" hidden>
+            <label for="treinoFile">Arquivo PDF</label>
+            <input type="file" id="treinoFile" accept="application/pdf">
+          </div>
+          <button type="submit" class="btn" id="treinoSaveBtn" style="width:auto;padding:10px 16px">Adicionar treinamento</button>
+          <div class="loginErr" id="treinoErr"></div>
+        </form>
+        <div class="treino-list" id="treinoList"></div>
       </div>
     </details>
 
@@ -212,6 +258,143 @@
   }
   populateFilterOptions();
 
+  var treinamentos = [];
+  var treinoForm = document.getElementById("treinoForm");
+  var treinoFuncao = document.getElementById("treinoFuncao");
+  var treinoTitulo = document.getElementById("treinoTitulo");
+  var treinoTipo = document.getElementById("treinoTipo");
+  var treinoUrl = document.getElementById("treinoUrl");
+  var treinoFile = document.getElementById("treinoFile");
+  var treinoUrlWrap = document.getElementById("treinoUrlWrap");
+  var treinoFileWrap = document.getElementById("treinoFileWrap");
+  var treinoErr = document.getElementById("treinoErr");
+  var treinoSaveBtn = document.getElementById("treinoSaveBtn");
+
+  FUNCOES_OPTIONS.forEach(function(f){
+    var opt = document.createElement("option");
+    opt.value = f; opt.textContent = f;
+    treinoFuncao.appendChild(opt);
+  });
+
+  treinoTipo.addEventListener("change", function(){
+    var isPdf = treinoTipo.value === "pdf";
+    treinoFileWrap.hidden = !isPdf;
+    treinoUrlWrap.hidden = isPdf;
+  });
+
+  function slugify(s){
+    return String(s).normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-zA-Z0-9]+/g,"-").toLowerCase().replace(/(^-|-$)/g,"");
+  }
+
+  function loadTreinamentos(){
+    sb.from("treinamentos").select("*").order("funcao").order("created_at").then(function(res){
+      if (res.error){
+        document.getElementById("treinoList").innerHTML = '<div class="empty">Erro ao carregar: ' + res.error.message + '</div>';
+        return;
+      }
+      treinamentos = res.data || [];
+      renderTreinamentos();
+    });
+  }
+
+  function renderTreinamentos(){
+    var el = document.getElementById("treinoList");
+    if (!treinamentos.length){
+      el.innerHTML = '<div class="empty">Nenhum treinamento cadastrado ainda.</div>';
+      return;
+    }
+    var porFuncao = {};
+    treinamentos.forEach(function(t){
+      if (!porFuncao[t.funcao]) porFuncao[t.funcao] = [];
+      porFuncao[t.funcao].push(t);
+    });
+    var funcoes = Object.keys(porFuncao).sort();
+    el.innerHTML = funcoes.map(function(f){
+      var itens = porFuncao[f].map(function(t){
+        return '<div class="treino-item" data-id="' + t.id + '">' +
+          '<div><a href="' + esc(t.url) + '" target="_blank" rel="noopener">' + esc(t.titulo) + '</a><span class="tag">' + (t.tipo === "pdf" ? "PDF" : "Vídeo") + '</span></div>' +
+          '<button type="button" class="delTreinoBtn" data-id="' + t.id + '">Excluir</button>' +
+        '</div>';
+      }).join("");
+      return '<div class="treino-group"><h4>' + esc(f) + '</h4>' + itens + '</div>';
+    }).join("");
+    Array.prototype.forEach.call(el.querySelectorAll(".delTreinoBtn"), function(btn){
+      btn.addEventListener("click", function(){
+        var id = btn.getAttribute("data-id");
+        if (!confirm("Excluir este treinamento?")) return;
+        sb.from("treinamentos").delete().eq("id", id).then(function(res){
+          if (res.error){ alert("Erro ao excluir: " + res.error.message); return; }
+          loadTreinamentos();
+        });
+      });
+    });
+  }
+
+  treinoForm.addEventListener("submit", function(e){
+    e.preventDefault();
+    treinoErr.classList.remove("show");
+    var funcao = treinoFuncao.value;
+    var titulo = treinoTitulo.value.trim();
+    var tipo = treinoTipo.value;
+
+    if (!funcao || !titulo){
+      treinoErr.textContent = "Preencha a função e o título.";
+      treinoErr.classList.add("show");
+      return;
+    }
+
+    treinoSaveBtn.disabled = true;
+    treinoSaveBtn.textContent = "Salvando...";
+
+    function inserirTreinamento(url){
+      return sb.from("treinamentos").insert({ funcao: funcao, tipo: tipo, titulo: titulo, url: url }).then(function(res){
+        treinoSaveBtn.disabled = false;
+        treinoSaveBtn.textContent = "Adicionar treinamento";
+        if (res.error){
+          treinoErr.textContent = "Erro ao salvar: " + res.error.message;
+          treinoErr.classList.add("show");
+          return;
+        }
+        treinoForm.reset();
+        treinoTipo.dispatchEvent(new Event("change"));
+        loadTreinamentos();
+      });
+    }
+
+    if (tipo === "pdf"){
+      var file = treinoFile.files[0];
+      if (!file){
+        treinoSaveBtn.disabled = false;
+        treinoSaveBtn.textContent = "Adicionar treinamento";
+        treinoErr.textContent = "Selecione um arquivo PDF.";
+        treinoErr.classList.add("show");
+        return;
+      }
+      var path = "treinamentos/" + slugify(funcao) + "/" + Date.now() + "-" + file.name;
+      sb.storage.from("public-assets").upload(path, file, { contentType: "application/pdf" }).then(function(res){
+        if (res.error){
+          treinoSaveBtn.disabled = false;
+          treinoSaveBtn.textContent = "Adicionar treinamento";
+          treinoErr.textContent = "Erro ao enviar arquivo: " + res.error.message;
+          treinoErr.classList.add("show");
+          return;
+        }
+        var pub = sb.storage.from("public-assets").getPublicUrl(path);
+        inserirTreinamento(pub.data.publicUrl);
+      });
+    } else {
+      var url = treinoUrl.value.trim();
+      if (!url){
+        treinoSaveBtn.disabled = false;
+        treinoSaveBtn.textContent = "Adicionar treinamento";
+        treinoErr.textContent = "Informe o link do vídeo.";
+        treinoErr.classList.add("show");
+        return;
+      }
+      inserirTreinamento(url);
+    }
+  });
+
   loginForm.addEventListener("submit", function(e){
     e.preventDefault();
     loginErr.classList.remove("show");
@@ -251,6 +434,7 @@
     loginView.hidden = true;
     appView.hidden = false;
     loadCandidatos();
+    loadTreinamentos();
   }
 
   sb.auth.getSession().then(function(res){
