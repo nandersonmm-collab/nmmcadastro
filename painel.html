@@ -54,9 +54,23 @@
   .item .sub{font-size:12.5px;color:var(--muted);margin-top:3px}
   .badge{font-size:11px;font-weight:700;padding:3px 9px;border-radius:99px;text-transform:uppercase;letter-spacing:.03em}
   .badge.novo{background:var(--accent-soft);color:var(--accent)}
+  .badge.em_analise{background:#FFF3D6;color:#8A6100}
   .badge.aprovado{background:#DFF2E1;color:#1E7B34}
-  .badge.reprovado{background:var(--danger-soft);color:var(--danger)}
+  .badge.descartado{background:var(--danger-soft);color:var(--danger)}
   .empty{text-align:center;color:var(--muted);padding:60px 20px;font-size:14px}
+  .panorama{background:var(--surface);border:1px solid var(--border);border-radius:9px;margin-bottom:16px;overflow:hidden}
+  .panorama summary{padding:13px 16px;cursor:pointer;font-weight:700;font-size:13.5px;list-style:none;display:flex;align-items:center;justify-content:space-between}
+  .panorama summary::-webkit-details-marker{display:none}
+  .panorama summary .chev{color:var(--muted);font-size:12px;transition:transform .15s}
+  .panorama[open] summary .chev{transform:rotate(90deg)}
+  .panorama-body{padding:4px 16px 16px;display:grid;grid-template-columns:1fr;gap:16px}
+  @media (min-width:640px){.panorama-body{grid-template-columns:1fr 1fr}}
+  .panorama-col h4{font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin:0 0 8px}
+  .bar-row{display:flex;align-items:center;gap:8px;font-size:12.5px;margin-bottom:6px}
+  .bar-row .bar-label{flex:none;width:118px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .bar-row .bar-track{flex:1;height:8px;background:var(--surface-2);border-radius:99px;overflow:hidden}
+  .bar-row .bar-fill{height:100%;background:var(--accent);border-radius:99px}
+  .bar-row .bar-n{flex:none;width:22px;text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
   .overlay{position:fixed;inset:0;background:var(--bg);z-index:20;overflow-y:auto}
   .detailHead{display:flex;align-items:center;gap:12px;padding:16px 20px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0}
   .detailHead h2{font-size:15px;margin:0;flex:1}
@@ -104,13 +118,43 @@
   </header>
   <main>
     <div class="stats" id="stats"></div>
+
+    <details class="panorama" id="panorama">
+      <summary>Panorama dos cadastros <span class="chev">&#9656;</span></summary>
+      <div class="panorama-body">
+        <div class="panorama-col">
+          <h4>Cidades de atuação</h4>
+          <div id="panoramaCidades"></div>
+        </div>
+        <div class="panorama-col">
+          <h4>Funções com experiência</h4>
+          <div id="panoramaExperiencia"></div>
+        </div>
+        <div class="panorama-col">
+          <h4>Funções pretendidas</h4>
+          <div id="panoramaPretendidas"></div>
+        </div>
+        <div class="panorama-col">
+          <h4>Funções que querem aprender</h4>
+          <div id="panoramaAprender"></div>
+        </div>
+      </div>
+    </details>
+
     <div class="toolbar">
       <input type="text" id="searchInput" placeholder="Buscar por nome, CPF ou cidade...">
       <select id="statusFilter">
         <option value="">Todos os status</option>
         <option value="novo">Novo</option>
+        <option value="em_analise">Em análise</option>
         <option value="aprovado">Aprovado</option>
-        <option value="reprovado">Reprovado</option>
+        <option value="descartado">Descartado</option>
+      </select>
+      <select id="cidadeFilter">
+        <option value="">Todas as cidades</option>
+      </select>
+      <select id="funcaoFilter">
+        <option value="">Todas as funções</option>
       </select>
     </div>
     <div class="list" id="listArea"></div>
@@ -141,6 +185,32 @@
   var loginErr = document.getElementById("loginErr");
 
   var candidatos = [];
+
+  var STATUS_LABEL = {
+    novo: "Novo",
+    em_analise: "Em análise",
+    aprovado: "Aprovado",
+    descartado: "Descartado"
+  };
+
+  var CIDADES_OPTIONS = ["Braço do Norte","Capivari de Baixo","Criciúma","Imbituba","Laguna","Orleans","Sombrio","Tubarão"];
+  var FUNCOES_OPTIONS = ["Açougueiro","Atendente","Auxiliar de Açougue","Auxiliar de Cozinha","Auxiliar de Padaria","Balconista","Caixa","Carga e Descarga","Chapeiro","Churrasqueiro","Confeiteiro","Conferente","Cozinheira","Degustador","Estoquista","Faxineira","Fiscal de Caixa","FLC (Frios, Laticínios, Congelados)","FLV (Frutas, Legumes, Verduras)","Garçom","Hortifruti","Limpeza","Limpeza Pesada","Mercearia","Motoboy","Motorista AB","Motorista ABC","Motorista ABCD","Padeiro","Panificador","Recepcionista","Repositor","Telefonista","Vendedor","Outros"];
+
+  function populateFilterOptions(){
+    var cidadeSel = document.getElementById("cidadeFilter");
+    CIDADES_OPTIONS.forEach(function(c){
+      var opt = document.createElement("option");
+      opt.value = c; opt.textContent = c;
+      cidadeSel.appendChild(opt);
+    });
+    var funcaoSel = document.getElementById("funcaoFilter");
+    FUNCOES_OPTIONS.forEach(function(f){
+      var opt = document.createElement("option");
+      opt.value = f; opt.textContent = f;
+      funcaoSel.appendChild(opt);
+    });
+  }
+  populateFilterOptions();
 
   loginForm.addEventListener("submit", function(e){
     e.preventDefault();
@@ -198,18 +268,60 @@
       candidatos = res.data || [];
       renderStats();
       renderList();
+      renderPanorama();
     });
+  }
+
+  function contarValores(campo){
+    var counts = {};
+    candidatos.forEach(function(c){
+      var raw = c[campo];
+      if (!raw) return;
+      raw.split(",").forEach(function(v){
+        v = v.trim();
+        if (!v) return;
+        counts[v] = (counts[v] || 0) + 1;
+      });
+    });
+    return Object.keys(counts).map(function(k){ return {label:k, n:counts[k]}; })
+      .sort(function(a,b){ return b.n - a.n; });
+  }
+
+  function renderBarras(containerId, items){
+    var el = document.getElementById(containerId);
+    if (!items.length){
+      el.innerHTML = '<div style="font-size:12.5px;color:var(--muted)">Sem dados</div>';
+      return;
+    }
+    var max = items[0].n;
+    el.innerHTML = items.map(function(it){
+      var pct = max ? Math.round((it.n / max) * 100) : 0;
+      return '<div class="bar-row">' +
+        '<div class="bar-label" title="' + esc(it.label) + '">' + esc(it.label) + '</div>' +
+        '<div class="bar-track"><div class="bar-fill" style="width:' + pct + '%"></div></div>' +
+        '<div class="bar-n">' + it.n + '</div>' +
+      '</div>';
+    }).join("");
+  }
+
+  function renderPanorama(){
+    renderBarras("panoramaCidades", contarValores("cidades_atuacao"));
+    renderBarras("panoramaExperiencia", contarValores("funcoes_experiencia"));
+    renderBarras("panoramaPretendidas", contarValores("funcoes_pretendidas"));
+    renderBarras("panoramaAprender", contarValores("funcoes_aprender"));
   }
 
   function renderStats(){
     var novo = candidatos.filter(function(c){return c.status === "novo";}).length;
+    var emAnalise = candidatos.filter(function(c){return c.status === "em_analise";}).length;
     var aprovado = candidatos.filter(function(c){return c.status === "aprovado";}).length;
-    var reprovado = candidatos.filter(function(c){return c.status === "reprovado";}).length;
+    var descartado = candidatos.filter(function(c){return c.status === "descartado";}).length;
     document.getElementById("stats").innerHTML =
       statCard(candidatos.length, "Total") +
       statCard(novo, "Novos") +
+      statCard(emAnalise, "Em análise") +
       statCard(aprovado, "Aprovados") +
-      statCard(reprovado, "Reprovados");
+      statCard(descartado, "Descartados");
   }
   function statCard(n, l){
     return '<div class="stat"><div class="n">' + n + '</div><div class="l">' + l + '</div></div>';
@@ -221,11 +333,23 @@
     });
   }
 
+  function temFuncao(c, valor){
+    var todas = [c.funcoes_experiencia, c.funcoes_pretendidas, c.funcoes_aprender].join(", ").toLowerCase();
+    return todas.indexOf(valor.toLowerCase()) >= 0;
+  }
+  function temCidade(c, valor){
+    return (c.cidades_atuacao || "").toLowerCase().indexOf(valor.toLowerCase()) >= 0;
+  }
+
   function renderList(){
     var q = (document.getElementById("searchInput").value || "").toLowerCase();
     var statusF = document.getElementById("statusFilter").value;
+    var cidadeF = document.getElementById("cidadeFilter").value;
+    var funcaoF = document.getElementById("funcaoFilter").value;
     var filtered = candidatos.filter(function(c){
       if (statusF && c.status !== statusF) return false;
+      if (cidadeF && !temCidade(c, cidadeF)) return false;
+      if (funcaoF && !temFuncao(c, funcaoF)) return false;
       if (!q) return true;
       return (c.nome_completo||"").toLowerCase().indexOf(q) >= 0 ||
              (c.cpf||"").indexOf(q.replace(/\D/g,"")) >= 0 ||
@@ -239,11 +363,12 @@
     el.innerHTML = filtered.map(function(c){
       var d = new Date(c.created_at);
       var dateStr = d.toLocaleDateString("pt-BR") + " " + d.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
+      var statusLabel = STATUS_LABEL[c.status] || c.status;
       return '<div class="item" data-id="' + c.id + '">' +
         '<div class="row">' +
           '<div><div class="name">' + esc(c.nome_completo) + '</div>' +
           '<div class="sub">' + esc(c.cidades_atuacao) + ' &middot; ' + dateStr + '</div></div>' +
-          '<span class="badge ' + esc(c.status) + '">' + esc(c.status) + '</span>' +
+          '<span class="badge ' + esc(c.status) + '">' + esc(statusLabel) + '</span>' +
         '</div></div>';
     }).join("");
     Array.prototype.forEach.call(el.querySelectorAll(".item"), function(node){
@@ -255,6 +380,8 @@
 
   document.getElementById("searchInput").addEventListener("input", renderList);
   document.getElementById("statusFilter").addEventListener("change", renderList);
+  document.getElementById("cidadeFilter").addEventListener("change", renderList);
+  document.getElementById("funcaoFilter").addEventListener("change", renderList);
 
   function fmtCpf(cpf){
     cpf = (cpf||"").replace(/\D/g,"");
@@ -272,8 +399,9 @@
       '<div class="statusRow">' +
         '<select id="statusSelect">' +
           '<option value="novo"' + (c.status==="novo"?" selected":"") + '>Novo</option>' +
+          '<option value="em_analise"' + (c.status==="em_analise"?" selected":"") + '>Em análise</option>' +
           '<option value="aprovado"' + (c.status==="aprovado"?" selected":"") + '>Aprovado</option>' +
-          '<option value="reprovado"' + (c.status==="reprovado"?" selected":"") + '>Reprovado</option>' +
+          '<option value="descartado"' + (c.status==="descartado"?" selected":"") + '>Descartado</option>' +
         '</select>' +
         '<button class="btn" id="saveStatusBtn" style="width:auto;padding:10px 16px">Salvar</button>' +
       '</div></div>' +
@@ -350,6 +478,7 @@
       if (c) c.status = status;
       renderStats();
       renderList();
+      renderPanorama();
     });
   }
 
