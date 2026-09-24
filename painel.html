@@ -83,6 +83,23 @@
   .treino-item a:hover{text-decoration:underline}
   .treino-item .tag{font-size:11px;color:var(--muted);text-transform:uppercase;margin-left:6px}
   .treino-item button{background:none;border:0;color:var(--danger);font-size:12.5px;cursor:pointer;padding:4px 6px}
+  .maintabs{display:flex;gap:8px;margin-bottom:16px;border-bottom:1px solid var(--border)}
+  .tabbtn{background:none;border:0;padding:10px 4px;margin-right:16px;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent}
+  .tabbtn.active{color:var(--accent);border-bottom-color:var(--accent)}
+  .fin-item{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:12px 14px}
+  .fin-item .fin-main{min-width:0}
+  .fin-item .fin-desc{font-weight:600;font-size:14px}
+  .fin-item .fin-sub{font-size:12px;color:var(--muted);margin-top:2px}
+  .fin-item .fin-valor{font-weight:800;font-size:15px;white-space:nowrap}
+  .fin-valor.entrada{color:#1E7B34}
+  .fin-valor.saida{color:var(--danger)}
+  .fin-actions{display:flex;align-items:center;gap:8px;flex:none}
+  .fin-actions a{font-size:12.5px}
+  .fin-actions button{background:none;border:1px solid var(--border);border-radius:6px;font-size:12px;padding:5px 9px;cursor:pointer;color:var(--text)}
+  .fin-actions button.danger{color:var(--danger);border-color:var(--danger-soft)}
+  .fin-badge{font-size:11px;padding:3px 8px;border-radius:99px;text-transform:uppercase;font-weight:700;letter-spacing:.03em}
+  .fin-badge.pago{background:var(--accent-soft);color:var(--accent)}
+  .fin-badge.pendente{background:#FFF3D6;color:#8A6100}
   .overlay{position:fixed;inset:0;background:var(--bg);z-index:20;overflow-y:auto}
   .detailHead{display:flex;align-items:center;gap:12px;padding:16px 20px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0}
   .detailHead h2{font-size:15px;margin:0;flex:1}
@@ -129,6 +146,12 @@
     <button class="iconbtn" id="logoutBtn">Sair</button>
   </header>
   <main>
+    <div class="maintabs">
+      <button type="button" class="tabbtn active" id="tabBtnCadastros">Cadastros</button>
+      <button type="button" class="tabbtn" id="tabBtnFinanceiro">Financeiro</button>
+    </div>
+
+    <div id="tabCadastros" class="tabpane">
     <div class="stats" id="stats"></div>
 
     <details class="panorama" id="panorama">
@@ -204,6 +227,74 @@
       </select>
     </div>
     <div class="list" id="listArea"></div>
+    </div>
+
+    <div id="tabFinanceiro" class="tabpane" hidden>
+      <div class="stats" id="finStats"></div>
+
+      <div class="panorama" style="margin-bottom:16px">
+        <div style="padding:13px 16px;font-weight:700;font-size:13.5px">Novo lançamento</div>
+        <form id="finForm" class="treino-form" style="padding:4px 16px 16px;border:0">
+          <div class="field">
+            <label for="finTipo">Tipo</label>
+            <select id="finTipo">
+              <option value="saida">Saída (despesa)</option>
+              <option value="entrada">Entrada (receita)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="finCategoria">Categoria</label>
+            <select id="finCategoria"></select>
+          </div>
+          <div class="field">
+            <label for="finDescricao">Descrição</label>
+            <input type="text" id="finDescricao" placeholder="Ex.: Combustível do carro">
+          </div>
+          <div class="field">
+            <label for="finValor">Valor (R$)</label>
+            <input type="text" id="finValor" inputmode="decimal" placeholder="0,00">
+          </div>
+          <div class="field">
+            <label for="finData">Data</label>
+            <input type="date" id="finData">
+          </div>
+          <div class="field">
+            <label for="finStatus">Status</label>
+            <select id="finStatus">
+              <option value="pago">Pago/Recebido</option>
+              <option value="pendente">Pendente (conta a pagar/receber)</option>
+            </select>
+          </div>
+          <div class="field" id="finVencimentoWrap" hidden>
+            <label for="finVencimento">Vencimento</label>
+            <input type="date" id="finVencimento">
+          </div>
+          <div class="field">
+            <label for="finComprovante">Comprovante <span class="opt">(opcional)</span></label>
+            <input type="file" id="finComprovante" accept="image/*,.pdf">
+          </div>
+          <button type="submit" class="btn" id="finSaveBtn" style="width:auto;padding:10px 16px">Lançar</button>
+          <div class="loginErr" id="finErr"></div>
+        </form>
+      </div>
+
+      <div class="toolbar">
+        <select id="finTipoFilter">
+          <option value="">Todos os tipos</option>
+          <option value="entrada">Entradas</option>
+          <option value="saida">Saídas</option>
+        </select>
+        <select id="finStatusFilter">
+          <option value="">Todos os status</option>
+          <option value="pago">Pago/Recebido</option>
+          <option value="pendente">Pendente</option>
+        </select>
+        <select id="finCategoriaFilter">
+          <option value="">Todas as categorias</option>
+        </select>
+      </div>
+      <div class="list" id="finList"></div>
+    </div>
   </main>
 </div>
 
@@ -395,6 +486,230 @@
     }
   });
 
+  var tabBtnCadastros = document.getElementById("tabBtnCadastros");
+  var tabBtnFinanceiro = document.getElementById("tabBtnFinanceiro");
+  var tabCadastros = document.getElementById("tabCadastros");
+  var tabFinanceiro = document.getElementById("tabFinanceiro");
+  tabBtnCadastros.addEventListener("click", function(){
+    tabBtnCadastros.classList.add("active");
+    tabBtnFinanceiro.classList.remove("active");
+    tabCadastros.hidden = false;
+    tabFinanceiro.hidden = true;
+  });
+  tabBtnFinanceiro.addEventListener("click", function(){
+    tabBtnFinanceiro.classList.add("active");
+    tabBtnCadastros.classList.remove("active");
+    tabFinanceiro.hidden = false;
+    tabCadastros.hidden = true;
+  });
+
+  var CATEGORIAS_SAIDA = ["Salários","Fornecedores","Aluguel","Impostos","Combustível","Manutenção","Marketing","Contas a pagar diversas","Outros"];
+  var CATEGORIAS_ENTRADA = ["Prestação de serviços","Vendas","Investimento recebido","Outros"];
+
+  var lancamentos = [];
+  var finForm = document.getElementById("finForm");
+  var finTipo = document.getElementById("finTipo");
+  var finCategoria = document.getElementById("finCategoria");
+  var finDescricao = document.getElementById("finDescricao");
+  var finValor = document.getElementById("finValor");
+  var finData = document.getElementById("finData");
+  var finStatus = document.getElementById("finStatus");
+  var finVencimento = document.getElementById("finVencimento");
+  var finVencimentoWrap = document.getElementById("finVencimentoWrap");
+  var finComprovante = document.getElementById("finComprovante");
+  var finErr = document.getElementById("finErr");
+  var finSaveBtn = document.getElementById("finSaveBtn");
+
+  function popularCategoriasFin(){
+    var lista = finTipo.value === "entrada" ? CATEGORIAS_ENTRADA : CATEGORIAS_SAIDA;
+    finCategoria.innerHTML = lista.map(function(c){ return '<option value="' + escAttrFin(c) + '">' + c + '</option>'; }).join("");
+  }
+  function escAttrFin(s){ return String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;"); }
+  popularCategoriasFin();
+  finTipo.addEventListener("change", popularCategoriasFin);
+
+  finStatus.addEventListener("change", function(){
+    finVencimentoWrap.hidden = finStatus.value !== "pendente";
+  });
+
+  finData.valueAsDate = new Date();
+
+  function populateCategoriaFilter(){
+    var sel = document.getElementById("finCategoriaFilter");
+    var todas = CATEGORIAS_SAIDA.concat(CATEGORIAS_ENTRADA).filter(function(c, i, arr){ return arr.indexOf(c) === i; });
+    todas.forEach(function(c){
+      var opt = document.createElement("option");
+      opt.value = c; opt.textContent = c;
+      sel.appendChild(opt);
+    });
+  }
+  populateCategoriaFilter();
+
+  function fmtMoeda(v){
+    return (Number(v) || 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+  }
+
+  function loadFinanceiro(){
+    sb.from("financeiro_lancamentos").select("*").order("data", { ascending: false }).then(function(res){
+      if (res.error){
+        document.getElementById("finList").innerHTML = '<div class="empty">Erro ao carregar: ' + res.error.message + '</div>';
+        return;
+      }
+      lancamentos = res.data || [];
+      renderFinStats();
+      renderFinList();
+    });
+  }
+
+  function renderFinStats(){
+    var totalEntradas = lancamentos.filter(function(l){ return l.tipo === "entrada" && l.status === "pago"; })
+      .reduce(function(s,l){ return s + Number(l.valor); }, 0);
+    var totalSaidas = lancamentos.filter(function(l){ return l.tipo === "saida" && l.status === "pago"; })
+      .reduce(function(s,l){ return s + Number(l.valor); }, 0);
+    var saldo = totalEntradas - totalSaidas;
+    var aPagar = lancamentos.filter(function(l){ return l.tipo === "saida" && l.status === "pendente"; })
+      .reduce(function(s,l){ return s + Number(l.valor); }, 0);
+    var aReceber = lancamentos.filter(function(l){ return l.tipo === "entrada" && l.status === "pendente"; })
+      .reduce(function(s,l){ return s + Number(l.valor); }, 0);
+    document.getElementById("finStats").innerHTML =
+      '<div class="stat"><div class="n">' + fmtMoeda(totalEntradas) + '</div><div class="l">Entradas</div></div>' +
+      '<div class="stat"><div class="n">' + fmtMoeda(totalSaidas) + '</div><div class="l">Saídas</div></div>' +
+      '<div class="stat"><div class="n">' + fmtMoeda(saldo) + '</div><div class="l">Saldo</div></div>' +
+      '<div class="stat"><div class="n">' + fmtMoeda(aPagar) + '</div><div class="l">A pagar</div></div>' +
+      '<div class="stat"><div class="n">' + fmtMoeda(aReceber) + '</div><div class="l">A receber</div></div>';
+  }
+
+  function renderFinList(){
+    var tipoF = document.getElementById("finTipoFilter").value;
+    var statusF = document.getElementById("finStatusFilter").value;
+    var catF = document.getElementById("finCategoriaFilter").value;
+    var filtrados = lancamentos.filter(function(l){
+      if (tipoF && l.tipo !== tipoF) return false;
+      if (statusF && l.status !== statusF) return false;
+      if (catF && l.categoria !== catF) return false;
+      return true;
+    });
+    var el = document.getElementById("finList");
+    if (!filtrados.length){
+      el.innerHTML = '<div class="empty">Nenhum lançamento encontrado.</div>';
+      return;
+    }
+    el.innerHTML = filtrados.map(function(l){
+      var dataStr = new Date(l.data + "T00:00:00").toLocaleDateString("pt-BR");
+      var vencStr = l.vencimento ? (" &middot; vence " + new Date(l.vencimento + "T00:00:00").toLocaleDateString("pt-BR")) : "";
+      return '<div class="fin-item" data-id="' + l.id + '">' +
+        '<div class="fin-main">' +
+          '<div class="fin-desc">' + esc(l.categoria) + (l.descricao ? " — " + esc(l.descricao) : "") + '</div>' +
+          '<div class="fin-sub">' + dataStr + vencStr + ' <span class="fin-badge ' + l.status + '">' + (l.status === "pago" ? (l.tipo === "entrada" ? "Recebido" : "Pago") : "Pendente") + '</span></div>' +
+        '</div>' +
+        '<div class="fin-actions">' +
+          '<div class="fin-valor ' + l.tipo + '">' + (l.tipo === "saida" ? "-" : "+") + " " + fmtMoeda(l.valor) + '</div>' +
+          (l.comprovante_path ? '<button type="button" class="verComprovanteBtn" data-path="' + esc(l.comprovante_path) + '">Comprovante</button>' : "") +
+          (l.status === "pendente" ? '<button type="button" class="marcarPagoBtn" data-id="' + l.id + '">Marcar como pago</button>' : "") +
+          '<button type="button" class="danger delFinBtn" data-id="' + l.id + '">Excluir</button>' +
+        '</div>' +
+      '</div>';
+    }).join("");
+
+    Array.prototype.forEach.call(el.querySelectorAll(".verComprovanteBtn"), function(btn){
+      btn.addEventListener("click", function(){
+        var path = btn.getAttribute("data-path");
+        sb.storage.from("financeiro-docs").createSignedUrl(path, 300).then(function(res){
+          if (res.error || !res.data){ alert("Não foi possível abrir o comprovante."); return; }
+          window.open(res.data.signedUrl, "_blank");
+        });
+      });
+    });
+    Array.prototype.forEach.call(el.querySelectorAll(".marcarPagoBtn"), function(btn){
+      btn.addEventListener("click", function(){
+        var id = btn.getAttribute("data-id");
+        sb.from("financeiro_lancamentos").update({ status: "pago" }).eq("id", id).then(function(res){
+          if (res.error){ alert("Erro ao atualizar: " + res.error.message); return; }
+          loadFinanceiro();
+        });
+      });
+    });
+    Array.prototype.forEach.call(el.querySelectorAll(".delFinBtn"), function(btn){
+      btn.addEventListener("click", function(){
+        var id = btn.getAttribute("data-id");
+        if (!confirm("Excluir este lançamento?")) return;
+        sb.from("financeiro_lancamentos").delete().eq("id", id).then(function(res){
+          if (res.error){ alert("Erro ao excluir: " + res.error.message); return; }
+          loadFinanceiro();
+        });
+      });
+    });
+  }
+
+  ["finTipoFilter","finStatusFilter","finCategoriaFilter"].forEach(function(id){
+    document.getElementById(id).addEventListener("change", renderFinList);
+  });
+
+  finForm.addEventListener("submit", function(e){
+    e.preventDefault();
+    finErr.classList.remove("show");
+
+    var tipo = finTipo.value;
+    var categoria = finCategoria.value;
+    var descricao = finDescricao.value.trim();
+    var valorStr = finValor.value.trim().replace(/\./g,"").replace(",",".");
+    var valor = parseFloat(valorStr);
+    var data = finData.value;
+    var status = finStatus.value;
+    var vencimento = status === "pendente" ? (finVencimento.value || null) : null;
+
+    if (!valor || valor <= 0 || isNaN(valor)){
+      finErr.textContent = "Informe um valor válido.";
+      finErr.classList.add("show");
+      return;
+    }
+    if (!data){
+      finErr.textContent = "Informe a data.";
+      finErr.classList.add("show");
+      return;
+    }
+
+    finSaveBtn.disabled = true;
+    finSaveBtn.textContent = "Salvando...";
+
+    function inserirLancamento(comprovantePath){
+      return sb.from("financeiro_lancamentos").insert({
+        tipo: tipo, categoria: categoria, descricao: descricao || null, valor: valor,
+        data: data, status: status, vencimento: vencimento, comprovante_path: comprovantePath || null
+      }).then(function(res){
+        finSaveBtn.disabled = false;
+        finSaveBtn.textContent = "Lançar";
+        if (res.error){
+          finErr.textContent = "Erro ao salvar: " + res.error.message;
+          finErr.classList.add("show");
+          return;
+        }
+        finForm.reset();
+        finData.valueAsDate = new Date();
+        popularCategoriasFin();
+        finVencimentoWrap.hidden = true;
+        loadFinanceiro();
+      });
+    }
+
+    var file = finComprovante.files[0];
+    if (file){
+      var path = "financeiro/" + Date.now() + "-" + file.name;
+      sb.storage.from("financeiro-docs").upload(path, file).then(function(res){
+        if (res.error){
+          finSaveBtn.disabled = false;
+          finSaveBtn.textContent = "Lançar";
+          finErr.textContent = "Erro ao enviar comprovante: " + res.error.message;
+          finErr.classList.add("show");
+          return;
+        }
+        inserirLancamento(path);
+      });
+    } else {
+      inserirLancamento(null);
+    }
+  });
+
   loginForm.addEventListener("submit", function(e){
     e.preventDefault();
     loginErr.classList.remove("show");
@@ -435,6 +750,7 @@
     appView.hidden = false;
     loadCandidatos();
     loadTreinamentos();
+    loadFinanceiro();
   }
 
   sb.auth.getSession().then(function(res){
