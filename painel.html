@@ -233,7 +233,7 @@
       <div class="stats" id="finStats"></div>
 
       <div class="panorama" style="margin-bottom:16px">
-        <div style="padding:13px 16px;font-weight:700;font-size:13.5px">Novo lançamento</div>
+        <div style="padding:13px 16px;font-weight:700;font-size:13.5px" id="finFormTitle">Novo lançamento</div>
         <form id="finForm" class="treino-form" style="padding:4px 16px 16px;border:0">
           <div class="field">
             <label for="finTipo">Tipo</label>
@@ -272,8 +272,12 @@
           <div class="field">
             <label for="finComprovante">Comprovante <span class="opt">(opcional)</span></label>
             <input type="file" id="finComprovante" accept="image/*,.pdf">
+            <div id="finComprovanteAtual" style="font-size:12px;color:var(--muted);margin-top:4px"></div>
           </div>
-          <button type="submit" class="btn" id="finSaveBtn" style="width:auto;padding:10px 16px">Lançar</button>
+          <div style="display:flex;gap:10px">
+            <button type="submit" class="btn" id="finSaveBtn" style="width:auto;padding:10px 16px">Lançar</button>
+            <button type="button" class="iconbtn" id="finCancelEditBtn" hidden>Cancelar edição</button>
+          </div>
           <div class="loginErr" id="finErr"></div>
         </form>
       </div>
@@ -606,6 +610,7 @@
           '<div class="fin-valor ' + l.tipo + '">' + (l.tipo === "saida" ? "-" : "+") + " " + fmtMoeda(l.valor) + '</div>' +
           (l.comprovante_path ? '<button type="button" class="verComprovanteBtn" data-path="' + esc(l.comprovante_path) + '">Comprovante</button>' : "") +
           (l.status === "pendente" ? '<button type="button" class="marcarPagoBtn" data-id="' + l.id + '">Marcar como pago</button>' : "") +
+          '<button type="button" class="editFinBtn" data-id="' + l.id + '">Editar</button>' +
           '<button type="button" class="danger delFinBtn" data-id="' + l.id + '">Excluir</button>' +
         '</div>' +
       '</div>';
@@ -635,11 +640,58 @@
         if (!confirm("Excluir este lançamento?")) return;
         sb.from("financeiro_lancamentos").delete().eq("id", id).then(function(res){
           if (res.error){ alert("Erro ao excluir: " + res.error.message); return; }
+          if (finEditId === id) cancelarEdicaoFin();
           loadFinanceiro();
         });
       });
     });
+    Array.prototype.forEach.call(el.querySelectorAll(".editFinBtn"), function(btn){
+      btn.addEventListener("click", function(){
+        var id = btn.getAttribute("data-id");
+        var l = lancamentos.filter(function(x){ return x.id === id; })[0];
+        if (!l) return;
+        iniciarEdicaoFin(l);
+      });
+    });
   }
+
+  var finEditId = null;
+  var finCancelEditBtn = document.getElementById("finCancelEditBtn");
+  var finFormTitle = document.getElementById("finFormTitle");
+  var finComprovanteAtual = document.getElementById("finComprovanteAtual");
+
+  function iniciarEdicaoFin(l){
+    finEditId = l.id;
+    finTipo.value = l.tipo;
+    popularCategoriasFin();
+    finCategoria.value = l.categoria;
+    finDescricao.value = l.descricao || "";
+    finValor.value = (Number(l.valor) || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    finData.value = l.data;
+    finStatus.value = l.status;
+    finVencimentoWrap.hidden = l.status !== "pendente";
+    finVencimento.value = l.vencimento || "";
+    finComprovante.value = "";
+    finComprovanteAtual.textContent = l.comprovante_path ? "Já existe um comprovante anexado. Envie um novo arquivo apenas se quiser substituí-lo." : "";
+    finFormTitle.textContent = "Editando lançamento";
+    finSaveBtn.textContent = "Salvar alterações";
+    finCancelEditBtn.hidden = false;
+    finForm.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function cancelarEdicaoFin(){
+    finEditId = null;
+    finForm.reset();
+    finData.valueAsDate = new Date();
+    popularCategoriasFin();
+    finVencimentoWrap.hidden = true;
+    finComprovanteAtual.textContent = "";
+    finFormTitle.textContent = "Novo lançamento";
+    finSaveBtn.textContent = "Lançar";
+    finCancelEditBtn.hidden = true;
+  }
+
+  finCancelEditBtn.addEventListener("click", cancelarEdicaoFin);
 
   ["finTipoFilter","finStatusFilter","finCategoriaFilter"].forEach(function(id){
     document.getElementById(id).addEventListener("change", renderFinList);
@@ -669,27 +721,36 @@
       return;
     }
 
+    var isEdit = !!finEditId;
     finSaveBtn.disabled = true;
     finSaveBtn.textContent = "Salvando...";
+
+    function finalizarSalvar(res){
+      finSaveBtn.disabled = false;
+      if (res.error){
+        finSaveBtn.textContent = isEdit ? "Salvar alterações" : "Lançar";
+        finErr.textContent = "Erro ao salvar: " + res.error.message;
+        finErr.classList.add("show");
+        return;
+      }
+      cancelarEdicaoFin();
+      loadFinanceiro();
+    }
 
     function inserirLancamento(comprovantePath){
       return sb.from("financeiro_lancamentos").insert({
         tipo: tipo, categoria: categoria, descricao: descricao || null, valor: valor,
         data: data, status: status, vencimento: vencimento, comprovante_path: comprovantePath || null
-      }).then(function(res){
-        finSaveBtn.disabled = false;
-        finSaveBtn.textContent = "Lançar";
-        if (res.error){
-          finErr.textContent = "Erro ao salvar: " + res.error.message;
-          finErr.classList.add("show");
-          return;
-        }
-        finForm.reset();
-        finData.valueAsDate = new Date();
-        popularCategoriasFin();
-        finVencimentoWrap.hidden = true;
-        loadFinanceiro();
-      });
+      }).then(finalizarSalvar);
+    }
+
+    function atualizarLancamento(comprovantePath){
+      var patch = {
+        tipo: tipo, categoria: categoria, descricao: descricao || null, valor: valor,
+        data: data, status: status, vencimento: vencimento
+      };
+      if (comprovantePath) patch.comprovante_path = comprovantePath;
+      return sb.from("financeiro_lancamentos").update(patch).eq("id", finEditId).then(finalizarSalvar);
     }
 
     var file = finComprovante.files[0];
@@ -698,15 +759,15 @@
       sb.storage.from("financeiro-docs").upload(path, file).then(function(res){
         if (res.error){
           finSaveBtn.disabled = false;
-          finSaveBtn.textContent = "Lançar";
+          finSaveBtn.textContent = isEdit ? "Salvar alterações" : "Lançar";
           finErr.textContent = "Erro ao enviar comprovante: " + res.error.message;
           finErr.classList.add("show");
           return;
         }
-        inserirLancamento(path);
+        if (isEdit) atualizarLancamento(path); else inserirLancamento(path);
       });
     } else {
-      inserirLancamento(null);
+      if (isEdit) atualizarLancamento(null); else inserirLancamento(null);
     }
   });
 
