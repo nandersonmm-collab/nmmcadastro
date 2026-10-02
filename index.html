@@ -3,7 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Cadastro de Profissionais Autônomos - NMM</title>
+<title>Cadastro de Profissionais · TRIVA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap">
 <style>
   :root{
     --bg:#F4F6F7; --surface:#FFFFFF; --surface-2:#EFF2F3; --border:#D7DEE1;
@@ -81,22 +84,49 @@
   .success h2{font-size:19px;margin:0 0 8px}
   .success p{font-size:14px;color:var(--muted);margin:0;line-height:1.6;max-width:38ch;margin-inline:auto}
   [hidden]{display:none !important}
+
+  /* ===== Identidade TRIVA: Azul Profundo #0B1F2A · Laranja #F58220 · Grafite #6B6F76 · Areia #E6DCCF ===== */
+  :root{
+    --navy:#0B1F2A; --orange:#F58220;
+    --bg:#FAF8F5; --surface:#FFFFFF; --surface-2:#F2EDE6; --border:#E4DED6;
+    --text:#0B1F2A; --muted:#5F646B; --primary:#0B1F2A; --accent:#C8600E;
+    --accent-ink:#0B1F2A; --accent-soft:#FCEBDA;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0A1821; --surface:#11242F; --surface-2:#0E1F29; --border:#203642;
+      --text:#EEF1F3; --muted:#A5ADB4; --primary:#EEF1F3; --accent:#FF9A45;
+      --accent-ink:#0B1F2A; --accent-soft:#3A2614;
+    }
+  }
+  body{font-family:"Montserrat",system-ui,-apple-system,"Segoe UI",sans-serif}
+  input,select,textarea,button{font-family:inherit}
+  .btn{background:var(--orange);color:var(--navy)}
+  .btn:hover:not(:disabled){background:#FF9133}
+  input:focus,select:focus,textarea:focus{border-color:var(--orange)!important;box-shadow:0 0 0 3px rgba(245,130,32,.22)!important}
+  .brandlogo{display:block;height:34px;width:auto}
+  .brandbar{background:var(--navy);color:#fff}
+  header.top{background:var(--navy);color:#fff;padding:18px 20px;border-radius:var(--radius);gap:16px;flex-wrap:wrap}
+  header.top h1{color:#fff}
+  header.top p{color:rgba(255,255,255,.72)}
+  header.top .brandlogo{height:38px;padding-right:16px;border-right:1px solid rgba(255,255,255,.2)}
+  legend{color:var(--accent)}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header class="top">
-    <div class="mark">NMM</div>
+    <img class="brandlogo" src="logo-triva.png" alt="TRIVA Soluções Operacionais" width="126" height="34">
     <div>
       <h1>Cadastro de Profissionais Autônomos</h1>
-      <p>NMM Soluções em Serviços</p>
+      <p>TRIVA Soluções Operacionais</p>
     </div>
   </header>
 
   <div id="formView" class="card">
     <div class="intro">
       <h2>Trabalhe com a gente</h2>
-      <p>Preencha o formulário abaixo para se cadastrar. Seus dados ficam armazenados de forma privada e são acessados apenas pela equipe da NMM.</p>
+      <p>Preencha o formulário abaixo para se cadastrar. Seus dados ficam armazenados de forma privada e são acessados apenas pela equipe da TRIVA.</p>
     </div>
     <form id="cadForm" novalidate>
       <fieldset>
@@ -226,7 +256,7 @@
         <div class="declaration-box">
           <p>Ao marcar a opção abaixo, o(a) candidato(a) cujos dados foram informados neste cadastro declara e concorda que:</p>
           <ul>
-            <li>A prestação de serviços é realizada na condição de profissional autônomo(a) freelancer, <strong>não havendo vínculo empregatício</strong> com a NMM Soluções em Serviços, nos termos da legislação aplicável.</li>
+            <li>A prestação de serviços é realizada na condição de profissional autônomo(a) freelancer, <strong>não havendo vínculo empregatício</strong> com a TRIVA Soluções Operacionais, nos termos da legislação aplicável.</li>
             <li>Compromete-se a cumprir os horários e obrigações combinados para cada trabalho aceito.</li>
             <li>Em caso de falta não comunicada com, no mínimo, <strong>2 (duas) horas de antecedência</strong>, e sem apresentação de atestado médico, estará sujeito(a) a uma <strong>multa de R$ 30,00</strong>.</li>
             <li>As informações prestadas neste cadastro são verdadeiras e de sua responsabilidade.</li>
@@ -282,7 +312,7 @@
     </div>
   </div>
 
-  <footer class="foot">NMM Soluções em Serviços &middot; <a href="portal.html" style="color:inherit">Já se cadastrou? Acesse seu portal</a></footer>
+  <footer class="foot">TRIVA Soluções Operacionais &middot; <a href="portal.html" style="color:inherit">Já se cadastrou? Acesse seu portal</a></footer>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>

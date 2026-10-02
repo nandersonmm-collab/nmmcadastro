@@ -3,7 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Painel Administrativo - NMM</title>
+<title>Painel Administrativo · TRIVA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap">
 <style>
   :root{
     --bg:#F4F6F7; --surface:#FFFFFF; --surface-2:#EFF2F3; --border:#D7DEE1;
@@ -115,15 +118,46 @@
   .img-box img{width:100%;display:block}
   .spinner{width:15px;height:15px;border-radius:50%;border:2px solid var(--accent-ink);border-top-color:transparent;animation:spin .7s linear infinite;display:inline-block}
   @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* ===== Identidade TRIVA: Azul Profundo #0B1F2A · Laranja #F58220 · Grafite #6B6F76 · Areia #E6DCCF ===== */
+  :root{
+    --navy:#0B1F2A; --orange:#F58220;
+    --bg:#FAF8F5; --surface:#FFFFFF; --surface-2:#F2EDE6; --border:#E4DED6;
+    --text:#0B1F2A; --muted:#5F646B; --primary:#0B1F2A; --accent:#C8600E;
+    --accent-ink:#0B1F2A; --accent-soft:#FCEBDA;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0A1821; --surface:#11242F; --surface-2:#0E1F29; --border:#203642;
+      --text:#EEF1F3; --muted:#A5ADB4; --primary:#EEF1F3; --accent:#FF9A45;
+      --accent-ink:#0B1F2A; --accent-soft:#3A2614;
+    }
+  }
+  body{font-family:"Montserrat",system-ui,-apple-system,"Segoe UI",sans-serif}
+  input,select,textarea,button{font-family:inherit}
+  .btn{background:var(--orange);color:var(--navy)}
+  .btn:hover:not(:disabled){background:#FF9133}
+  input:focus,select:focus,textarea:focus{border-color:var(--orange)!important;box-shadow:0 0 0 3px rgba(245,130,32,.22)!important}
+  .brandlogo{display:block;height:34px;width:auto}
+  .brandbar{background:var(--navy);color:#fff}
+  .loginBrand{margin:-28px -26px 22px;padding:22px 26px;border-radius:var(--radius) var(--radius) 0 0}
+  .loginBrand .brandlogo{height:40px}
+  header.top{background:var(--navy);border-bottom:3px solid var(--orange);color:#fff}
+  header.top h1{color:#fff}
+  header.top .brandlogo{height:30px;padding-right:14px;border-right:1px solid rgba(255,255,255,.22)}
+  header.top .iconbtn{color:#fff;border-color:rgba(255,255,255,.3)}
+  .tabbtn.active{color:var(--accent);border-bottom-color:var(--orange)}
+  .bar-row .bar-fill{background:var(--orange)}
+  .section h3{color:var(--accent)}
 </style>
 </head>
 <body>
 
 <div id="loginView" class="center">
   <div class="loginCard">
-    <div class="mark">NMM</div>
+    <div class="brandbar loginBrand"><img class="brandlogo" src="logo-triva.png" alt="TRIVA Soluções Operacionais" width="126" height="34"></div>
     <h1>Painel Administrativo</h1>
-    <p>Acesso restrito à equipe NMM.</p>
+    <p>Acesso restrito à equipe TRIVA.</p>
     <form id="loginForm">
       <div class="field">
         <label for="loginEmail">E-mail</label>
@@ -141,7 +175,7 @@
 
 <div id="appView" hidden>
   <header class="top">
-    <div class="mark">NMM</div>
+    <img class="brandlogo" src="logo-triva.png" alt="TRIVA Soluções Operacionais" width="126" height="34">
     <h1>Cadastros de Profissionais Autônomos</h1>
     <button class="iconbtn" id="logoutBtn">Sair</button>
   </header>
@@ -149,6 +183,7 @@
     <div class="maintabs">
       <button type="button" class="tabbtn active" id="tabBtnCadastros">Cadastros</button>
       <button type="button" class="tabbtn" id="tabBtnFinanceiro">Financeiro</button>
+      <a class="tabbtn" href="comercial.html" style="text-decoration:none">Comercial</a>
     </div>
 
     <div id="tabCadastros" class="tabpane">
@@ -506,6 +541,7 @@
     tabFinanceiro.hidden = false;
     tabCadastros.hidden = true;
   });
+  if (location.hash === "#financeiro") tabBtnFinanceiro.click();
 
   var CATEGORIAS_SAIDA = ["Salários","Fornecedores","Aluguel","Impostos","Combustível","Manutenção","Marketing","Contas a pagar diversas","Outros"];
   var CATEGORIAS_ENTRADA = ["Prestação de serviços","Vendas","Investimento recebido","Outros"];
