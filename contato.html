@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>TRIVA Contato</title>
+<link rel="manifest" href="contato.webmanifest">
+<meta name="theme-color" content="#0B1F2A">
+<link rel="icon" href="icone-192.png">
+<link rel="apple-touch-icon" href="icone-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="TRIVA Contato">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<script>
+  // Aberto pelo ícone da tela inicial: vai direto para o registro de contato
+  if (window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone) {
+    location.replace("comercial.html#registrar");
+  }
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap">
+<style>
+  :root{--navy:#0B1F2A;--orange:#F58220;--bg:#FAF8F5;--surface:#fff;--line:#E4DED6;--fg:#0B1F2A;--muted:#5F646B;--accent:#C8600E}
+  @media (prefers-color-scheme:dark){:root{--bg:#0A1821;--surface:#11242F;--line:#203642;--fg:#EEF1F3;--muted:#A5ADB4;--accent:#FF9A45;color-scheme:dark}}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font:400 16px/1.55 "Montserrat",system-ui,sans-serif;padding:0 16px 40px}
+  .wrap{max-width:520px;margin:0 auto}
+  header{background:var(--navy);border-bottom:3px solid var(--orange);border-radius:0 0 14px 14px;padding:22px 20px;display:flex;align-items:center;gap:14px;color:#fff}
+  header img{height:34px;width:auto}
+  header span{font-weight:600;padding-left:14px;border-left:1px solid rgba(255,255,255,.25)}
+  h1{font-size:1.35rem;margin:26px 0 6px;text-wrap:balance}
+  p{margin:0 0 18px;color:var(--muted)}
+  .app{display:flex;align-items:center;gap:14px;margin:0 0 22px}
+  .app img{width:64px;height:64px;border-radius:15px;box-shadow:0 4px 12px rgba(0,0,0,.18)}
+  .app b{display:block}
+  .app small{color:var(--muted)}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:12px}
+  .card h2{font-size:.95rem;margin:0 0 8px}
+  ol{margin:0;padding-left:20px}
+  li{margin:4px 0}
+  li b{color:var(--accent)}
+  .cta{display:block;text-align:center;background:var(--orange);color:var(--navy);font-weight:700;text-decoration:none;padding:15px;border-radius:10px;margin-top:20px}
+  .note{font-size:.85rem;margin-top:16px}
+</style>
+</head>
+<body>
+<header><img src="logo-triva.png" alt="TRIVA Soluções Operacionais" width="126" height="34"><span>Contato</span></header>
+<div class="wrap">
+  <h1>Coloque o registro de contato na tela do seu celular</h1>
+  <p>Depois disso, um toque no ícone abre direto o formulário para registrar uma ligação, WhatsApp ou visita.</p>
+  <div class="app"><img src="icone-180.png" alt="" width="64" height="64"><div><b>TRIVA Contato</b><small>É assim que o ícone vai aparecer</small></div></div>
+
+  <div class="card">
+    <h2>Android (Chrome)</h2>
+    <ol>
+      <li>Toque nos <b>três pontinhos ⋮</b> no canto de cima.</li>
+      <li>Escolha <b>Adicionar à tela inicial</b> (ou <b>Instalar app</b>).</li>
+      <li>Confirme em <b>Adicionar</b>.</li>
+    </ol>
+  </div>
+  <div class="card">
+    <h2>iPhone (Safari)</h2>
+    <ol>
+      <li>Toque no botão <b>Compartilhar</b> (quadrado com a seta para cima).</li>
+      <li>Role e escolha <b>Adicionar à Tela de Início</b>.</li>
+      <li>Toque em <b>Adicionar</b>.</li>
+    </ol>
+  </div>
+
+  <a class="cta" href="comercial.html#registrar">Registrar um contato agora</a>
+  <p class="note">Na primeira vez que abrir pelo ícone, entre com o e-mail da sua área e a sua senha. Depois o acesso fica salvo.</p>
+</div>
+</body>
+</html>

@@ -872,7 +872,9 @@ async function iniciar(){
   if(EQUIPE.includes(mem.nome)){$("#meSel").value=mem.nome;lsSet("triva_me",mem.nome)}
   if(iniciado){renderAll();return}
   iniciado=true;db=dbSB;podeEscrever=true;
-  db.collection("empresas").onSnapshot(s=>{empresas=s.docs.map(x=>({id:x.id,...x.data()}));renderAll()});
+  let abrirRapido=location.hash==="#registrar";
+  db.collection("empresas").onSnapshot(s=>{empresas=s.docs.map(x=>({id:x.id,...x.data()}));renderAll();
+    if(abrirRapido){abrirRapido=false;history.replaceState(null,"",location.pathname);setTimeout(()=>abrirContato(null),150)}});
   db.collection("contatos").onSnapshot(s=>{contatos=s.docs.map(x=>({id:x.id,...x.data()})).sort((a,b)=>(b.data||"").localeCompare(a.data||"")||(b.criadoEm||"").localeCompare(a.criadoEm||""));renderAll()});
   db.collection("agenda").onSnapshot(s=>{agenda=s.docs.map(x=>({id:x.id,...x.data()}));renderAgenda();renderPainel()});
   db.collection("plano").onSnapshot(s=>{planoFeito={};s.docs.forEach(x=>planoFeito[x.id]=x.data());renderPlano()});
