@@ -7,8 +7,8 @@
 <title>TRIVA Equipe</title>
 <link rel="manifest" href="equipe.webmanifest">
 <meta name="theme-color" content="#0B1F2A">
-<link rel="icon" href="icone-192.png">
-<link rel="apple-touch-icon" href="icone-180.png">
+<link rel="icon" href="icone-equipe-192.png">
+<link rel="apple-touch-icon" href="icone-equipe-180.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="TRIVA Equipe">
@@ -53,6 +53,13 @@ h1{font-size:1.3rem;margin:0 0 4px}
 .btn{background:var(--orange);color:var(--navy);border:0;border-radius:10px;padding:13px;font:inherit;font-weight:700;cursor:pointer}
 .err{background:var(--crit-soft);color:var(--crit);border-radius:8px;padding:10px 12px;font-size:.88rem}
 .note{font-size:.82rem;color:var(--muted);margin-top:18px}
+.inst{margin-top:18px;display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:12px;align-items:center;background:var(--surface);border:1px dashed var(--orange);border-radius:12px;padding:12px 14px}
+.inst img{width:52px;height:52px;border-radius:12px}
+.inst b{display:block}
+.inst span{font-size:.85rem;color:var(--muted)}
+.inst .btn{padding:11px 14px;white-space:nowrap}
+@media (max-width:420px){.inst{grid-template-columns:52px minmax(0,1fr)}.inst .btn{grid-column:1/-1}}
+.ios{margin-top:10px;font-size:.88rem;background:var(--surface2);border-radius:10px;padding:12px 14px}
 .note a{color:var(--accent)}
 </style>
 </head>
@@ -80,7 +87,15 @@ h1{font-size:1.3rem;margin:0 0 4px}
       <a class="tile" href="painel.html#financeiro"><b>Financeiro</b><span>Entradas, saídas e contas a pagar</span></a>
       <a class="tile" href="capacita-admin.html"><b>TRIVA Capacita</b><span>Criar e editar cursos</span></a>
     </div>
-    <p class="note">Para instalar este acesso no celular: no Chrome, ⋮ › Adicionar à tela inicial. No iPhone, Compartilhar › Adicionar à Tela de Início. O ícone aparece como "TRIVA Equipe".</p>
+    <div class="inst" id="inst">
+      <img src="icone-equipe-180.png" alt="" width="52" height="52">
+      <div><b>Atalho TRIVA Equipe</b><span id="instTxt">Coloque este acesso na tela inicial do seu celular.</span></div>
+      <button class="btn" id="bInst" type="button">Instalar atalho</button>
+    </div>
+    <div class="ios" id="ios" hidden>
+      <b>No iPhone (Safari):</b> toque em <b>Compartilhar</b> (quadrado com a seta para cima) › <b>Adicionar à Tela de Início</b> › <b>Adicionar</b>.<br>
+      <b>No Android (Chrome):</b> toque nos <b>três pontinhos ⋮</b> › <b>Adicionar à tela inicial</b> › <b>Adicionar</b>.
+    </div>
   </section>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
@@ -104,6 +119,16 @@ h1{font-size:1.3rem;margin:0 0 4px}
     iniciar();
   });
   $("#bSair").onclick = async function(){ await sb.auth.signOut(); location.reload(); };
+  // botão "Instalar atalho"
+  var pedido = null;
+  var instalado = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone;
+  if (instalado){ $("#inst").hidden = true; }
+  window.addEventListener("beforeinstallprompt", function(e){ e.preventDefault(); pedido = e; });
+  window.addEventListener("appinstalled", function(){ $("#instTxt").textContent = "Atalho instalado! Procure o ícone TRIVA Equipe na tela do celular."; $("#bInst").hidden = true; });
+  $("#bInst").onclick = async function(){
+    if (pedido){ pedido.prompt(); var r = await pedido.userChoice; pedido = null; if (r.outcome === "accepted") $("#bInst").hidden = true; return; }
+    $("#ios").hidden = !$("#ios").hidden;
+  };
   iniciar();
 })();
 </script>
