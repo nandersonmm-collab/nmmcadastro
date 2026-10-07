@@ -1,0 +1,15 @@
+{
+  "name": "TRIVA Equipe",
+  "short_name": "TRIVA Equipe",
+  "description": "Acesso exclusivo da equipe administrativa TRIVA",
+  "lang": "pt-BR",
+  "start_url": "equipe.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0B1F2A",
+  "theme_color": "#0B1F2A",
+  "icons": [
+    { "src": "icone-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icone-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

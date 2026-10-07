@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>TRIVA Equipe</title>
+<link rel="manifest" href="equipe.webmanifest">
+<meta name="theme-color" content="#0B1F2A">
+<link rel="icon" href="icone-192.png">
+<link rel="apple-touch-icon" href="icone-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="TRIVA Equipe">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: entrada exclusiva da equipe — login e, depois, atalhos para cada área do sistema */
+:root{
+  --navy:#0B1F2A; --navy2:#122C3B; --orange:#F58220;
+  --bg:#FAF8F5; --surface:#FFFFFF; --surface2:#F2EDE6; --line:#E4DED6;
+  --fg:#0B1F2A; --muted:#5F646B; --accent:#C8600E; --crit:#B3261E; --crit-soft:#F8DEDB;
+  --font:"Montserrat",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0A1821; --surface:#11242F; --surface2:#0E1F29; --line:#203642; --fg:#EEF1F3; --muted:#A5ADB4; --accent:#FF9A45; --crit:#FF8A80; --crit-soft:#3D1C1A; color-scheme:dark}}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font:400 16px/1.55 var(--font)}
+:focus-visible{outline:3px solid var(--orange);outline-offset:3px;border-radius:4px}
+header{background:linear-gradient(120deg,var(--navy) 0 60%,var(--navy2));color:#fff;border-bottom:3px solid var(--orange);padding:calc(18px + env(safe-area-inset-top,0px)) 16px 20px}
+header .in{max-width:720px;margin:0 auto;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+header img{height:34px;width:auto}
+header .t{font-weight:700;padding-left:14px;border-left:1px solid rgba(255,255,255,.25);flex:1}
+header .u{font-size:.8rem;color:rgba(255,255,255,.75);display:flex;gap:8px;align-items:center}
+header .u button{background:none;border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:8px;padding:5px 10px;font:inherit;cursor:pointer}
+main{max-width:720px;margin:0 auto;padding:22px 16px 40px}
+h1{font-size:1.3rem;margin:0 0 4px}
+.sub{color:var(--muted);margin:0 0 18px;font-size:.92rem}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:520px){.grid{grid-template-columns:minmax(0,1fr)}}
+.tile{display:flex;flex-direction:column;gap:4px;text-decoration:none;color:inherit;background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--orange);border-radius:12px;padding:16px 18px}
+.tile b{font-size:1.02rem}
+.tile span{font-size:.85rem;color:var(--muted)}
+.tile.main{background:var(--navy);color:#fff;border-color:var(--navy);border-left-color:var(--orange);grid-column:1/-1}
+.tile.main span{color:rgba(255,255,255,.75)}
+.login{max-width:400px;margin:20px auto 0;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px;display:grid;gap:12px}
+.login label{display:grid;gap:4px;font-size:.85rem;font-weight:600}
+.login input{font:inherit;font-size:16px;padding:11px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--fg)}
+.btn{background:var(--orange);color:var(--navy);border:0;border-radius:10px;padding:13px;font:inherit;font-weight:700;cursor:pointer}
+.err{background:var(--crit-soft);color:var(--crit);border-radius:8px;padding:10px 12px;font-size:.88rem}
+.note{font-size:.82rem;color:var(--muted);margin-top:18px}
+.note a{color:var(--accent)}
+</style>
+</head>
+<body>
+<header><div class="in"><img src="logo-triva.png" alt="TRIVA Soluções Operacionais" width="126" height="34"><span class="t">Equipe</span><span class="u" id="u" hidden><span id="uEmail"></span><button id="bSair">Sair</button></span></div></header>
+<main>
+  <section id="vLogin" hidden>
+    <form class="login" id="fLogin">
+      <h1>Acesso exclusivo da equipe</h1>
+      <p class="sub" style="margin:0">Entre com o e-mail da sua área (@trivasolucoes.com.br).</p>
+      <label for="le">E-mail<input id="le" type="email" autocomplete="username" required></label>
+      <label for="ls">Senha<input id="ls" type="password" autocomplete="current-password" required></label>
+      <div class="err" id="lerr" hidden></div>
+      <button class="btn" type="submit" id="bEntrar">Entrar</button>
+      <p class="note" style="margin:0">Primeiro acesso ou esqueceu a senha? Use <a href="comercial.html">esta página</a>.</p>
+    </form>
+  </section>
+  <section id="vApp" hidden>
+    <h1 id="ola">Olá!</h1>
+    <p class="sub">Escolha a área que você quer abrir.</p>
+    <div class="grid">
+      <a class="tile main" href="comercial.html#registrar"><b>+ Registrar contato</b><span>Ligação, WhatsApp, visita ou proposta</span></a>
+      <a class="tile" href="comercial.html"><b>Comercial</b><span>Empresas, agenda, metas e cobranças</span></a>
+      <a class="tile" href="painel.html"><b>Cadastros</b><span>Profissionais autônomos cadastrados</span></a>
+      <a class="tile" href="painel.html#financeiro"><b>Financeiro</b><span>Entradas, saídas e contas a pagar</span></a>
+      <a class="tile" href="capacita-admin.html"><b>TRIVA Capacita</b><span>Criar e editar cursos</span></a>
+    </div>
+    <p class="note">Para instalar este acesso no celular: no Chrome, ⋮ › Adicionar à tela inicial. No iPhone, Compartilhar › Adicionar à Tela de Início. O ícone aparece como "TRIVA Equipe".</p>
+  </section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
+(function(){
+  var sb = supabase.createClient("https://ratkhskpvgvlperrtsvv.supabase.co","sb_publishable_hVEkTLTJWP0kRKHsXTrWoA_Q7167_ra");
+  function $(s){ return document.querySelector(s); }
+  async function iniciar(){
+    var s = (await sb.auth.getSession()).data.session;
+    if (!s){ $("#vLogin").hidden=false; $("#vApp").hidden=true; $("#u").hidden=true; return; }
+    var m = await sb.from("crm_membros").select("nome").eq("email",(s.user.email||"").toLowerCase()).maybeSingle();
+    if (!m.data){ await sb.auth.signOut(); $("#vLogin").hidden=false; $("#lerr").textContent="Este e-mail não tem acesso à área da equipe."; $("#lerr").hidden=false; return; }
+    $("#vLogin").hidden=true; $("#vApp").hidden=false; $("#u").hidden=false;
+    $("#uEmail").textContent=s.user.email; $("#ola").textContent="Olá, "+m.data.nome+"!";
+  }
+  $("#fLogin").addEventListener("submit", async function(ev){
+    ev.preventDefault(); $("#lerr").hidden=true; $("#bEntrar").disabled=true;
+    var r = await sb.auth.signInWithPassword({ email:$("#le").value.trim().toLowerCase(), password:$("#ls").value });
+    $("#bEntrar").disabled=false;
+    if (r.error){ $("#lerr").textContent="E-mail ou senha incorretos."; $("#lerr").hidden=false; return; }
+    iniciar();
+  });
+  $("#bSair").onclick = async function(){ await sb.auth.signOut(); location.reload(); };
+  iniciar();
+})();
+</script>
+</body>
+</html>
