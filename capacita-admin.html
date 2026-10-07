@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>TRIVA Capacita · Gestão</title>
+<link rel="icon" href="icone-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: gestão em duas colunas — lista de cursos à esquerda, editor do curso à direita; uma coluna no celular */
+:root{
+  --navy:#0B1F2A; --orange:#F58220;
+  --bg:#FAF8F5; --surface:#FFFFFF; --surface2:#F2EDE6; --line:#E4DED6;
+  --fg:#0B1F2A; --muted:#5F646B; --accent:#C8600E; --accent-soft:#FCEBDA;
+  --ok:#1F7A3A; --ok-soft:#DCF1E2; --crit:#B3261E; --crit-soft:#F8DEDB;
+  --font:"Montserrat",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0A1821; --surface:#11242F; --surface2:#0E1F29; --line:#203642;
+  --fg:#EEF1F3; --muted:#A5ADB4; --accent:#FF9A45; --accent-soft:#3A2614;
+  --ok:#6FD08A; --ok-soft:#173424; --crit:#FF8A80; --crit-soft:#3D1C1A; color-scheme:dark}}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--fg);font:400 15px/1.5 var(--font)}
+button,input,select,textarea{font:inherit}
+:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px 48px}
+header.top{background:var(--navy);color:#fff;border-radius:12px;padding:14px 18px;margin-top:16px;border-bottom:3px solid var(--orange);display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px}
+.sys{flex-basis:100%;display:flex;gap:4px;flex-wrap:wrap;font-size:.85rem}
+.sys a{padding:6px 12px;border-radius:999px;color:rgba(255,255,255,.78);text-decoration:none;border:1px solid rgba(255,255,255,.25)}
+.sys a:hover{color:#fff}
+.sys a[aria-current]{background:var(--orange);color:var(--navy);border-color:var(--orange)}
+.brand{display:flex;align-items:center;gap:12px;flex:1;min-width:0}
+.brand img{height:30px;width:auto;padding-right:12px;border-right:1px solid rgba(255,255,255,.22)}
+.brand h1{margin:0;font-size:1.35rem;color:#fff}
+.user{font-size:.82rem;color:rgba(255,255,255,.75);display:flex;gap:8px;align-items:center}
+.user button{background:none;border:0;color:#fff;font-weight:600;cursor:pointer}
+.grid{display:grid;grid-template-columns:300px minmax(0,1fr);gap:18px;margin-top:18px;align-items:start}
+@media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;min-width:0}
+.panel h2{margin:0 0 10px;font-size:1.05rem}
+.list{display:flex;flex-direction:column;gap:6px}
+.citem{display:grid;grid-template-columns:6px 1fr;gap:10px;text-align:left;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:10px 12px 10px 0;cursor:pointer;color:inherit;overflow:hidden}
+.citem .b{background:var(--c,var(--orange))}
+.citem.sel{border-color:var(--orange);box-shadow:inset 0 0 0 1px var(--orange)}
+.citem small{display:block;color:var(--muted);font-size:.78rem}
+.pill{display:inline-block;font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:999px}
+.p-ok{background:var(--ok-soft);color:var(--ok)} .p-dr{background:var(--surface2);color:var(--muted)}
+button.pri{background:var(--orange);color:var(--navy);border:0;border-radius:8px;padding:10px 16px;font-weight:700;cursor:pointer}
+button.sec{background:var(--surface2);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:9px 14px;font-weight:600;cursor:pointer}
+button.ghost{background:none;border:0;color:var(--accent);font-weight:600;cursor:pointer;padding:6px 8px}
+button.danger{background:none;border:0;color:var(--crit);font-weight:600;cursor:pointer;padding:6px 8px}
+button:disabled{opacity:.5;cursor:not-allowed}
+.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 12px}
+.fields .full{grid-column:1/-1}
+@media (max-width:560px){.fields{grid-template-columns:minmax(0,1fr)}}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:.8rem;color:var(--muted);font-weight:600}
+label.f input,label.f select,label.f textarea{color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:9px 10px;font-size:.95rem;font-weight:400;min-width:0}
+textarea{resize:vertical;min-height:90px}
+.chk{display:flex;gap:8px;align-items:center;font-size:.9rem;font-weight:600}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px}
+.row .sp{flex:1}
+.sec-t{display:flex;align-items:center;gap:10px;margin:22px 0 10px}
+.sec-t h3{margin:0;font-size:.95rem;flex:1}
+.it{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px;background:var(--bg)}
+.it .h{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.it .h b{flex:1;min-width:0}
+.it small{color:var(--muted)}
+.it .ed{margin-top:10px}
+.empty{color:var(--muted);text-align:center;padding:22px;border:1px dashed var(--line);border-radius:10px}
+.note{font-size:.82rem;color:var(--muted);background:var(--surface2);border-radius:8px;padding:10px 12px;margin-top:10px}
+.login{max-width:400px;margin:60px auto;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.login .lb{background:var(--navy);padding:20px 22px}
+.login .lb img{height:38px;width:auto;display:block}
+.login form{padding:22px;display:grid;gap:12px}
+.login h1{margin:0;font-size:1.3rem}
+.err{background:var(--crit-soft);color:var(--crit);border-radius:8px;padding:10px 12px;font-size:.88rem}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 16px;border-radius:8px;z-index:50}
+</style>
+</head>
+<body>
+<div id="loginV" hidden>
+  <div class="login"><div class="lb"><img src="logo-triva.png" alt="TRIVA Soluções Operacionais" width="140" height="38"></div>
+    <form id="fLogin"><h1>TRIVA Capacita · Gestão</h1>
+      <label class="f" for="le">E-mail<input id="le" type="email" autocomplete="username" required></label>
+      <label class="f" for="ls">Senha<input id="ls" type="password" autocomplete="current-password" required></label>
+      <div class="err" id="lerr" hidden></div>
+      <button class="pri" type="submit">Entrar</button>
+    </form></div>
+</div>
+
+<div class="wrap" id="appV" hidden>
+  <header class="top">
+    <nav class="sys" aria-label="Sistema TRIVA"><a href="painel.html">Cadastros</a><a href="painel.html#financeiro">Financeiro</a><a href="comercial.html">Comercial</a><a aria-current="page">TRIVA Capacita</a></nav>
+    <div class="brand"><img src="logo-triva.png" alt="TRIVA" width="111" height="30"><h1>TRIVA Capacita</h1></div>
+    <span class="user"><span id="uEmail"></span><button id="bSair">Sair</button></span>
+  </header>
+  <div class="grid">
+    <aside class="panel">
+      <h2>Cursos</h2>
+      <div class="list" id="lista"></div>
+      <div class="row"><button class="pri" id="bNovo">+ Novo curso</button><a href="capacita.html?preview" target="_blank" rel="noopener" style="font-size:.85rem;color:var(--accent);font-weight:600">Ver como o profissional ›</a></div>
+      <p class="note">Link para os profissionais: <b>nandersonmm-collab.github.io/nmmcadastro/capacita.html</b>. Eles entram com o mesmo CPF e senha do Portal do Profissional.</p>
+    </aside>
+    <section class="panel" id="editor"><p class="empty">Escolha um curso na lista ou crie um novo.</p></section>
+  </div>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
+(function(){
+  var sb = supabase.createClient("https://ratkhskpvgvlperrtsvv.supabase.co","sb_publishable_hVEkTLTJWP0kRKHsXTrWoA_Q7167_ra");
+  var cursos=[], aulas=[], questoes=[], selId=null, salvando=false;
+  function $(s){ return document.querySelector(s); }
+  function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];}); }
+  function toast(m){ var t=$("#toast"); t.textContent=m; t.hidden=false; clearTimeout(toast._t); toast._t=setTimeout(function(){t.hidden=true;},2600); }
+  function erro(e){ toast(/row-level|permission|42501/i.test((e&&e.message)||"") ? "Sem permissão. Entre com um e-mail da equipe TRIVA." : "Não foi possível salvar. Tente de novo."); }
+  async function vez(fn){ if(salvando) return; salvando=true; try{ await fn(); } catch(e){ erro(e); } finally{ salvando=false; } }
+
+  /* login */
+  $("#fLogin").addEventListener("submit", async function(ev){
+    ev.preventDefault(); $("#lerr").hidden=true;
+    var r = await sb.auth.signInWithPassword({ email:$("#le").value.trim().toLowerCase(), password:$("#ls").value });
+    if (r.error){ $("#lerr").textContent="E-mail ou senha incorretos."; $("#lerr").hidden=false; return; }
+    iniciar();
+  });
+  $("#bSair").onclick = async function(){ await sb.auth.signOut(); location.reload(); };
+
+  async function iniciar(){
+    var s = (await sb.auth.getSession()).data.session;
+    if (!s){ $("#loginV").hidden=false; $("#appV").hidden=true; return; }
+    var m = await sb.from("crm_membros").select("nome").eq("email",(s.user.email||"").toLowerCase()).maybeSingle();
+    if (!m.data){ $("#loginV").hidden=false; $("#appV").hidden=true; $("#lerr").textContent="Este e-mail não faz parte da equipe TRIVA."; $("#lerr").hidden=false; await sb.auth.signOut(); return; }
+    $("#loginV").hidden=true; $("#appV").hidden=false; $("#uEmail").textContent=s.user.email;
+    await carregar();
+  }
+
+  async function carregar(){
+    var rs = await Promise.all([
+      sb.from("capacita_cursos").select("*").order("ordem").order("criado_em"),
+      sb.from("capacita_aulas").select("*").order("ordem"),
+      sb.from("capacita_questoes").select("*").order("ordem")
+    ]);
+    if (rs[0].error){ $("#editor").innerHTML='<p class="empty">O banco do TRIVA Capacita ainda não foi criado. Rode o comando capacita.sql no Supabase.</p>'; return; }
+    cursos=rs[0].data||[]; aulas=rs[1].data||[]; questoes=rs[2].data||[];
+    renderLista(); renderEditor();
+  }
+
+  function renderLista(){
+    $("#lista").innerHTML = cursos.length ? cursos.map(function(c){
+      var na = aulas.filter(function(a){return a.curso_id===c.id;}).length, nq = questoes.filter(function(q){return q.curso_id===c.id;}).length;
+      return '<button class="citem'+(c.id===selId?' sel':'')+'" style="--c:'+esc(c.cor||"#F58220")+'" data-id="'+c.id+'"><span class="b"></span><span><b>'+esc(c.titulo)+'</b> '+(c.publicado?'<span class="pill p-ok">Publicado</span>':'<span class="pill p-dr">Rascunho</span>')+'<small>'+na+' aula(s) · '+nq+' pergunta(s)</small></span></button>';
+    }).join("") : '<p class="empty">Nenhum curso ainda.</p>';
+    $("#lista").querySelectorAll("[data-id]").forEach(function(b){ b.onclick=function(){ selId=b.dataset.id; renderLista(); renderEditor(); }; });
+  }
+
+  $("#bNovo").onclick = function(){ vez(async function(){
+    var r = await sb.from("capacita_cursos").insert({ titulo:"Novo curso", ordem: cursos.length+1, publicado:false }).select().single();
+    if (r.error) throw r.error;
+    selId = r.data.id; await carregar(); toast("Curso criado como rascunho.");
+  }); };
+
+  function renderEditor(){
+    var c = cursos.filter(function(x){return x.id===selId;})[0];
+    if (!c){ $("#editor").innerHTML='<p class="empty">Escolha um curso na lista ou crie um novo.</p>'; return; }
+    var as = aulas.filter(function(a){return a.curso_id===c.id;}), qs = questoes.filter(function(q){return q.curso_id===c.id;});
+    $("#editor").innerHTML =
+      '<h2>Dados do curso</h2><div class="fields">'+
+      '<label class="f full" for="c_titulo">Título<input id="c_titulo" value="'+esc(c.titulo)+'"></label>'+
+      '<label class="f full" for="c_desc">Descrição<textarea id="c_desc">'+esc(c.descricao)+'</textarea></label>'+
+      '<label class="f" for="c_funcao">Função (ex.: Caixa, Repositor, Todas as funções)<input id="c_funcao" value="'+esc(c.funcao)+'"></label>'+
+      '<label class="f" for="c_carga">Carga horária (ex.: 2 horas)<input id="c_carga" value="'+esc(c.carga_horaria)+'"></label>'+
+      '<label class="f" for="c_ordem">Ordem na lista<input id="c_ordem" type="number" value="'+(c.ordem||0)+'"></label>'+
+      '<label class="f" for="c_cor">Cor do curso<input id="c_cor" type="color" value="'+esc(c.cor||"#F58220")+'"></label>'+
+      '<label class="chk full" for="c_pub"><input id="c_pub" type="checkbox"'+(c.publicado?' checked':'')+'> Publicado (visível para os profissionais)</label>'+
+      '</div><div class="row"><button class="pri" id="bSalvarC">Salvar curso</button><span class="sp"></span><button class="danger" id="bDelC">Excluir curso</button></div>'+
+      '<div class="sec-t"><h3>Aulas ('+as.length+')</h3><button class="sec" id="bAddA">+ Aula</button></div>'+
+      (as.length? as.map(function(a,i){ return itemAula(a,i,as.length); }).join("") : '<p class="empty">Nenhuma aula ainda.</p>')+
+      '<div class="sec-t"><h3>Exercícios ('+qs.length+')</h3><button class="sec" id="bAddQ">+ Pergunta</button></div>'+
+      (qs.length? qs.map(itemQuestao).join("") : '<p class="empty">Sem exercícios: o certificado é liberado ao concluir as aulas.</p>')+
+      '<p class="note">O profissional precisa acertar 70% dos exercícios para liberar o certificado. Vídeos: cole o link do YouTube ou Vimeo.</p>';
+
+    $("#bSalvarC").onclick = function(){ vez(async function(){
+      var r = await sb.from("capacita_cursos").update({ titulo:$("#c_titulo").value.trim()||"Sem título", descricao:$("#c_desc").value.trim(), funcao:$("#c_funcao").value.trim(), carga_horaria:$("#c_carga").value.trim(), ordem:+$("#c_ordem").value||0, cor:$("#c_cor").value, publicado:$("#c_pub").checked }).eq("id",c.id);
+      if (r.error) throw r.error; await carregar(); toast("Curso salvo.");
+    }); };
+    var delArm=false;
+    $("#bDelC").onclick = function(){ if(!delArm){ delArm=true; $("#bDelC").textContent="Confirmar exclusão (apaga aulas e exercícios)"; return; }
+      vez(async function(){ var r=await sb.from("capacita_cursos").delete().eq("id",c.id); if(r.error) throw r.error; selId=null; await carregar(); toast("Curso excluído."); }); };
+    $("#bAddA").onclick = function(){ vez(async function(){
+      var ult = as[as.length-1];
+      var r=await sb.from("capacita_aulas").insert({ curso_id:c.id, modulo: ult?ult.modulo:"Módulo 1", ordem:(ult?ult.ordem:0)+1, titulo:"Nova aula", tipo:"texto" }).select().single();
+      if(r.error) throw r.error; await carregar(); abrir("a"+r.data.id);
+    }); };
+    $("#bAddQ").onclick = function(){ vez(async function(){
+      var ult = qs[qs.length-1];
+      var r=await sb.from("capacita_questoes").insert({ curso_id:c.id, ordem:(ult?ult.ordem:0)+1, pergunta:"Nova pergunta", opcoes:["Opção A","Opção B","Opção C","Opção D"], correta:0 }).select().single();
+      if(r.error) throw r.error; await carregar(); abrir("q"+r.data.id);
+    }); };
+
+    as.forEach(function(a,i){ ligarAula(a,i,as); });
+    qs.forEach(ligarQuestao);
+  }
+  function abrir(k){ var el=document.querySelector('[data-ed="'+k+'"]'); if(el){ el.hidden=false; el.scrollIntoView({block:"center"}); } }
+
+  function itemAula(a,i,n){
+    var tipo = a.tipo==="video"?"Vídeo":a.tipo==="pdf"?"PDF":"Texto";
+    return '<div class="it"><div class="h"><b>'+(i+1)+'. '+esc(a.titulo)+'</b><small>'+esc(a.modulo)+' · '+tipo+(a.duracao_min?' · '+a.duracao_min+' min':'')+'</small>'+
+      '<button class="ghost" data-up="'+a.id+'"'+(i===0?' disabled':'')+' aria-label="Subir">↑</button><button class="ghost" data-down="'+a.id+'"'+(i===n-1?' disabled':'')+' aria-label="Descer">↓</button><button class="ghost" data-open="a'+a.id+'">Editar</button></div>'+
+      '<div class="ed" data-ed="a'+a.id+'" hidden><div class="fields">'+
+      '<label class="f">Módulo<input data-f="modulo" value="'+esc(a.modulo)+'"></label>'+
+      '<label class="f">Título da aula<input data-f="titulo" value="'+esc(a.titulo)+'"></label>'+
+      '<label class="f">Tipo<select data-f="tipo"><option value="texto"'+(a.tipo==="texto"?' selected':'')+'>Texto</option><option value="video"'+(a.tipo==="video"?' selected':'')+'>Vídeo (YouTube/Vimeo)</option><option value="pdf"'+(a.tipo==="pdf"?' selected':'')+'>PDF / link</option></select></label>'+
+      '<label class="f">Duração (min)<input data-f="duracao_min" type="number" value="'+(a.duracao_min||"")+'"></label>'+
+      '<label class="f full">Link do vídeo ou PDF<input data-f="url" value="'+esc(a.url)+'" placeholder="https://youtu.be/..."></label>'+
+      '<label class="f full">Texto da aula<textarea data-f="conteudo" rows="6">'+esc(a.conteudo)+'</textarea></label>'+
+      '</div><div class="row"><button class="pri" data-save="'+a.id+'">Salvar aula</button><span class="sp"></span><button class="danger" data-del="'+a.id+'">Excluir</button></div></div></div>';
+  }
+  function ligarAula(a,i,as){
+    var box=document.querySelector('[data-ed="a'+a.id+'"]');
+    document.querySelector('[data-open="a'+a.id+'"]').onclick=function(){ box.hidden=!box.hidden; };
+    box.querySelector('[data-save]').onclick=function(){ vez(async function(){
+      var d={}; box.querySelectorAll("[data-f]").forEach(function(el){ d[el.dataset.f]= el.type==="number" ? (el.value?+el.value:null) : el.value.trim(); });
+      if(!d.titulo) d.titulo="Sem título"; if(!d.modulo) d.modulo="Módulo 1";
+      var r=await sb.from("capacita_aulas").update(d).eq("id",a.id); if(r.error) throw r.error; await carregar(); toast("Aula salva.");
+    }); };
+    var arm=false, del=box.querySelector('[data-del]');
+    del.onclick=function(){ if(!arm){arm=true;del.textContent="Confirmar exclusão";return;} vez(async function(){ var r=await sb.from("capacita_aulas").delete().eq("id",a.id); if(r.error) throw r.error; await carregar(); toast("Aula excluída."); }); };
+    function troca(j){ return function(){ vez(async function(){
+      var b=as[j]; var r1=await sb.from("capacita_aulas").update({ordem:b.ordem}).eq("id",a.id); if(r1.error) throw r1.error;
+      var r2=await sb.from("capacita_aulas").update({ordem:a.ordem===b.ordem?a.ordem+1:a.ordem}).eq("id",b.id); if(r2.error) throw r2.error; await carregar();
+    }); }; }
+    if(i>0) document.querySelector('[data-up="'+a.id+'"]').onclick=troca(i-1);
+    if(i<as.length-1) document.querySelector('[data-down="'+a.id+'"]').onclick=troca(i+1);
+  }
+
+  function itemQuestao(q,i){
+    var ops = Array.isArray(q.opcoes)?q.opcoes:[];
+    return '<div class="it"><div class="h"><b>'+(i+1)+'. '+esc(q.pergunta)+'</b><small>Resposta: '+String.fromCharCode(65+q.correta)+'</small><button class="ghost" data-open="q'+q.id+'">Editar</button></div>'+
+      '<div class="ed" data-ed="q'+q.id+'" hidden><div class="fields">'+
+      '<label class="f full">Pergunta<input data-q="pergunta" value="'+esc(q.pergunta)+'"></label>'+
+      [0,1,2,3].map(function(k){ return '<label class="f">Opção '+String.fromCharCode(65+k)+'<input data-op="'+k+'" value="'+esc(ops[k]||"")+'"></label>'; }).join("")+
+      '<label class="f">Resposta certa<select data-q="correta">'+[0,1,2,3].map(function(k){return '<option value="'+k+'"'+(q.correta===k?' selected':'')+'>'+String.fromCharCode(65+k)+'</option>';}).join("")+'</select></label>'+
+      '<label class="f full">Explicação (aparece depois de responder)<input data-q="explicacao" value="'+esc(q.explicacao)+'"></label>'+
+      '</div><div class="row"><button class="pri" data-save="1">Salvar pergunta</button><span class="sp"></span><button class="danger" data-del="1">Excluir</button></div></div></div>';
+  }
+  function ligarQuestao(q){
+    var box=document.querySelector('[data-ed="q'+q.id+'"]');
+    document.querySelector('[data-open="q'+q.id+'"]').onclick=function(){ box.hidden=!box.hidden; };
+    box.querySelector('[data-save]').onclick=function(){ vez(async function(){
+      var ops=[]; box.querySelectorAll("[data-op]").forEach(function(el){ if(el.value.trim()) ops.push(el.value.trim()); });
+      if(ops.length<2){ toast("Preencha pelo menos 2 opções."); return; }
+      var correta=+box.querySelector('[data-q="correta"]').value; if(correta>=ops.length) correta=0;
+      var r=await sb.from("capacita_questoes").update({ pergunta:box.querySelector('[data-q="pergunta"]').value.trim()||"Pergunta", opcoes:ops, correta:correta, explicacao:box.querySelector('[data-q="explicacao"]').value.trim() }).eq("id",q.id);
+      if(r.error) throw r.error; await carregar(); toast("Pergunta salva.");
+    }); };
+    var arm=false, del=box.querySelector('[data-del]');
+    del.onclick=function(){ if(!arm){arm=true;del.textContent="Confirmar exclusão";return;} vez(async function(){ var r=await sb.from("capacita_questoes").delete().eq("id",q.id); if(r.error) throw r.error; await carregar(); toast("Pergunta excluída."); }); };
+  }
+
+  iniciar();
+})();
+</script>
+</body>
+</html>

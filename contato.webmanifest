@@ -1,15 +1,25 @@
 {
-  "name": "TRIVA Contato",
-  "short_name": "TRIVA Contato",
-  "description": "Registrar contatos comerciais da TRIVA",
+  "name": "TRIVA",
+  "short_name": "TRIVA",
+  "description": "Acesso da equipe e dos profissionais TRIVA",
   "lang": "pt-BR",
-  "start_url": "comercial.html#registrar",
+  "start_url": "inicio.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#0B1F2A",
   "theme_color": "#0B1F2A",
   "icons": [
-    { "src": "icone-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
-    { "src": "icone-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+    {
+      "src": "icone-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icone-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
   ]
 }

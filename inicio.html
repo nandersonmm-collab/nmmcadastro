@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>TRIVA Soluções Operacionais</title>
+<meta name="description" content="Acesso da equipe e dos profissionais TRIVA: cadastro, treinamentos e painel.">
+<link rel="manifest" href="contato.webmanifest">
+<meta name="theme-color" content="#0B1F2A">
+<link rel="icon" href="icone-192.png">
+<link rel="apple-touch-icon" href="icone-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="TRIVA">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: faixa azul com logo e slogan, depois três portas de entrada (equipe, profissional, quero trabalhar) */
+:root{
+  --navy:#0B1F2A; --navy2:#122C3B; --orange:#F58220;
+  --bg:#FAF8F5; --surface:#FFFFFF; --surface2:#F2EDE6; --line:#E4DED6;
+  --fg:#0B1F2A; --muted:#5F646B; --accent:#C8600E;
+  --font:"Montserrat",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0A1821; --surface:#11242F; --surface2:#0E1F29; --line:#203642; --fg:#EEF1F3; --muted:#A5ADB4; --accent:#FF9A45; color-scheme:dark}}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font:400 16px/1.6 var(--font)}
+:focus-visible{outline:3px solid var(--orange);outline-offset:3px;border-radius:4px}
+.hero{background:linear-gradient(120deg,var(--navy) 0 60%,var(--navy2));color:#fff;position:relative;overflow:hidden;padding:calc(28px + env(safe-area-inset-top,0px)) 16px 46px}
+.hero::after{content:"";position:absolute;right:-20px;top:0;width:200px;height:90px;background:linear-gradient(118deg,transparent 0 36%,var(--orange) 36% 66%,transparent 66%);opacity:.95}
+.hero .in{max-width:880px;margin:0 auto;position:relative;z-index:1}
+.hero img{height:48px;width:auto;display:block}
+.hero h1{font-size:clamp(1.6rem,4.5vw,2.4rem);font-weight:500;letter-spacing:-.01em;margin:28px 0 8px;line-height:1.15;text-wrap:balance;max-width:20em}
+.hero h1 strong{color:var(--orange);font-weight:800}
+.hero p{margin:0;color:rgba(255,255,255,.75);max-width:34em}
+main{max-width:880px;margin:-22px auto 0;padding:0 16px 40px;position:relative;z-index:2}
+.doors{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media (max-width:760px){.doors{grid-template-columns:minmax(0,1fr)}}
+.door{background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--orange);border-radius:14px;padding:20px 18px;display:flex;flex-direction:column;gap:10px;box-shadow:0 10px 26px -18px rgba(11,31,42,.45)}
+.door .eye{font-size:.72rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
+.door h2{margin:0;font-size:1.15rem;line-height:1.25}
+.door p{margin:0;color:var(--muted);font-size:.9rem;flex:1}
+.btn{display:flex;align-items:center;justify-content:space-between;gap:8px;text-decoration:none;font-weight:700;border-radius:10px;padding:13px 16px;font-size:.95rem}
+.btn.pri{background:var(--orange);color:var(--navy)}
+.btn.pri:hover{background:#FF9133}
+.btn.sec{background:var(--surface2);color:var(--fg);border:1px solid var(--line)}
+.links{display:flex;flex-direction:column;gap:8px}
+.inst{margin-top:22px;background:var(--surface);border:1px solid var(--line);border-radius:14px}
+.inst summary{cursor:pointer;padding:16px 18px;font-weight:700;display:flex;align-items:center;gap:12px;list-style:none}
+.inst summary::-webkit-details-marker{display:none}
+.inst summary img{width:40px;height:40px;border-radius:10px}
+.inst summary span{flex:1}
+.inst summary span[aria-hidden]{flex:none;color:var(--muted)}
+.inst .body{padding:0 18px 18px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:560px){.inst .body{grid-template-columns:minmax(0,1fr)}}
+.inst h3{margin:0 0 6px;font-size:.9rem}
+.inst ol{margin:0;padding-left:20px;font-size:.9rem}
+.inst b{color:var(--accent)}
+footer{text-align:center;font-size:.82rem;color:var(--muted);padding:10px 16px 30px}
+footer a{color:inherit}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="in">
+    <img src="logo-triva.png" alt="TRIVA Soluções Operacionais" width="178" height="48">
+    <h1>Mais eficiência para o seu negócio <strong>ir mais longe.</strong></h1>
+    <p>Acesse sua área: equipe TRIVA, profissionais parceiros ou quem quer começar a trabalhar com a gente.</p>
+  </div>
+</header>
+
+<main>
+  <div class="doors">
+    <section class="door">
+      <span class="eye">Profissional TRIVA</span>
+      <h2>Meu cadastro e cursos</h2>
+      <p>Entre com seu CPF e senha para atualizar seus dados e fazer os treinamentos do TRIVA Capacita.</p>
+      <div class="links">
+        <a class="btn pri" href="capacita.html">TRIVA Capacita <span>›</span></a>
+        <a class="btn sec" href="portal.html">Meu cadastro <span>›</span></a>
+      </div>
+    </section>
+    <section class="door">
+      <span class="eye">Quero trabalhar</span>
+      <h2>Ainda não sou cadastrado</h2>
+      <p>Faça seu cadastro como profissional autônomo e receba convites para turnos nas empresas da região.</p>
+      <div class="links">
+        <a class="btn pri" href="index.html">Fazer meu cadastro <span>›</span></a>
+      </div>
+    </section>
+    <section class="door">
+      <span class="eye">Equipe TRIVA</span>
+      <h2>Acesso administrativo</h2>
+      <p>Painel da equipe com cadastros, financeiro, comercial e gestão dos cursos.</p>
+      <div class="links">
+        <a class="btn pri" href="comercial.html#registrar">Registrar contato <span>›</span></a>
+        <a class="btn sec" href="painel.html">Abrir painel <span>›</span></a>
+      </div>
+    </section>
+  </div>
+
+  <details class="inst">
+    <summary><img src="icone-180.png" alt="" width="40" height="40"><span>Instalar o app TRIVA no celular</span><span aria-hidden="true">▾</span></summary>
+    <div class="body">
+      <div><h3>Android (Chrome)</h3><ol><li>Toque nos <b>três pontinhos ⋮</b>.</li><li>Escolha <b>Adicionar à tela inicial</b> ou <b>Instalar app</b>.</li><li>Confirme em <b>Adicionar</b>.</li></ol></div>
+      <div><h3>iPhone (Safari)</h3><ol><li>Toque em <b>Compartilhar</b> (quadrado com seta).</li><li>Escolha <b>Adicionar à Tela de Início</b>.</li><li>Toque em <b>Adicionar</b>.</li></ol></div>
+    </div>
+  </details>
+</main>
+<footer>TRIVA Soluções Operacionais · WhatsApp (48) 98810-9335 · <a href="https://trivasolucoes.com.br" target="_blank" rel="noopener">trivasolucoes.com.br</a></footer>
+</body>
+</html>
