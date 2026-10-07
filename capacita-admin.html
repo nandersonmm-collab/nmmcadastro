@@ -183,7 +183,10 @@ textarea{resize:vertical;min-height:90px}
       (as.length? as.map(function(a,i){ return itemAula(a,i,as.length); }).join("") : '<p class="empty">Nenhuma aula ainda.</p>')+
       '<div class="sec-t"><h3>Exercícios ('+qs.length+')</h3><button class="sec" id="bAddQ">+ Pergunta</button></div>'+
       (qs.length? qs.map(itemQuestao).join("") : '<p class="empty">Sem exercícios: o certificado é liberado ao concluir as aulas.</p>')+
-      '<p class="note">O profissional precisa acertar 70% dos exercícios para liberar o certificado. Vídeos: cole o link do YouTube ou Vimeo.</p>';
+      '<p class="note">Os exercícios são sorteados e corrigidos pela TRIVA, e o profissional não vê o gabarito. Até 5 perguntas, todas aparecem; acima disso, cada tentativa sorteia 2/3 delas (hoje: '+(qs.length<=5?qs.length:Math.max(5,Math.round(qs.length*2/3)))+' de '+qs.length+'), sempre com as alternativas embaralhadas. É preciso acertar 70%. O certificado sai com os dados do cadastro e um código de validação. Dica: com 10 ou mais perguntas, cada tentativa fica bem diferente. Vídeos: cole o link do YouTube ou Vimeo.</p>'+
+      '<div class="sec-t"><h3>Resultados dos profissionais</h3><span id="resResumo" class="pill p-dr"></span></div>'+
+      '<div class="row" style="margin-top:0"><input id="fBusca" placeholder="Buscar profissional ou código" style="font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--fg);min-width:0;flex:1"></div>'+
+      '<div id="resLista" style="margin-top:10px"><p class="empty">Carregando resultados…</p></div>';
 
     $("#bSalvarC").onclick = function(){ vez(async function(){
       var r = await sb.from("capacita_cursos").update({ titulo:$("#c_titulo").value.trim()||"Sem título", descricao:$("#c_desc").value.trim(), funcao:$("#c_funcao").value.trim(), carga_horaria:$("#c_carga").value.trim(), ordem:+$("#c_ordem").value||0, cor:$("#c_cor").value, publicado:$("#c_pub").checked }).eq("id",c.id);
@@ -205,6 +208,7 @@ textarea{resize:vertical;min-height:90px}
 
     as.forEach(function(a,i){ ligarAula(a,i,as); });
     qs.forEach(ligarQuestao);
+    carregarResultados(c);
   }
   /* Cursos com página própria (ex.: Atendimento ao Cliente): conteúdo fixo na página, testes sorteados no servidor */
   function renderPagina(c){
@@ -212,7 +216,7 @@ textarea{resize:vertical;min-height:90px}
       '<h2>'+esc(c.titulo)+'</h2><p class="note" style="margin-top:0">Curso com página própria (<a href="'+esc(c.pagina)+'" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600">'+esc(c.pagina)+'</a>): '+(c.modulos_total||0)+' módulos com áudio, teste sorteado de 3 perguntas por módulo (mínimo 2), avaliação final de 20 questões (mínimo 70%) e certificado automático com os dados do cadastro. As perguntas ficam no banco de questões e o gabarito nunca vai para o celular do profissional.</p>'+
       '<div class="fields"><label class="f" for="c_ordem">Ordem na lista<input id="c_ordem" type="number" value="'+(c.ordem||0)+'"></label>'+
       '<label class="chk" for="c_pub" style="align-self:end"><input id="c_pub" type="checkbox"'+(c.publicado?' checked':'')+'> Publicado</label></div>'+
-      '<div class="row"><button class="pri" id="bSalvarP">Salvar</button><span class="sp"></span><input id="fBusca" placeholder="Buscar profissional" style="font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--fg);min-width:0"></div>'+
+      '<div class="row"><button class="pri" id="bSalvarP">Salvar</button><span class="sp"></span><input id="fBusca" placeholder="Buscar profissional ou código" style="font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--fg);min-width:0"></div>'+
       '<div class="sec-t"><h3>Resultados dos profissionais</h3><span id="resResumo" class="pill p-dr"></span></div><div id="resLista"><p class="empty">Carregando resultados…</p></div>';
     $("#bSalvarP").onclick = function(){ vez(async function(){
       var r = await sb.from("capacita_cursos").update({ ordem:+$("#c_ordem").value||0, publicado:$("#c_pub").checked }).eq("id",c.id);
@@ -223,18 +227,24 @@ textarea{resize:vertical;min-height:90px}
   async function carregarResultados(c){
     var rs = await Promise.all([
       sb.from("capacita_tentativas").select("candidato_id,tipo,modulo,aprovado,acertos,total,corrigido_em,candidatos(nome_completo)").eq("curso_slug",c.slug).not("corrigido_em","is",null).order("corrigido_em",{ascending:false}).limit(5000),
-      sb.from("capacita_certificados").select("*").eq("curso_slug",c.slug)
+      sb.from("capacita_certificados").select("*").eq("curso_slug",c.slug),
+      c.pagina ? Promise.resolve({data:[]}) : sb.from("capacita_aulas_feitas").select("candidato_id,feito_em,candidatos(nome_completo)").eq("curso_slug",c.slug).limit(10000)
     ]);
-    if (rs[0].error || rs[1].error){ $("#resLista").innerHTML='<p class="empty">Não foi possível carregar os resultados.</p>'; return; }
+    if (rs[0].error || rs[1].error || rs[2].error){ $("#resLista").innerHTML='<p class="empty">Não foi possível carregar os resultados.</p>'; return; }
     var por = {};
     rs[0].data.forEach(function(t){
       var p = por[t.candidato_id] || (por[t.candidato_id] = { nome:(t.candidatos&&t.candidatos.nome_completo)||"—", mods:{}, finais:[], ultimo:t.corrigido_em });
       if (t.tipo==="modulo" && t.aprovado) p.mods[t.modulo]=1;
       if (t.tipo==="final") p.finais.push(t);
     });
-    var certs = {}; rs[1].data.forEach(function(x){ certs[x.candidato_id]=x; });
+    rs[2].data.forEach(function(f){
+      var p = por[f.candidato_id] || (por[f.candidato_id] = { nome:(f.candidatos&&f.candidatos.nome_completo)||"—", mods:{}, finais:[], ultimo:f.feito_em, aulas:0 });
+      p.aulas = (p.aulas||0)+1; if (f.feito_em > p.ultimo) p.ultimo = f.feito_em;
+    });
+    var nAulas = aulas.filter(function(a){return a.curso_id===c.id;}).length;
+    var certs = {}; rs[1].data.forEach(function(x){ certs[x.candidato_id]=x; if(!por[x.candidato_id]) por[x.candidato_id]={ nome:x.nome, mods:{}, finais:[], ultimo:x.emitido_em, aulas:0 }; });
     var lista = Object.keys(por).map(function(id){ var p=por[id]; p.id=id; p.cert=certs[id]; return p; })
-      .sort(function(a,b){ return (b.cert?1:0)-(a.cert?1:0) || Object.keys(b.mods).length-Object.keys(a.mods).length; });
+      .sort(function(a,b){ return (b.cert?1:0)-(a.cert?1:0) || (Object.keys(b.mods).length+(b.aulas||0))-(Object.keys(a.mods).length+(a.aulas||0)); });
     $("#resResumo").textContent = lista.length+" iniciaram · "+rs[1].data.length+" certificado(s)";
     function pinta(){
       var f = ($("#fBusca").value||"").trim().toLowerCase();
@@ -243,9 +253,9 @@ textarea{resize:vertical;min-height:90px}
         var nm = Object.keys(p.mods).length, ult = p.finais[0];
         var sit = p.cert ? '<span class="pill p-ok">Certificado '+esc(p.cert.codigo)+' · '+p.cert.nota+'%</span>'
           : (ult ? '<span class="pill p-dr">Final: '+p.finais.length+' tentativa(s), última '+ult.acertos+'/'+ult.total+'</span>' : '<span class="pill p-dr">Em andamento</span>');
-        return '<div class="it"><div class="h"><b>'+esc(p.nome)+'</b>'+sit+'</div><small>Módulos aprovados: '+nm+' de '+(c.modulos_total||0)+' · última atividade '+new Date(p.ultimo).toLocaleString("pt-BR",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"})+
+        return '<div class="it"><div class="h"><b>'+esc(p.nome)+'</b>'+sit+'</div><small>'+(c.pagina?'Módulos aprovados: '+nm+' de '+(c.modulos_total||0):'Aulas concluídas: '+Math.min(p.aulas||0,nAulas)+' de '+nAulas)+' · última atividade '+new Date(p.ultimo).toLocaleString("pt-BR",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"})+
           (p.cert ? ' · emitido em '+new Date(p.cert.emitido_em).toLocaleDateString("pt-BR")+' · '+esc(p.cert.funcao||"")+' · '+esc(p.cert.cidade||"")+' · <a href="validar.html?c='+encodeURIComponent(p.cert.codigo)+'" target="_blank" rel="noopener" style="color:var(--accent)">validar</a>' : '')+'</small></div>';
-      }).join("") : '<p class="empty">'+(lista.length?'Ninguém encontrado com essa busca.':'Nenhum profissional fez testes deste curso ainda.')+'</p>';
+      }).join("") : '<p class="empty">'+(lista.length?'Ninguém encontrado com essa busca.':'Nenhum profissional começou este curso ainda.')+'</p>';
     }
     $("#fBusca").oninput = pinta; pinta();
   }

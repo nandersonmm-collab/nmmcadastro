@@ -156,7 +156,11 @@ h1,h2,h3{line-height:1.2;text-wrap:balance;margin:0}
   var cursos = [], aulas = [], questoes = [];
   var progresso = {};
   var CAPACITA_API = SUPABASE_URL + "/functions/v1/capacita-api";
-  var paginaProg = {};     // progresso dos cursos com página própria (vem do servidor)
+  var srv = {};            // progresso registrado na TRIVA, por curso (slug): aulas, exercícios e certificado
+  function capApi(acao, extra){
+    return fetch(CAPACITA_API, { method:"POST", headers:{ "Content-Type":"application/json", "apikey":SUPABASE_ANON_KEY, "Authorization":"Bearer "+SUPABASE_ANON_KEY }, body: JSON.stringify(Object.assign({ acao:acao, token: lsGet(TOKEN_KEY) }, extra || {})) })
+      .then(function(r){ return r.json(); });
+  }
 
   function $(s){ return document.querySelector(s); }
   function esc(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
@@ -185,12 +189,19 @@ h1,h2,h3{line-height:1.2;text-wrap:balance;margin:0}
   function questoesDo(cursoId){ return questoes.filter(function(q){ return q.curso_id === cursoId; }); }
   function estado(c){
     if (c.pagina){
-      var pp = paginaProg[c.slug] || { modulos_ok:[], certificado:null };
+      var pp = srv[c.slug] || { modulos_ok:[], certificado:null };
       var tm = c.modulos_total || 0, fm = (pp.modulos_ok || []).length, cert = !!pp.certificado;
       var pg = tm ? Math.round((fm + (cert ? 1 : 0)) / (tm + 1) * 100) : 0;
       return { feitas:fm, totalAulas:tm, pct:pg, aulasOk: fm === tm, quizOk: cert, temQuiz:true, concluido: cert, pagina:true };
     }
     var as = aulasDo(c.id), p = progresso[c.id] || { aulas:{} };
+    if (!usuario.admin){
+      var sv = srv[c.slug] || { aulas_feitas:[], questoes:0, certificado:null };
+      var nf = as.filter(function(a){ return sv.aulas_feitas.indexOf(a.id) >= 0 || (p.aulas && p.aulas[a.id]); }).length;
+      var tq = sv.questoes > 0, cert = !!sv.certificado;
+      var tot = as.length + (tq ? 1 : 0), fts = nf + (tq && cert ? 1 : 0);
+      return { feitas:nf, totalAulas:as.length, pct: tot ? Math.round(fts / tot * 100) : 0, aulasOk: nf === as.length, quizOk: !tq || cert, temQuiz:tq, concluido: cert, srv:sv };
+    }
     var feitas = as.filter(function(a){ return p.aulas && p.aulas[a.id]; }).length;
     var temQuiz = questoesDo(c.id).length > 0;
     var total = as.length + (temQuiz ? 1 : 0);
@@ -199,6 +210,7 @@ h1,h2,h3{line-height:1.2;text-wrap:balance;margin:0}
     return { feitas:feitas, totalAulas:as.length, pct:pct, aulasOk: feitas === as.length, quizOk: !temQuiz || (p.quiz && p.quiz.aprovado), temQuiz:temQuiz, concluido: pct === 100 };
   }
   function marcarConcluido(c){
+    if (!usuario.admin) return;   // para o profissional, quem conclui e emite o certificado é o servidor
     var p = pc(c.id);
     if (estado(c).concluido && !p.concluido){ p.concluido = new Date().toISOString(); salvarProgresso(); toast("Curso concluído! Seu certificado está liberado."); }
   }
@@ -255,10 +267,19 @@ h1,h2,h3{line-height:1.2;text-wrap:balance;margin:0}
     ]).then(function(rs){
       if (rs[0].error) throw rs[0].error;
       cursos = rs[0].data || []; aulas = rs[1].data || []; questoes = rs[2].data || [];
-      if (usuario.admin || !cursos.some(function(c){ return c.pagina; })) return;
-      // progresso dos cursos com página própria fica no servidor
-      return fetch(CAPACITA_API, { method:"POST", headers:{ "Content-Type":"application/json", "apikey":SUPABASE_ANON_KEY, "Authorization":"Bearer "+SUPABASE_ANON_KEY }, body: JSON.stringify({ acao:"resumo", token: lsGet(TOKEN_KEY) }) })
-        .then(function(r){ return r.json(); }).then(function(b){ if (b && b.ok) paginaProg = b.cursos || {}; }).catch(function(){});
+      if (usuario.admin) return;
+      // progresso, exercícios e certificados ficam registrados na TRIVA
+      return capApi("resumo").then(function(b){
+        if (!b || !b.ok){ lsDel(TOKEN_KEY); usuario = null; telaLogin("Sua sessão expirou. Entre novamente."); throw new Error("sessao"); }
+        srv = b.cursos || {}; usuario.perfil = b.perfil;
+        // aulas feitas antes desta versão (guardadas só no aparelho) sobem para o servidor
+        cursos.forEach(function(c){
+          if (c.pagina || !srv[c.slug]) return;
+          var loc = (progresso[c.id] && progresso[c.id].aulas) || {};
+          var faltam = Object.keys(loc).filter(function(id){ return srv[c.slug].aulas_feitas.indexOf(id) < 0 && aulasDo(c.id).some(function(a){ return a.id === id; }); });
+          if (faltam.length) capApi("aula", { curso:c.slug, aulas:faltam }).then(function(r){ if (r && r.ok){ srv[c.slug] = r.progresso; rota(); } }).catch(function(){});
+        });
+      });
     });
   }
 
@@ -267,7 +288,8 @@ h1,h2,h3{line-height:1.2;text-wrap:balance;margin:0}
     $("#btnSair").textContent = usuario.admin ? "Voltar à gestão" : "Sair";
     carregarProgresso();
     app.innerHTML = '<p class="empty">Carregando cursos...</p>';
-    carregarCursos().then(rota).catch(function(){
+    carregarCursos().then(rota).catch(function(err){
+      if (err && err.message === "sessao") return;
       app.innerHTML = '<p class="empty">O TRIVA Capacita ainda está sendo preparado. Volte em instantes.</p>';
     });
   }
@@ -295,7 +317,7 @@ h1,h2,h3{line-height:1.2;text-wrap:balance;margin:0}
     var andamento = cursos.filter(function(c){ var e = estado(c); return e.pct > 0 && !e.concluido; });
     var outros = cursos.filter(function(c){ return estado(c).pct === 0; }).sort(function(a,b){ return recomendado(b) - recomendado(a); });
     var concl = cursos.filter(function(c){ return estado(c).concluido; });
-    var primeiro = usuario.nome.split(" ")[0];
+    var primeiro = ((usuario.perfil && usuario.perfil.nome) || usuario.nome).split(" ")[0];
     app.innerHTML =
       '<section class="hero"><div class="ring"><svg viewBox="0 0 76 76"><circle cx="38" cy="38" r="32" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="8"/><circle cx="38" cy="38" r="32" fill="none" stroke="#F58220" stroke-width="8" stroke-linecap="round" stroke-dasharray="' + C + '" stroke-dashoffset="' + (C * (1 - pct / 100)) + '"/></svg><span>' + pct + '%</span></div>' +
       '<div><h1>Olá, ' + esc(primeiro) + '!</h1><p>' + feitos + ' de ' + tot + ' curso' + (tot === 1 ? '' : 's') + ' concluído' + (tot === 1 ? '' : 's') + '. Cada curso feito te deixa mais preparado para novas vagas.</p></div></section>' +
@@ -329,7 +351,9 @@ h1,h2,h3{line-height:1.2;text-wrap:balance;margin:0}
     var pq = p.quiz;
     html += '<div class="mod"><h3>Finalização</h3>';
     if (e.temQuiz){
-      html += '<button class="item' + (e.quizOk ? ' done' : '') + (e.aulasOk ? '' : ' lock') + '" data-quiz="' + c.id + '"><span class="ck">' + (e.quizOk ? '✓' : '?') + '</span><span>Exercícios<small>' + questoesDo(c.id).length + (questoesDo(c.id).length === 1 ? ' pergunta' : ' perguntas') + ' · acerte 70% ou mais' + (pq ? ' · último resultado: ' + pq.acertos + '/' + pq.total : '') + (e.aulasOk ? '' : ' · conclua as aulas antes') + '</small></span><span class="go">›</span></button>';
+      var nq = e.srv ? e.srv.sorteio : questoesDo(c.id).length;
+      var ult = e.srv ? e.srv.ultima_final : pq;
+      html += '<button class="item' + (e.quizOk ? ' done' : '') + (e.aulasOk ? '' : ' lock') + '" data-quiz="' + c.id + '"><span class="ck">' + (e.quizOk ? '✓' : '?') + '</span><span>Exercícios<small>' + nq + (nq === 1 ? ' pergunta' : ' perguntas') + (e.srv && e.srv.questoes > nq ? ' sorteadas' : '') + ' · acerte 70% ou mais' + (ult ? ' · último resultado: ' + ult.acertos + '/' + ult.total : '') + (e.aulasOk ? '' : ' · conclua as aulas antes') + '</small></span><span class="go">›</span></button>';
     }
     html += '<button class="item' + (e.concluido ? ' done' : ' lock') + '" data-cert="' + c.id + '"><span class="ck">' + (e.concluido ? '✓' : '★') + '</span><span>Certificado<small>' + (e.concluido ? 'Disponível para ver e salvar' : 'Liberado ao concluir o curso') + '</small></span><span class="go">›</span></button></div>';
     app.innerHTML = html;
@@ -359,12 +383,22 @@ h1,h2,h3{line-height:1.2;text-wrap:balance;margin:0}
     if (ant) $("#bAnt").onclick = function(){ location.hash = "#/aula/" + ant.id; };
     $("#bOk").onclick = function(){
       if (!p.aulas[a.id]){ p.aulas[a.id] = new Date().toISOString(); salvarProgresso(); marcarConcluido(c); }
+      if (!usuario.admin){
+        var antes = estado(c).concluido;
+        capApi("aula", { curso:c.slug, aula:a.id }).then(function(r){
+          if (!r || !r.ok) return;
+          srv[c.slug] = r.progresso;
+          if (!antes && r.progresso.certificado) toast("Curso concluído! Seu certificado está liberado.");
+          if (location.hash === "#/curso/" + c.id) rota();
+        }).catch(function(){ toast("Sem conexão: a aula fica marcada aqui e será enviada depois."); });
+      }
       location.hash = prox ? "#/aula/" + prox.id : "#/curso/" + c.id;
     };
     window.scrollTo(0,0);
   }
 
   function telaQuiz(c){
+    if (!usuario.admin) return telaQuizServidor(c);
     var qs = questoesDo(c.id); if (!qs.length){ location.hash = "#/curso/" + c.id; return; }
     var i = 0, acertos = 0, escolhido = null, respondido = false;
     function render(){
@@ -400,7 +434,68 @@ h1,h2,h3{line-height:1.2;text-wrap:balance;margin:0}
     render(); window.scrollTo(0,0);
   }
 
+  function telaQuizServidor(c){
+    var voltar = '<button class="back" onclick="location.hash=\'#/curso/' + c.id + '\'">‹ ' + esc(c.titulo) + '</button>';
+    app.innerHTML = voltar + '<p class="empty">Sorteando as perguntas...</p>';
+    capApi("sortear", { curso:c.slug }).then(function(r){
+      if (r && r.certificado){ srv[c.slug] = Object.assign(srv[c.slug] || {}, { certificado:r.certificado }); location.hash = "#/certificado/" + c.id; return; }
+      if (!r || !r.ok){ app.innerHTML = voltar + '<p class="empty">' + esc((r && r.erro) || "Não foi possível abrir os exercícios.") + '</p>'; return; }
+      var qs = r.questoes, resp = qs.map(function(){ return null; }), i = 0;
+      function render(){
+        var q = qs[i];
+        app.innerHTML = voltar + '<section class="lesson q"><div class="kicker">Exercícios · acerte pelo menos ' + r.minimo + ' de ' + qs.length + '</div><div class="qcount">Pergunta ' + (i + 1) + ' de ' + qs.length + '</div><h1>' + esc(q.pergunta) + '</h1>' +
+          q.opcoes.map(function(o, k){ return '<button class="opt' + (resp[i] === k ? ' sel' : '') + '" data-k="' + k + '">' + String.fromCharCode(65 + k) + ') ' + esc(o) + '</button>'; }).join("") +
+          '<p class="qcount" style="margin-top:8px">A correção aparece no final. Você pode voltar e trocar respostas antes de enviar.</p></section>' +
+          '<div class="navbtns">' + (i > 0 ? '<button class="btn sec2" id="bAntQ">‹ Anterior</button>' : '') +
+          '<button class="btn pri" id="bQ"' + (resp[i] === null ? ' disabled' : '') + '>' + (i + 1 < qs.length ? 'Próxima ›' : 'Enviar respostas') + '</button></div>';
+        app.querySelectorAll("[data-k]").forEach(function(b){ b.onclick = function(){ resp[i] = +b.dataset.k; render(); }; });
+        if (i > 0) $("#bAntQ").onclick = function(){ i--; render(); };
+        $("#bQ").onclick = function(){
+          if (i + 1 < qs.length){ i++; render(); window.scrollTo(0,0); return; }
+          enviar();
+        };
+      }
+      function enviar(){
+        $("#bQ").disabled = true; $("#bQ").textContent = "Corrigindo...";
+        capApi("corrigir", { tentativa_id:r.tentativa_id, respostas:resp }).then(function(res){
+          if (!res || !res.ok){ toast((res && res.erro) || "Não foi possível corrigir."); $("#bQ").disabled = false; $("#bQ").textContent = "Enviar respostas"; return; }
+          var sv = srv[c.slug] || (srv[c.slug] = {});
+          sv.final_tentativas = (sv.final_tentativas || 0) + 1; sv.ultima_final = { acertos:res.acertos, total:res.total, aprovado:res.aprovado };
+          if (res.certificado) sv.certificado = res.certificado;
+          app.innerHTML = '<section class="lesson" style="text-align:center"><div class="kicker">Resultado</div><h1 style="font-size:2.4rem;margin:8px 0">' + res.acertos + '/' + res.total + '</h1>' +
+            '<p>' + (res.aprovado ? 'Parabéns! Você foi aprovado e seu certificado foi gerado com os dados do seu cadastro.' : 'Você precisa acertar pelo menos ' + res.minimo + '. Revise as aulas e tente de novo: a próxima tentativa terá outras perguntas e as respostas em outra ordem.') + '</p></section>' +
+            '<div class="navbtns">' + (res.aprovado ? '<button class="btn pri" id="bR">Ver certificado ★</button>' : '<button class="btn sec2" id="bV">Revisar as aulas</button><button class="btn pri" id="bT">Tentar de novo</button>') + '</div>';
+          if (res.aprovado) $("#bR").onclick = function(){ location.hash = "#/certificado/" + c.id; };
+          else { $("#bV").onclick = function(){ location.hash = "#/curso/" + c.id; }; $("#bT").onclick = function(){ telaQuizServidor(c); }; }
+          window.scrollTo(0,0);
+        }).catch(function(){ toast("Sem conexão. Tente enviar de novo."); $("#bQ").disabled = false; $("#bQ").textContent = "Enviar respostas"; });
+      }
+      render(); window.scrollTo(0,0);
+    }).catch(function(){ app.innerHTML = voltar + '<p class="empty">Sem conexão. Tente novamente.</p>'; });
+  }
+
+  function telaCertServidor(c, d){
+    var data = new Date(d.emitido_em).toLocaleDateString("pt-BR", { day:"2-digit", month:"long", year:"numeric" });
+    var linha = [d.cpf ? "CPF " + esc(d.cpf) : "", esc(d.funcao || ""), esc(d.cidade || "")].filter(Boolean).join(" · ");
+    app.innerHTML = '<button class="back" onclick="location.hash=\'#/curso/' + c.id + '\'">‹ ' + esc(c.titulo) + '</button>' +
+      '<section class="cert"><img src="logo-triva.png" alt="TRIVA Soluções Operacionais" width="150" height="40"><div class="k">Certificado de conclusão</div>' +
+      '<h1>' + esc(d.curso_titulo) + '</h1><p>Certificamos que</p><div class="nome">' + esc(d.nome) + '</div>' +
+      (linha ? '<p style="font-size:.85rem;color:#5F646B;margin-top:8px">' + linha + '</p>' : '') +
+      '<p>concluiu o curso <b>' + esc(d.curso_titulo) + '</b> do programa TRIVA Capacita' + (d.carga_horaria ? ', com carga horária de <b>' + esc(d.carga_horaria) + '</b>' : '') + (d.total ? ', com ' + d.nota + '% de aproveitamento nos exercícios' : '') + ', em ' + data + '.</p>' +
+      '<p style="margin-top:22px"><b>Nanderson Meurer Michels</b><br><span style="font-size:.8rem;color:#5F646B">Gestor Administrativo · TRIVA Soluções Operacionais</span></p>' +
+      '<div class="rod"><span>Código de validação: <b>' + esc(d.codigo) + '</b></span><span>Valide em nandersonmm-collab.github.io/nmmcadastro/validar.html</span></div></section>' +
+      '<div class="navbtns noprint"><button class="btn pri" id="bPrint">Salvar / imprimir certificado</button></div>' +
+      '<p class="noprint" style="font-size:.8rem;color:var(--muted);text-align:center">No celular, escolha "Salvar como PDF" na tela de impressão. Qualquer empresa pode conferir o certificado pelo código.</p>';
+    $("#bPrint").onclick = function(){ window.print(); };
+    window.scrollTo(0,0);
+  }
+
   function telaCert(c){
+    if (!usuario.admin){
+      var sv = srv[c.slug];
+      if (!sv || !sv.certificado){ location.hash = "#/curso/" + c.id; return; }
+      return telaCertServidor(c, sv.certificado);
+    }
     var e = estado(c); if (!e.concluido){ location.hash = "#/curso/" + c.id; return; }
     var p = pc(c.id), d = new Date(p.concluido || Date.now());
     var data = d.toLocaleDateString("pt-BR", { day:"2-digit", month:"long", year:"numeric" });
