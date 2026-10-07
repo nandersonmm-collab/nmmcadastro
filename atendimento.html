@@ -1,0 +1,699 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Atendimento ao Cliente · TRIVA Capacita</title>
+<link rel="manifest" href="contato.webmanifest">
+<meta name="theme-color" content="#0B1F2A">
+<link rel="icon" href="icone-192.png">
+<link rel="apple-touch-icon" href="icone-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: trilha lateral de módulos + coluna de leitura; cada passo é uma ficha com ilustração e texto. Identidade TRIVA (navy + laranja, Montserrat). */
+:root{
+  --bg:#FAF8F5; --surface:#FFFFFF; --surface2:#F2EDE6; --ink:#0B1F2A; --muted:#5F646B; --line:#E4DED6;
+  --navy:#0B1F2A; --orange:#F58220; --accent:#C8600E; --accent-soft:#FCEBDA;
+  --teal:#1F7A3A; --teal-soft:#DCF1E2; --good:#1F7A3A; --bad:#B3261E; --bad-soft:#F8DEDB;
+  --ill:#EEE8E0;
+  --display:"Montserrat", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --body:"Montserrat", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --r:14px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0A1821; --surface:#11242F; --surface2:#0E1F29; --ink:#EEF1F3; --muted:#A5ADB4; --line:#203642;
+  --accent:#FF9A45; --accent-soft:#3A2614; --teal:#6FD08A; --teal-soft:#173424; --good:#6FD08A; --bad:#FF8A80; --bad-soft:#3D1C1A;
+  --ill:#D9DEE2; color-scheme:dark}}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6;margin:0}
+h1,h2,h3{font-family:var(--display);line-height:1.2;text-wrap:balance;margin:0}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
+
+header.top{background:var(--navy);color:#fff;border-bottom:3px solid var(--orange);position:sticky;top:0;z-index:10;padding-top:env(safe-area-inset-top,0px)}
+.top-in{max-width:1180px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:12px 16px;flex-wrap:wrap}
+.top-in img{height:28px;width:auto}
+.top-in .t{font-weight:700;padding-left:12px;border-left:1px solid rgba(255,255,255,.25);white-space:nowrap}
+.prog{flex:1;min-width:170px;display:flex;align-items:center;gap:10px;font-size:13px;color:rgba(255,255,255,.75)}
+.bar{flex:1;height:8px;border-radius:99px;background:rgba(255,255,255,.18);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--orange);width:0;transition:width .4s}
+.toplink{color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.3);border-radius:8px;padding:6px 10px;font-size:.8rem;font-weight:600;white-space:nowrap}
+
+.wrap{max-width:1180px;margin:0 auto;padding-inline:16px;padding-block:24px 64px;display:grid;grid-template-columns:270px minmax(0,1fr);gap:32px}
+nav.trail{position:sticky;top:84px;align-self:start;display:flex;flex-direction:column;gap:4px}
+.trail-h{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:0 0 6px 10px}
+.trail button{display:grid;grid-template-columns:30px 1fr;gap:10px;align-items:center;text-align:left;background:none;border:0;border-radius:10px;padding:8px 10px;color:var(--ink);font-size:14px;line-height:1.3}
+.trail button:hover{background:var(--surface)}
+.trail button[aria-current="true"]{background:var(--surface);box-shadow:inset 3px 0 0 var(--orange);font-weight:700}
+.num{width:28px;height:28px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:12.5px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums}
+.done .num{background:var(--teal);border-color:var(--teal);color:var(--surface)}
+.lockd .num{border-style:dashed}
+
+main{min-width:0}
+.hero{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:24px;align-items:center;margin-bottom:28px}
+.hero.solo{grid-template-columns:minmax(0,1fr)}
+.eyebrow{font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--accent)}
+.hero h1{font-size:clamp(28px,4.2vw,42px);font-weight:800;margin:6px 0 12px}
+.lead{font-size:17.5px;color:var(--muted);max-width:62ch;margin:0}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.chip{font-size:13px;padding:4px 11px;border-radius:99px;background:var(--surface);border:1px solid var(--line);color:var(--muted)}
+.hero-ill{background:var(--ill);border-radius:18px;overflow:hidden}
+.hero-ill svg,.step .ill svg{display:block;width:100%;height:auto}
+
+.player{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;background:var(--navy);color:#fff;border-radius:var(--r);padding:14px 16px;margin-bottom:28px;border-left:6px solid var(--orange)}
+.play{width:46px;height:46px;border-radius:50%;border:0;background:var(--orange);display:grid;place-items:center;flex:none}
+.play svg{width:20px;height:20px}
+.player-t{flex:1;min-width:150px;line-height:1.3}
+.player-t b{display:block;font-size:15px}
+.player-t span{font-size:13px;opacity:.8}
+.pbtn{background:transparent;border:1.5px solid rgba(255,255,255,.6);color:#fff;border-radius:99px;padding:5px 12px;font-size:13px;font-weight:600}
+.pbtn[aria-pressed="true"]{background:var(--orange);border-color:var(--orange);color:#0B1F2A}
+
+.steps{display:flex;flex-direction:column;gap:18px}
+.step{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:22px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;transition:box-shadow .3s,border-color .3s}
+.step.reading{border-color:var(--orange);box-shadow:0 0 0 3px var(--accent-soft)}
+.step .ill{background:var(--ill);border-radius:12px;overflow:hidden;align-self:start}
+.step-b{min-width:0;display:flex;flex-direction:column;gap:8px;padding-block:4px}
+.step-n{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--teal)}
+.step h3{font-size:20px;font-weight:700}
+.step p{margin:0;max-width:64ch}
+.say{display:grid;gap:6px;margin-top:4px}
+.say div{font-size:14.5px;padding:7px 12px;border-radius:10px;line-height:1.45}
+.say .y{background:var(--teal-soft)} .say .n{background:var(--bad-soft)}
+.say b{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;margin-right:6px}
+.say .y b{color:var(--good)} .say .n b{color:var(--bad)}
+.tip{font-size:14.5px;background:var(--accent-soft);border-radius:10px;padding:8px 12px}
+.listen{align-self:flex-start;background:none;border:1px solid var(--line);color:var(--muted);border-radius:99px;padding:4px 12px 4px 9px;font-size:13px;display:inline-flex;gap:6px;align-items:center}
+.listen:hover{color:var(--ink);border-color:var(--muted)}
+
+.block{margin-top:32px}
+.block h2{font-size:24px;font-weight:800;margin-bottom:12px}
+.case{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px;display:grid;gap:10px}
+.case .q{font-size:17px}
+.case details{border-top:1px solid var(--line);padding-top:10px}
+.case summary{cursor:pointer;font-weight:700;color:var(--teal)}
+.keys{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;padding:0;margin:0;list-style:none}
+.keys li{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px 12px 40px;position:relative;font-size:15px}
+.keys li::before{content:"";position:absolute;left:14px;top:17px;width:14px;height:14px;border-radius:50%;background:var(--teal);box-shadow:inset 0 0 0 4px var(--teal-soft)}
+
+.quiz{display:grid;gap:14px}
+fieldset.qa{margin:0;min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+fieldset.qa legend{font-weight:600;font-size:16px;padding:0;margin-bottom:10px;float:left;width:100%}
+.opts{display:grid;gap:8px;clear:both}
+.opt{display:flex;gap:10px;align-items:flex-start;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:9px 12px;font-size:15px;cursor:pointer}
+.opt input{margin-top:4px;accent-color:var(--orange);flex:none}
+.opt:has(input:checked){border-color:var(--orange)}
+.opts .opt.ok{border-color:var(--good);background:var(--teal-soft)}
+.opts .opt.no{border-color:var(--bad);background:var(--bad-soft)}
+.block,#result{scroll-margin-top:90px}
+.fb{font-size:14px;margin-top:8px;color:var(--muted)}
+.g{color:var(--good)} .b{color:var(--bad)}
+.test-bar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:16px}
+.sticky-bar{position:sticky;bottom:0;background:var(--bg);padding-block:12px calc(12px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);justify-content:space-between;z-index:5}
+.pill{font-size:13.5px;font-weight:700;padding:5px 12px;border-radius:99px;background:var(--teal-soft);color:var(--good)}
+.pill.b{color:var(--bad);background:var(--bad-soft)}
+.note{font-size:14px;color:var(--muted)}
+.err{background:var(--bad-soft);color:var(--bad);border-radius:10px;padding:10px 12px;font-size:14.5px;font-weight:600}
+
+.nav-foot{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:36px;padding-top:20px;border-top:1px solid var(--line)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:10px;padding:12px 18px;font-weight:700;font-size:15px;text-decoration:none}
+.btn.pri{background:var(--orange);color:#0B1F2A}
+.btn.sec{background:var(--surface);border:1px solid var(--line);color:var(--ink)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.score{font-family:var(--display);font-size:44px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1}
+.miss{list-style:none;padding:0;margin:12px 0;display:grid;gap:8px}
+.linkbtn{background:none;border:0;padding:0;color:var(--accent);font-weight:700;text-decoration:underline;text-underline-offset:3px;text-align:left}
+.cert-wrap{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px;margin-bottom:12px}
+.cert-wrap img{display:block;width:100%;height:auto;border-radius:6px}
+.mono{font-variant-numeric:tabular-nums;letter-spacing:.04em}
+.center{max-width:520px;margin:40px auto;text-align:center;display:grid;gap:14px;justify-items:center}
+
+@media (max-width:900px){
+  .wrap{grid-template-columns:minmax(0,1fr);gap:16px}
+  nav.trail{position:static;flex-direction:row;overflow-x:auto;gap:6px;padding-bottom:6px}
+  .trail-h{display:none}
+  .trail button{grid-template-columns:28px auto;white-space:nowrap;background:var(--surface);border:1px solid var(--line)}
+  .hero{grid-template-columns:minmax(0,1fr)}
+  .hero-ill{max-width:420px}
+}
+@media (max-width:640px){
+  .step{grid-template-columns:minmax(0,1fr)}
+  .prog{order:3;flex-basis:100%}
+}
+@media print{
+  header.top,nav.trail,.noprint{display:none!important}
+  .wrap{display:block;padding:0}
+  .cert-wrap{border:0;padding:0}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <img src="logo-triva.png" alt="TRIVA" width="104" height="28">
+    <span class="t">Capacita</span>
+    <div class="prog"><span id="progTxt">Carregando…</span><div class="bar"><i id="progBar"></i></div></div>
+    <a class="toplink" href="capacita.html">‹ Meus cursos</a>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="trail" id="trail" aria-label="Módulos do curso"></nav>
+  <main id="main"><p class="note">Carregando o curso…</p></main>
+</div>
+
+<script>
+/* ================= ILUSTRAÇÕES ================= */
+const SK=['#E9B48A','#C68A5E','#8D5A3B','#F2CBA6'], HR=['#3B2A20','#1E1A18','#7A4A28','#C9A063'];
+function person(x,o={}){
+  const att=o.role==='att', s=o.skin||SK[0], h=o.hair||HR[0];
+  const shirt=o.shirt||(att?'#14324A':'#2C8C80');
+  const f=o.flip?-1:1, mood=o.mood||'smile';
+  let a='';
+  const arm=(x1,y1,x2,y2)=>`<path d="M${x1} ${y1} L${x2} ${y2}" stroke="${shirt}" stroke-width="10" stroke-linecap="round"/><circle cx="${x2}" cy="${y2}" r="5.5" fill="${s}"/>`;
+  // braço esquerdo sempre para baixo
+  a+=arm(x-19*f,124,x-26*f,160);
+  const R={down:[x+26*f,160],wave:[x+38*f,90],point:[x+50*f,116],open:[x+44*f,140],phone:[x+12*f,96],hold:[x+34*f,140]}[o.arm||'down'];
+  a+=arm(x+19*f,124,R[0],R[1]);
+  if(o.arm==='open') a+=arm(x-19*f,124,x-44*f,140);
+  let mouth={smile:`<path d="M${x-6} 99 Q${x} 105 ${x+6} 99" stroke="#5A2E1E" stroke-width="2" fill="none" stroke-linecap="round"/>`,
+    neutral:`<path d="M${x-5} 101 L${x+5} 101" stroke="#5A2E1E" stroke-width="2" stroke-linecap="round"/>`,
+    sad:`<path d="M${x-6} 103 Q${x} 98 ${x+6} 103" stroke="#5A2E1E" stroke-width="2" fill="none" stroke-linecap="round"/>`,
+    angry:`<path d="M${x-6} 103 Q${x} 98 ${x+6} 103" stroke="#5A2E1E" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M${x-10} 84 L${x-3} 87 M${x+10} 84 L${x+3} 87" stroke="#3B2A20" stroke-width="2.2" stroke-linecap="round"/>`,
+    open:`<ellipse cx="${x}" cy="101" rx="4.5" ry="3.5" fill="#5A2E1E"/>`}[mood];
+  const badge=att?`<rect x="${x+5*f-(f<0?9:0)}" y="128" width="9" height="6" rx="1.5" fill="#F58220"/><path d="M${x-8} 112 L${x} 122 L${x+8} 112" stroke="#fff" stroke-width="2" fill="none" opacity=".75"/>`:'';
+  const legs=`<rect x="${x-17}" y="164" width="14" height="8" rx="3" fill="#2B3440"/><rect x="${x+3}" y="164" width="14" height="8" rx="3" fill="#2B3440"/>`;
+  return `<g>${legs}<path d="M${x-23} 168 L${x-21} 120 Q${x} 106 ${x+21} 120 L${x+23} 168 Z" fill="${shirt}"/>${badge}${a}
+  <rect x="${x-5}" y="104" width="10" height="8" fill="${s}"/>
+  <circle cx="${x}" cy="92" r="17" fill="${s}"/>
+  <path d="M${x-17} 90 Q${x-16} 72 ${x} 73 Q${x+17} 72 ${x+17} 90 Q${x+9} 80 ${x-4} 81 Q${x-12} 82 ${x-17} 90Z" fill="${h}"/>
+  <circle cx="${x-6}" cy="92" r="2" fill="#2B2420"/><circle cx="${x+6}" cy="92" r="2" fill="#2B2420"/>${mouth}
+  ${att?`<text x="${x}" y="152" text-anchor="middle" font-size="7" font-weight="700" fill="#F58220" font-family="Figtree,sans-serif" letter-spacing=".5">TRIVA</text>`:''}</g>`;
+}
+function bubble(x,y,w,txt,o={}){
+  const h=o.h||30, tail=o.tail||'left', fill=o.fill||'#FFFFFF', col=o.color||'#13283B';
+  const tx=tail==='left'?x+14:x+w-14;
+  const t=tail==='none'?'':`<path d="M${tx-6} ${y+h-1} L${tx+(tail==='left'?-8:8)} ${y+h+10} L${tx+6} ${y+h-1}Z" fill="${fill}"/>`;
+  const strike=o.strike?`<path d="M${x+8} ${y+h/2} L${x+w-8} ${y+h/2}" stroke="#C2453A" stroke-width="2.5"/>`:'';
+  return `<g><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${h/2}" fill="${fill}" stroke="${o.stroke||'#C9D5DE'}" stroke-width="1.2"/>${t}
+  <text x="${x+w/2}" y="${y+h/2+5}" text-anchor="middle" font-size="${o.fs||13}" font-weight="700" fill="${col}" font-family="Figtree,sans-serif">${txt}</text>${strike}</g>`;
+}
+const I={
+  heart:(x,y,s=1)=>`<path transform="translate(${x} ${y}) scale(${s})" d="M0 6 C0 -2 10 -2 10 5 C10 -2 20 -2 20 6 C20 13 10 18 10 20 C10 18 0 13 0 6Z" fill="#E0574A"/>`,
+  star:(x,y,s=1,c='#F58220')=>`<path transform="translate(${x} ${y}) scale(${s})" d="M10 0 L13 7 L20 7.5 L14.5 12 L16.5 19 L10 15 L3.5 19 L5.5 12 L0 7.5 L7 7Z" fill="${c}"/>`,
+  check:(x,y,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><circle cx="12" cy="12" r="12" fill="#2C8C80"/><path d="M6.5 12.5 L10.5 16.5 L17.5 8.5" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>`,
+  cross:(x,y,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><circle cx="12" cy="12" r="12" fill="#C2453A"/><path d="M8 8 L16 16 M16 8 L8 16" stroke="#fff" stroke-width="3" stroke-linecap="round"/></g>`,
+  clock:(x,y,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><circle cx="18" cy="18" r="17" fill="#fff" stroke="#14324A" stroke-width="3"/><path d="M18 8 L18 18 L25 22" stroke="#F58220" stroke-width="3" fill="none" stroke-linecap="round"/></g>`,
+  ear:(x,y,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><path d="M14 2 C4 2 2 12 4 18 C6 24 10 24 10 30 C10 36 18 36 18 30 C18 26 24 24 24 14 C24 6 20 2 14 2Z" fill="#E9B48A" stroke="#14324A" stroke-width="2"/><path d="M10 14 C10 8 18 8 18 14 C18 18 14 18 14 22" stroke="#14324A" stroke-width="2" fill="none"/><path d="M30 8 Q36 16 30 24 M35 4 Q44 16 35 28" stroke="#2C8C80" stroke-width="2.5" fill="none" stroke-linecap="round"/></g>`,
+  phone:(x,y,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><rect x="0" y="0" width="34" height="60" rx="7" fill="#14324A"/><rect x="3" y="7" width="28" height="44" rx="2" fill="#F2F5F7"/><circle cx="17" cy="55" r="2.2" fill="#F58220"/></g>`,
+  chat:(x,y)=>`<g transform="translate(${x} ${y})"><rect x="0" y="0" width="74" height="124" rx="12" fill="#14324A"/><rect x="5" y="12" width="64" height="100" rx="4" fill="#ECF3F1"/><rect x="10" y="20" width="40" height="14" rx="7" fill="#fff"/><rect x="24" y="40" width="40" height="14" rx="7" fill="#BFE6DA"/><rect x="10" y="60" width="46" height="14" rx="7" fill="#fff"/><rect x="20" y="80" width="44" height="14" rx="7" fill="#BFE6DA"/><circle cx="37" cy="117" r="2.5" fill="#F58220"/></g>`,
+  handset:(x,y,s=1)=>`<path transform="translate(${x} ${y}) scale(${s})" d="M4 2 L11 1 L14 9 L10 12 C12 17 15 20 20 22 L23 18 L31 21 L30 28 C30 31 27 32 24 32 C12 31 1 20 0 8 C0 5 1 2 4 2Z" fill="#14324A"/>`,
+  lock:(x,y,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><path d="M8 18 V11 C8 3 26 3 26 11 V18" stroke="#14324A" stroke-width="4" fill="none"/><rect x="2" y="17" width="30" height="24" rx="5" fill="#F58220"/><circle cx="17" cy="27" r="3.5" fill="#14324A"/><rect x="15.5" y="28" width="3" height="7" fill="#14324A"/></g>`,
+  gift:(x,y,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><rect x="0" y="12" width="36" height="28" rx="3" fill="#2C8C80"/><rect x="-2" y="6" width="40" height="9" rx="2" fill="#3BA596"/><rect x="15" y="6" width="6" height="34" fill="#F58220"/><path d="M18 6 C10 -4 4 4 18 6 C32 4 26 -4 18 6Z" fill="none" stroke="#F58220" stroke-width="3"/></g>`,
+  shelf:(x,y,empty=false)=>{let g=`<g transform="translate(${x} ${y})"><rect x="0" y="0" width="92" height="132" rx="4" fill="#C9D5DE"/><rect x="4" y="4" width="84" height="124" fill="#F4F7F9"/>`;
+    const C=['#F58220','#2C8C80','#C2453A','#14324A','#7FA7C9'];
+    [0,1,2,3].forEach(r=>{const yy=8+r*31;g+=`<rect x="4" y="${yy+24}" width="84" height="4" fill="#9FB1BF"/>`;
+      if(!(empty&&r===1)) for(let i=0;i<5;i++) g+=`<rect x="${9+i*16}" y="${yy+(i%2?6:2)}" width="12" height="${i%2?18:22}" rx="2" fill="${C[(i+r)%5]}"/>`;
+      else g+=`<text x="46" y="${yy+19}" text-anchor="middle" font-size="9" font-weight="700" fill="#C2453A" font-family="Figtree,sans-serif">EM FALTA</text>`;});
+    return g+'</g>';},
+  register:(x,y)=>`<g transform="translate(${x} ${y})"><rect x="0" y="40" width="110" height="52" rx="4" fill="#14324A"/><rect x="0" y="34" width="110" height="10" rx="3" fill="#24465F"/><rect x="62" y="2" width="38" height="28" rx="3" fill="#2B3440"/><rect x="65" y="5" width="32" height="18" rx="2" fill="#8FE0CF"/><rect x="78" y="30" width="6" height="6" fill="#2B3440"/><text x="81" y="18" text-anchor="middle" font-size="8" font-weight="700" fill="#14324A" font-family="Figtree,sans-serif">R$</text><rect x="10" y="22" width="30" height="14" rx="2" fill="#F58220"/></g>`,
+  counter:(x,y,w=140,label='')=>`<g transform="translate(${x} ${y})"><rect x="0" y="0" width="${w}" height="12" rx="3" fill="#24465F"/><rect x="6" y="12" width="${w-12}" height="44" fill="#14324A"/>${label?`<text x="${w/2}" y="40" text-anchor="middle" font-size="11" font-weight="700" fill="#F58220" font-family="Figtree,sans-serif" letter-spacing="1">${label}</text>`:''}</g>`,
+  cart:(x,y,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><path d="M0 4 L10 4 L16 32 L50 32 L56 12 L13 12" stroke="#14324A" stroke-width="3.5" fill="none" stroke-linejoin="round"/><rect x="17" y="2" width="12" height="12" rx="2" fill="#F58220"/><rect x="31" y="0" width="10" height="14" rx="2" fill="#2C8C80"/><circle cx="20" cy="40" r="4" fill="#14324A"/><circle cx="46" cy="40" r="4" fill="#14324A"/></g>`,
+  waves:(x,y)=>`<g transform="translate(${x} ${y})" stroke="#2C8C80" stroke-width="3" fill="none" stroke-linecap="round"><path d="M0 20 Q8 0 16 20 T32 20 T48 20"/><path d="M0 34 Q8 26 16 34 T32 34 T48 34" stroke="#F58220"/></g>`,
+  bread:(x,y)=>`<g transform="translate(${x} ${y})"><ellipse cx="22" cy="14" rx="22" ry="12" fill="#D9A15A"/><path d="M10 8 L16 18 M20 5 L26 16 M30 7 L35 15" stroke="#A86F2E" stroke-width="2.5" stroke-linecap="round"/></g>`,
+  ticket:(x,y,n='27')=>`<g transform="translate(${x} ${y})"><rect x="0" y="0" width="40" height="30" rx="4" fill="#fff" stroke="#F58220" stroke-width="2"/><text x="20" y="21" text-anchor="middle" font-size="15" font-weight="800" fill="#14324A" font-family="Figtree,sans-serif">${n}</text></g>`,
+  sparkle:(x,y,s=1,c='#F58220')=>`<path transform="translate(${x} ${y}) scale(${s})" d="M8 0 L10 6 L16 8 L10 10 L8 16 L6 10 L0 8 L6 6Z" fill="${c}"/>`,
+  board:(x,y,items)=>{let g=`<g transform="translate(${x} ${y})"><rect x="0" y="0" width="96" height="${items.length*24+18}" rx="6" fill="#fff" stroke="#C9D5DE"/><rect x="34" y="-5" width="28" height="10" rx="3" fill="#14324A"/>`;
+    items.forEach((t,i)=>{g+=`<g transform="translate(10 ${14+i*24})"><rect width="14" height="14" rx="3" fill="#2C8C80"/><path d="M3 7 L6 10 L11 4" stroke="#fff" stroke-width="2" fill="none"/><text x="22" y="12" font-size="11" font-weight="600" fill="#13283B" font-family="Figtree,sans-serif">${t}</text></g>`});return g+'</g>';},
+  arrow:(x1,y1,x2,y2)=>`<path d="M${x1} ${y1} Q${(x1+x2)/2} ${Math.min(y1,y2)-24} ${x2} ${y2}" stroke="#F58220" stroke-width="3" fill="none" stroke-dasharray="6 5" stroke-linecap="round"/><circle cx="${x2}" cy="${y2}" r="4.5" fill="#F58220"/>`,
+  meat:(x,y)=>`<g transform="translate(${x} ${y})"><path d="M2 14 C0 2 22 -2 30 6 C38 14 28 26 16 24 C8 23 3 20 2 14Z" fill="#C2453A"/><path d="M8 12 C10 6 22 6 24 12" stroke="#F3C9C2" stroke-width="3" fill="none"/></g>`,
+  nophone:(x,y)=>`<g transform="translate(${x} ${y})"><rect x="14" y="6" width="26" height="44" rx="5" fill="#14324A"/><rect x="17" y="11" width="20" height="32" rx="2" fill="#F2F5F7"/><circle cx="27" cy="28" r="26" fill="none" stroke="#C2453A" stroke-width="5"/><path d="M9 46 L45 10" stroke="#C2453A" stroke-width="5"/></g>`,
+};
+const floor=`<rect x="0" y="171" width="320" height="29" fill="#000" opacity=".06"/>`;
+const svg=(inner,label)=>`<svg viewBox="0 0 320 200" role="img" aria-label="${label}">${floor}${inner}</svg>`;
+
+/* ================= CONTEÚDO ================= */
+const M=[
+{t:"Fundamentos do atendimento",min:45,
+ lead:"Atender bem é cuidar da pessoa que está na sua frente. Neste módulo você entende por que cada contato com o cliente conta para a loja, para a equipe e para você.",
+ hero:()=>person(110,{role:'att',arm:'open'})+person(220,{mood:'smile',skin:SK[1],hair:HR[1],flip:true})+I.heart(150,30,1.4)+I.sparkle(130,56,.8)+I.sparkle(185,52,.7,'#2C8C80'),
+ steps:[
+  {h:"O que é atendimento ao cliente",
+   p:"Atendimento é tudo o que o cliente vive desde que chega até ir embora: como é recebido, se encontra o que procura, se é ouvido e se sai satisfeito. Quem atende representa a empresa inteira. Para o cliente, naquele momento, você é o mercado, a padaria ou o açougue.",
+   tip:"O cliente não lembra do nome do gerente. Ele lembra de como foi tratado por quem estava no balcão.",
+   ill:()=>person(100,{role:'att',arm:'point'})+person(220,{skin:SK[3],hair:HR[3],flip:true})+bubble(170,34,110,'Bem-vindo!',{tail:'none'})+I.heart(148,74)},
+  {h:"Cliente externo e cliente interno",
+   p:"Cliente externo é quem compra. Cliente interno é o colega, o líder, o setor vizinho que depende do seu trabalho. Quando o repositor deixa a gôndola organizada, ele está atendendo o operador de caixa e o cliente ao mesmo tempo. Uma equipe que se ajuda atende melhor quem está do lado de fora.",
+   tip:"Trate o colega com a mesma educação que você trata o cliente. O clima da equipe aparece no atendimento.",
+   ill:()=>person(62,{role:'att',arm:'hold'})+person(160,{role:'att',skin:SK[2],hair:HR[1],flip:true,arm:'hold'})+person(262,{skin:SK[0],hair:HR[2],flip:true,shirt:'#7FA7C9'})+bubble(80,30,150,'Pode contar comigo',{tail:'none',fs:12})+I.arrow(85,110,135,110)},
+  {h:"Os momentos da verdade",
+   p:"Momento da verdade é cada ponto de contato em que o cliente forma uma opinião: a saudação na entrada, a resposta a uma dúvida, a espera na fila, a despedida. Um único momento ruim pode apagar vários bons. Por isso cada detalhe importa, até um simples olhar quando o cliente se aproxima.",
+   tip:"Pense no atendimento como uma corrente. Ela é tão forte quanto o elo mais fraco.",
+   ill:()=>person(120,{skin:SK[1],hair:HR[0],mood:'open'})+I.clock(180,40,1.3)+I.star(240,100)+I.star(262,78,.8)+I.star(232,64,.6)},
+  {h:"Experiência que traz o cliente de volta",
+   p:"Cliente bem atendido volta, compra mais e indica para a família e os amigos. Cliente mal atendido conta para muito mais gente do que o satisfeito, principalmente nas redes sociais. Bom atendimento não é favor: é o que mantém a loja cheia e o seu trabalho valorizado.",
+   tip:"Um cliente fiel vale muito mais do que uma venda isolada.",
+   ill:()=>person(110,{skin:SK[3],hair:HR[2],arm:'hold'})+I.cart(140,128,.9)+[0,1,2,3,4].map(i=>I.star(178+i*24,40,.9)).join('')+I.heart(210,76,1.2)}
+ ],
+ caso:{q:"Uma cliente entra na loja, olha em volta e parece perdida. Dois funcionários estão conversando perto dela e não percebem. O que esse momento comunica e o que deveria acontecer?",
+  r:"Comunica descaso, mesmo sem intenção. O certo é interromper a conversa, olhar para a cliente, cumprimentar e perguntar se pode ajudar. Os primeiros segundos definem como ela vai enxergar a loja inteira."},
+ keys:["Quem atende representa a empresa inteira","Colegas também são clientes (internos)","Cada contato é um momento da verdade","Cliente bem atendido volta e indica"]},
+
+{t:"A primeira impressão",min:40,
+ lead:"O cliente decide em poucos segundos se foi bem recebido. Aparência, postura e uma saudação sincera abrem caminho para todo o resto do atendimento.",
+ hero:()=>person(120,{role:'att',arm:'wave'})+person(220,{skin:SK[2],hair:HR[1],flip:true})+bubble(150,30,110,'Bom dia!',{tail:'left'}),
+ steps:[
+  {h:"Apresentação pessoal",
+   p:"Uniforme limpo e passado, crachá visível, cabelo preso quando a função exige, unhas curtas e higiene em dia. Em padaria e açougue, touca, avental e luvas fazem parte do atendimento: mostram cuidado com o alimento do cliente. Evite perfume forte e excesso de acessórios.",
+   tip:"Antes de começar o turno, faça um check rápido no espelho: uniforme, crachá, cabelo, mãos.",
+   ill:()=>person(100,{role:'att',arm:'down'})+I.board(170,40,['Uniforme','Crachá','Cabelo','Higiene'])+I.sparkle(60,60,.9)+I.sparkle(136,48,.7,'#2C8C80')},
+  {h:"Postura e contato visual",
+   p:"Fique de frente para o cliente, com o corpo ereto e os braços soltos. Olhe nos olhos de forma natural. Não atenda encostado na parede, de braços cruzados, mexendo no celular ou de costas. A postura diz se você está disponível antes mesmo de você falar.",
+   tip:"Se estiver ocupado, faça contato visual e diga: \"Já vou te atender\". O cliente se sente visto.",
+   ill:()=>person(100,{role:'att',arm:'down'})+person(220,{skin:SK[0],hair:HR[3],flip:true})+`<path d="M128 90 L192 90" stroke="#F58220" stroke-width="2.5" stroke-dasharray="4 5"/>`+`<circle cx="160" cy="90" r="11" fill="#fff" stroke="#14324A" stroke-width="2"/><circle cx="160" cy="90" r="4.5" fill="#14324A"/>`},
+  {h:"Saudação com sorriso",
+   p:"Cumprimente sempre: \"Bom dia\", \"Boa tarde\", \"Boa noite\". O sorriso precisa ser verdadeiro, e ele aparece também na voz. Cumprimente o cliente mesmo quando ele não cumprimentar você. Em atendimento, quem cumprimenta primeiro é sempre o profissional.",
+   say:{y:"Bom dia! Tudo bem com o senhor?",n:"Fala. / O que é?"},
+   ill:()=>person(110,{role:'att',arm:'wave'})+person(225,{skin:SK[1],hair:HR[0],flip:true,mood:'smile'})+bubble(126,32,120,'Boa tarde!',{tail:'left'})+I.sparkle(250,44,.8)},
+  {h:"Coloque-se à disposição",
+   p:"Depois da saudação, mostre que está ali para ajudar: \"Em que posso ajudar?\" ou \"Está procurando algo em especial?\". Se fizer sentido, diga seu nome. Use o tratamento \"senhor\" ou \"senhora\" até o cliente indicar que prefere outra forma.",
+   say:{y:"Meu nome é Carla. Em que posso ajudar?",n:"Quer alguma coisa?"},
+   ill:()=>person(110,{role:'att',arm:'open',skin:SK[2],hair:HR[1]})+person(225,{skin:SK[3],hair:HR[2],flip:true,shirt:'#7FA7C9'})+bubble(118,30,140,'Posso ajudar?',{tail:'left'})}
+ ],
+ caso:{q:"Você está repondo uma gôndola e um cliente para do seu lado, olhando para você. O que fazer?",
+  r:"Pare a reposição, vire-se para ele, sorria e cumprimente: \"Boa tarde! Posso ajudar?\". A tarefa espera; o cliente não. Depois volte ao trabalho."},
+ keys:["Uniforme e higiene também atendem","Corpo de frente, olhar nos olhos","Quem cumprimenta primeiro é você","Ofereça ajuda logo após a saudação"]},
+
+{t:"Comunicação que aproxima",min:60,
+ lead:"Comunicar bem é ouvir mais do que falar, escolher palavras que resolvem e cuidar do tom de voz e do corpo. Aqui você aprende a falar de um jeito que o cliente entende e confia.",
+ hero:()=>person(100,{role:'att',mood:'smile'})+person(225,{skin:SK[0],hair:HR[2],flip:true,mood:'open',arm:'point'})+I.ear(140,40,1.1)+bubble(178,28,72,'...',{tail:'right'}),
+ steps:[
+  {h:"Escuta ativa",
+   p:"Ouça até o fim, sem interromper e sem já pensar na resposta. Mostre que está acompanhando: acene com a cabeça, diga \"entendi\", \"certo\". Preste atenção no que o cliente diz e também no que ele demonstra, como pressa, dúvida ou irritação. Muitas vezes o cliente só quer ser ouvido.",
+   tip:"Escutar não é esperar a sua vez de falar. É entender o que a pessoa precisa.",
+   ill:()=>person(95,{role:'att',mood:'neutral'})+person(230,{skin:SK[2],hair:HR[0],flip:true,mood:'open',arm:'point'})+bubble(180,30,80,'blá blá',{tail:'right',fs:12})+I.ear(128,40,.9)},
+  {h:"Linguagem positiva",
+   p:"Troque frases que fecham portas por frases que mostram solução. Em vez de dizer o que não pode, diga o que pode fazer. Evite gírias, diminutivos exagerados (\"só um minutinho\") e termos técnicos que o cliente não conhece.",
+   say:{y:"Vou verificar para o senhor agora mesmo.",n:"Não sei. / Não é comigo. / Não tem."},
+   ill:()=>person(80,{role:'att',arm:'open'})+bubble(130,40,120,'Não sei',{tail:'none',strike:true})+I.cross(258,43,.9)+bubble(130,92,120,'Vou verificar!',{tail:'none'})+I.check(258,95,.9)},
+  {h:"Tom de voz e ritmo",
+   p:"Fale em volume adequado ao ambiente, com calma e clareza. Nem muito rápido, nem arrastado. Com idosos ou pessoas com dificuldade de audição, fale de frente, um pouco mais devagar e sem gritar. O mesmo \"pois não?\" pode soar acolhedor ou grosseiro dependendo do tom.",
+   tip:"Se você está com pressa, o cliente percebe pela voz. Respire antes de responder.",
+   ill:()=>person(105,{role:'att',mood:'open',skin:SK[3],hair:HR[3]})+I.waves(140,70)+person(235,{skin:SK[1],hair:HR[3],flip:true,shirt:'#9C7BB0'})},
+  {h:"Linguagem corporal",
+   p:"Braços abertos, mãos visíveis e expressão tranquila mostram disponibilidade. Braços cruzados, olhar no relógio ou no celular e suspiros mostram impaciência. Aponte com a mão aberta, nunca com o dedo. O corpo fala junto com você, e o cliente acredita mais no corpo do que nas palavras.",
+   say:{y:"Braços abertos, aponte com a mão aberta",n:"Braços cruzados, olhar no celular"},
+   ill:()=>person(100,{role:'att',arm:'open'})+I.check(88,30)+person(225,{role:'att',skin:SK[1],hair:HR[1],flip:true,arm:'phone',mood:'neutral'})+I.cross(213,30)}
+ ],
+ caso:{q:"Um cliente pergunta se tem um produto e você não sabe. Como responder?",
+  r:"Nada de \"não sei\". Diga: \"Vou verificar para o senhor, um momento\". Consulte o estoque ou um colega e volte com a resposta. Se não tiver, já ofereça uma alternativa."},
+ keys:["Ouça até o fim, sem interromper","Diga o que pode fazer, não o que não pode","Tom calmo e claro","Mão aberta, nunca o dedo"]},
+
+{t:"Entender o que o cliente precisa",min:50,
+ lead:"Atender bem é descobrir a necessidade real e oferecer a solução certa. Com boas perguntas você evita erros, ganha tempo e ainda surpreende o cliente.",
+ hero:()=>person(105,{role:'att',arm:'point'})+I.shelf(190,40)+bubble(70,24,64,'?',{tail:'left',fs:18}),
+ steps:[
+  {h:"Faça perguntas abertas",
+   p:"Perguntas abertas fazem o cliente explicar o que precisa: \"Para que o senhor vai usar?\", \"Quantas pessoas vão comer?\", \"Tem preferência de marca?\". Perguntas fechadas (de sim ou não) servem para confirmar detalhes no final.",
+   say:{y:"Para quantas pessoas é o churrasco?",n:"Só isso?"},
+   ill:()=>person(100,{role:'att',mood:'open'})+person(225,{skin:SK[2],hair:HR[2],flip:true})+bubble(118,30,104,'Para quê?',{tail:'left'})+bubble(200,56,40,'?',{tail:'none',fs:16,fill:'#FBEBD2',stroke:'#F58220'})},
+  {h:"Confirme o que entendeu",
+   p:"Antes de agir, repita o pedido com suas palavras: \"Então são dois quilos de picanha, cortada em bifes, certo?\". Isso evita retrabalho e mostra cuidado. No açougue, na padaria e no caixa, a confirmação evita a maior parte das reclamações.",
+   tip:"Confirmar leva cinco segundos. Corrigir um pedido errado leva muito mais e irrita o cliente.",
+   ill:()=>person(90,{role:'att',arm:'hold'})+I.board(150,34,['2 kg','Picanha','Em bifes'])+I.check(268,60)},
+  {h:"Ofereça a solução",
+   p:"Leve o cliente até o produto em vez de apenas apontar o corredor. Explique as opções com honestidade, sem empurrar o mais caro. Se não for possível resolver na hora, diga o que vai fazer e em quanto tempo.",
+   tip:"Acompanhar o cliente até a gôndola é um dos gestos mais lembrados em supermercados.",
+   ill:()=>person(85,{role:'att',arm:'point'})+person(140,{skin:SK[0],hair:HR[1],shirt:'#7FA7C9'})+I.shelf(200,40)+I.arrow(110,60,200,70)},
+  {h:"Vá além do esperado",
+   p:"Pequenos gestos encantam: indicar o produto que combina (o carvão para a carne, o fermento para a farinha), avisar de uma promoção, ajudar a levar as compras de quem está com dificuldade. Encantar não custa caro; custa atenção.",
+   say:{y:"Para esse bolo, o fermento está aqui ao lado.",n:"(Entregar o produto e virar as costas)"},
+   ill:()=>person(110,{role:'att',arm:'hold',skin:SK[1],hair:HR[0]})+I.gift(146,112,1)+person(240,{skin:SK[3],hair:HR[3],flip:true})+I.sparkle(150,80)+I.sparkle(190,64,.7,'#2C8C80')+I.heart(220,40,.9)}
+ ],
+ caso:{q:"Uma cliente pede \"um pão para o café da tarde\". Que perguntas ajudam a acertar o pedido?",
+  r:"Pergunte para quantas pessoas é, se prefere pão francês, de forma ou doce, e se quer algo para acompanhar. Depois confirme: \"Então são 10 pães franceses e 200 g de queijo, certo?\"."},
+ keys:["Perguntas abertas descobrem a necessidade","Confirme antes de agir","Leve até o produto","Pequenos gestos encantam"]},
+
+{t:"Atendimento em cada canal",min:45,
+ lead:"O cliente fala com a empresa no balcão, no telefone e no WhatsApp. Cada canal tem suas regras, mas o cuidado é o mesmo.",
+ hero:()=>person(90,{role:'att',arm:'phone'})+I.chat(170,30)+I.handset(260,60,1.2),
+ steps:[
+  {h:"Presencial",
+   p:"No balcão, a prioridade é quem está na sua frente. Se o telefone tocar durante um atendimento, peça licença, atenda de forma breve e volte ao cliente presente. Respeite a ordem de chegada e as prioridades legais: idosos, gestantes, pessoas com deficiência e pessoas com crianças de colo.",
+   tip:"Prioridade não é favor: é lei. Indique o caixa preferencial com gentileza.",
+   ill:()=>person(160,{role:'att',arm:'open'})+I.counter(90,128,140,'ATENDIMENTO')+person(270,{skin:SK[2],hair:HR[3],flip:true,shirt:'#9C7BB0'})},
+  {h:"Telefone",
+   p:"Atenda até o terceiro toque. Diga o nome da empresa, o seu nome e a saudação: \"Triva, Carla, bom dia!\". Sorria ao falar, porque o sorriso aparece na voz. Anote nome, telefone e pedido. Se precisar deixar em espera, avise e não passe de um minuto sem dar retorno.",
+   say:{y:"Bom dia, Mercado Bom Preço, Carla falando. Como posso ajudar?",n:"Alô? / Pronto?"},
+   ill:()=>person(110,{role:'att',arm:'phone',mood:'open'})+I.handset(120,74,.7)+bubble(150,34,130,'Bom dia!',{tail:'left'})+I.board(190,80,['Nome','Pedido'])},
+  {h:"WhatsApp e mensagens",
+   p:"Responda rápido, mesmo que seja para dizer que vai verificar. Escreva frases curtas, com saudação, sem abreviações (\"vc\", \"blz\") e sem áudio longo, a não ser que o cliente prefira. Confira pedido, valor e horário por escrito antes de confirmar. Nunca discuta por mensagem: se esquentar, ofereça uma ligação.",
+   say:{y:"Boa tarde, Sr. João! Seu pedido fica pronto às 17h.",n:"blz, td certo"},
+   ill:()=>person(90,{role:'att',arm:'hold',skin:SK[2],hair:HR[1]})+I.chat(150,28)+I.check(236,50)+I.check(236,90,.8)},
+  {h:"Tempo de resposta e retorno",
+   p:"O cliente tolera esperar quando sabe quanto tempo vai levar. Dê previsões reais e cumpra. Se prometeu retornar, retorne, mesmo que a resposta ainda não seja a definitiva. Promessa esquecida é uma das maiores causas de reclamação.",
+   tip:"Prometa só o que você pode cumprir. Melhor dizer 20 minutos e entregar em 15 do que o contrário.",
+   ill:()=>I.clock(70,46,1.8)+person(210,{role:'att',arm:'open'})+bubble(130,34,120,'Em 15 min',{tail:'right'})}
+ ],
+ caso:{q:"Você está atendendo um cliente no balcão e o telefone toca. O que fazer?",
+  r:"Peça licença ao cliente presente, atenda o telefone, diga que está em atendimento e que retorna em instantes (ou anote o pedido rapidamente). Volte ao cliente da frente. Quem veio até a loja tem prioridade."},
+ keys:["Quem está na frente tem prioridade","Telefone: empresa, nome, saudação","Mensagens curtas e sem abreviações","Prometeu, cumpriu"]},
+
+{t:"Reclamações e clientes difíceis",min:60,
+ lead:"Toda reclamação é uma chance de recuperar o cliente. Com o método O.U.V.I.R. você mantém a calma, resolve o problema e transforma um cliente irritado em um cliente fiel.",
+ hero:()=>person(110,{role:'att',arm:'open'})+person(225,{skin:SK[1],hair:HR[0],flip:true,mood:'angry',arm:'point'})+bubble(196,28,40,'!',{tail:'right',fs:18,fill:'#F8E1DE',stroke:'#C2453A',color:'#C2453A'}),
+ metodo:"O.U.V.I.R.: Ouça, Use empatia, Verbalize desculpas, Indique a solução, Retorne e agradeça.",
+ steps:[
+  {h:"O · Ouça sem interromper",
+   p:"Deixe o cliente falar tudo. Não interrompa, não se justifique e não leve para o lado pessoal: ele está bravo com a situação, não com você. Enquanto ouve, anote os detalhes importantes. Muitas vezes, metade da irritação passa só por ser ouvido.",
+   tip:"Mantenha a voz baixa e calma. Se você sobe o tom, o cliente sobe junto.",
+   ill:()=>person(100,{role:'att',mood:'neutral'})+I.ear(132,44,.8)+person(230,{skin:SK[1],hair:HR[0],flip:true,mood:'angry',arm:'point'})+bubble(188,28,60,'!!',{tail:'right',fill:'#F8E1DE',stroke:'#C2453A',color:'#C2453A'})},
+  {h:"U · Use empatia",
+   p:"Mostre que entende o sentimento: \"Entendo como isso é chato\", \"Imagino o transtorno\". Empatia não é concordar com tudo; é reconhecer que a experiência foi ruim. Chame o cliente pelo nome, se souber.",
+   say:{y:"Entendo, Dona Maria. Ninguém gosta de passar por isso.",n:"Calma, não é pra tanto."},
+   ill:()=>person(105,{role:'att',arm:'open'})+I.heart(150,40,1.1)+person(225,{skin:SK[1],hair:HR[0],flip:true,mood:'sad'})},
+  {h:"V · Verbalize desculpas",
+   p:"Peça desculpas pelo transtorno, mesmo que o erro não tenha sido seu. Desculpas sinceras acalmam e não significam culpa pessoal. Nunca culpe colegas, outro setor ou o próprio cliente na frente dele.",
+   say:{y:"Peço desculpas pelo transtorno. Vamos resolver.",n:"Não fui eu, foi o pessoal da manhã."},
+   ill:()=>person(105,{role:'att',arm:'hold'})+bubble(122,32,128,'Desculpe!',{tail:'left'})+person(235,{skin:SK[1],hair:HR[0],flip:true,mood:'neutral'})},
+  {h:"I · Indique a solução",
+   p:"Diga o que vai fazer e faça. Ofereça opções quando houver: troca, devolução, outro produto. Se a solução não depende de você, chame o líder e explique o caso para que o cliente não precise repetir tudo. Conheça as regras de troca da loja para não prometer o que não pode.",
+   tip:"Se precisar chamar o líder, diga ao cliente: \"Vou chamar meu supervisor, que pode autorizar a troca\".",
+   ill:()=>person(90,{role:'att',arm:'point'})+I.gift(130,110,.9)+I.check(178,40,1.2)+person(245,{skin:SK[1],hair:HR[0],flip:true,mood:'smile'})},
+  {h:"R · Retorne e agradeça",
+   p:"Confirme se o cliente ficou satisfeito: \"Ficou tudo certo para a senhora?\". Agradeça por ter avisado, porque a reclamação ajuda a loja a melhorar. Depois, informe o líder sobre o ocorrido para que o problema não se repita.",
+   say:{y:"Obrigado por nos avisar. Isso nos ajuda a melhorar.",n:"(Encerrar sem confirmar se resolveu)"},
+   ill:()=>person(105,{role:'att',arm:'wave'})+person(225,{skin:SK[1],hair:HR[0],flip:true,mood:'smile',arm:'wave'})+I.heart(152,36)+I.star(178,60,.8)}
+ ],
+ caso:{q:"Um cliente volta ao caixa dizendo que foi cobrado duas vezes pelo mesmo produto e fala alto, irritado. Aplique o O.U.V.I.R.",
+  r:"Ouça sem interromper. Use empatia: \"Entendo, ninguém gosta de pagar a mais\". Peça desculpas pelo transtorno. Confira o cupom e, se houver erro, chame o fiscal para o estorno, explicando o caso. Confirme se ficou tudo certo e agradeça por ter avisado."},
+ keys:["Não é pessoal: é a situação","Empatia antes da solução","Desculpas sem culpar ninguém","Confirme e agradeça"]},
+
+{t:"Na prática: varejo e supermercado",min:60,
+ lead:"Situações reais do dia a dia em mercados, padarias e açougues, com o passo a passo de como agir em cada uma.",
+ hero:()=>I.register(30,80)+person(185,{role:'att',arm:'open'})+person(270,{skin:SK[3],hair:HR[2],flip:true})+I.cart(212,130,.7),
+ steps:[
+  {h:"Cliente procurando um produto",
+   p:"Pare o que está fazendo, cumprimente e pergunte o que procura. Sempre que possível, acompanhe o cliente até a gôndola. Se não puder sair do setor, indique com clareza: \"Corredor 5, do lado esquerdo, perto dos biscoitos\". Se o produto estiver em falta, já ofereça uma alternativa.",
+   say:{y:"Vou te levar até lá, me acompanha.",n:"Lá no fundo."},
+   ill:()=>person(80,{role:'att',arm:'point'})+person(132,{skin:SK[2],hair:HR[1],shirt:'#9C7BB0'})+I.shelf(206,40)+I.arrow(104,60,206,80)},
+  {h:"Fila no caixa",
+   p:"Cumprimente cada cliente, mesmo com a fila grande. Mantenha o ritmo sem perder a cordialidade. Confira o valor em voz alta, pergunte a forma de pagamento e o CPF na nota quando for o caso. Entregue o troco e o cupom na mão, contando o dinheiro. Se a fila crescer, avise o fiscal para abrir outro caixa.",
+   tip:"Fila longa pede agilidade, não pressa. Errar o troco para ir mais rápido custa mais caro.",
+   ill:()=>I.register(14,80)+person(150,{role:'att',arm:'hold',skin:SK[2],hair:HR[1]})+person(220,{skin:SK[0],hair:HR[0],flip:true})+person(286,{skin:SK[3],hair:HR[3],flip:true,shirt:'#9C7BB0'})+I.clock(250,20,.8)},
+  {h:"Produto em falta ou com problema",
+   p:"Seja honesto: diga que está em falta e, se souber, quando chega. Ofereça um similar e explique a diferença. Se o cliente encontrar produto vencido ou danificado, agradeça o aviso, retire da gôndola na hora e comunique o responsável do setor.",
+   say:{y:"Esse acabou, chega amanhã. Tenho este similar aqui.",n:"Não tem. (e voltar ao trabalho)"},
+   ill:()=>I.shelf(30,40,true)+person(175,{role:'att',arm:'hold'})+I.gift(208,112,.8)+person(275,{skin:SK[1],hair:HR[2],flip:true})},
+  {h:"Balcão: açougue, padaria e frios",
+   p:"Respeite a ordem da senha. Chame o número em voz clara e cumprimente. Pergunte quantidade, tipo de corte ou fatia e confirme antes de preparar. Mostre o produto, pese na frente do cliente e embale com cuidado. Higiene visível (touca, luva, balcão limpo) é parte do atendimento.",
+   tip:"Antes de entregar, mostre o peso: \"Deu 1,2 kg, pode ser?\". Isso evita surpresa no caixa.",
+   ill:()=>person(160,{role:'att',arm:'hold',skin:SK[0],hair:HR[2]})+I.counter(80,128,160,'AÇOUGUE · PADARIA')+I.meat(98,104)+I.bread(196,106)+I.ticket(260,40)+person(286,{skin:SK[2],hair:HR[0],flip:true,shirt:'#9C7BB0'})}
+ ],
+ caso:{q:"Um idoso com o carrinho cheio está com dificuldade para guardar as compras no caixa e a fila está crescendo. O que fazer?",
+  r:"Cumprimente, ofereça ajuda para embalar ou peça apoio de um colega ou empacotador. Avise o fiscal sobre a fila. Mantenha a calma com o idoso: ele não deve sentir que está atrapalhando."},
+ keys:["Acompanhe até a gôndola","Agilidade sem pressa no caixa","Falta? Seja honesto e ofereça similar","Confirme peso e corte no balcão"]},
+
+{t:"Postura profissional e encerramento",min:40,
+ lead:"Atitudes do dia a dia que mostram profissionalismo e a forma certa de terminar cada atendimento, para que o cliente saia com vontade de voltar.",
+ hero:()=>person(120,{role:'att',arm:'wave'})+bubble(150,28,140,'Volte sempre!',{tail:'left'})+person(255,{skin:SK[2],hair:HR[3],flip:true,arm:'wave'}),
+ steps:[
+  {h:"Pontualidade e comprometimento",
+   p:"Chegue antes do horário, já pronto para começar. Faltas e atrasos sobrecarregam os colegas e pioram o atendimento de todos. Se tiver um imprevisto, avise com antecedência. Na Triva, cada turno cumprido com qualidade conta para novas oportunidades.",
+   tip:"Chegar 10 minutos antes dá tempo de vestir o uniforme, se organizar e começar tranquilo.",
+   ill:()=>I.clock(60,40,1.6)+person(200,{role:'att',arm:'open'})+I.check(240,40,1.1)},
+  {h:"Celular e conversas paralelas",
+   p:"Durante o atendimento, celular guardado. Conversas pessoais entre colegas, risadas altas e reclamações do trabalho na frente do cliente passam desleixo. Use os intervalos para isso.",
+   say:{y:"Celular guardado, atenção total ao cliente",n:"Atender com o celular na mão"},
+   ill:()=>person(100,{role:'att',arm:'down',skin:SK[3],hair:HR[2]})+I.nophone(170,60)+I.check(240,90)},
+  {h:"Sigilo e respeito",
+   p:"Não comente sobre clientes, compras, valores ou problemas da empresa com outras pessoas, nem nas redes sociais. Trate todos com o mesmo respeito, sem distinção de idade, aparência, origem ou condição financeira. Dados pessoais do cliente, como CPF e telefone, são confidenciais.",
+   tip:"O que acontece no atendimento não vira assunto de grupo de WhatsApp.",
+   ill:()=>person(110,{role:'att',arm:'hold'})+I.lock(170,60,1.4)+I.sparkle(240,60,.8,'#2C8C80')},
+  {h:"Encerre o atendimento com cuidado",
+   p:"Pergunte se precisa de mais alguma coisa, agradeça pela preferência e despeça-se olhando para o cliente: \"Obrigado, tenha um ótimo dia, volte sempre!\". A última impressão é a que o cliente leva para casa.",
+   say:{y:"Mais alguma coisa? Obrigado e volte sempre!",n:"Próximo!"},
+   ill:()=>person(110,{role:'att',arm:'wave'})+bubble(128,30,120,'Obrigado!',{tail:'left'})+person(240,{skin:SK[0],hair:HR[1],flip:true,arm:'wave'})+I.heart(270,40,.9)}
+ ],
+ caso:{q:"Seu colega comenta, na frente de um cliente, que a loja \"está uma bagunça hoje\". Como agir?",
+  r:"Não entre na conversa. Mude o foco para o cliente, atenda com cordialidade e, depois, em particular, lembre o colega de que esse tipo de comentário prejudica a imagem da loja e da equipe."},
+ keys:["Chegue antes, pronto para trabalhar","Celular guardado no atendimento","Dados e assuntos do cliente são sigilosos","Termine com agradecimento"]}
+];
+
+/* ================= ÁUDIO (narração em português) ================= */
+const synth=window.speechSynthesis; let voice=null, rate=1, queue=[], qi=0, state='idle';
+function pickVoice(){ if(!synth) return; const v=synth.getVoices();
+  voice=v.find(x=>/pt-BR/i.test(x.lang)&&/Google|Natural|Luciana|Francisca|Thalita/i.test(x.name))||v.find(x=>/pt-BR/i.test(x.lang))||v.find(x=>/^pt/i.test(x.lang))||null; }
+if(synth){pickVoice(); synth.onvoiceschanged=pickVoice;}
+function chunks(t){return t.match(/[^.!?]+[.!?]*/g)?.reduce((a,s)=>{if(a.length&&(a[a.length-1]+s).length<220)a[a.length-1]+=s;else a.push(s);return a},[])||[t]}
+function buildQueue(m){
+  const q=[{el:null,text:`Módulo ${cur+1}. ${m.t}. ${m.lead}`}];
+  if(m.metodo) q.push({el:null,text:m.metodo});
+  m.steps.forEach((s,i)=>{const el=document.getElementById('st'+i);
+    let t=`Passo ${i+1}. ${s.h.replace(/^[A-Z] · /,'')}. ${s.p}`;
+    if(s.say) t+=` Diga: ${s.say.y}. Evite: ${s.say.n}.`; if(s.tip) t+=` Dica: ${s.tip}`;
+    chunks(t).forEach(c=>q.push({el,text:c}));});
+  q.push({el:null,text:`Situação prática. ${m.caso.q} Pense na sua resposta e depois confira a sugestão na página.`});
+  return q;
+}
+let stopAt=0, gen=0;
+function speakFrom(i,end){ if(!synth) return; state='idle'; synth.cancel(); qi=i; stopAt=end??queue.length; gen++; state='playing'; next(); paintPlayer(); }
+function next(){
+  document.querySelectorAll('.step.reading').forEach(e=>e.classList.remove('reading'));
+  if(qi>=stopAt){state='idle';paintPlayer();return;}
+  const it=queue[qi]; if(it.el){it.el.classList.add('reading'); if(qi===0||queue[qi-1].el!==it.el) it.el.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth',block:'center'});}
+  const u=new SpeechSynthesisUtterance(it.text); u.lang='pt-BR'; if(voice)u.voice=voice; u.rate=rate;
+  const g=gen; u.onend=()=>{if(g===gen&&state==='playing'){qi++;next();}}; u.onerror=()=>{};
+  synth.speak(u);
+}
+function togglePlay(){
+  if(!synth){return}
+  if(state==='playing'){synth.pause();state='paused';}
+  else if(state==='paused'){synth.resume();state='playing';}
+  else speakFrom(0);
+  paintPlayer();
+}
+function stopAudio(){ gen++; if(synth){state='idle';synth.cancel();} document.querySelectorAll('.step.reading').forEach(e=>e.classList.remove('reading')); paintPlayer(); }
+function paintPlayer(){
+  const b=document.getElementById('playBtn'); if(!b) return;
+  b.innerHTML=state==='playing'?'<svg viewBox="0 0 20 20"><rect x="4" y="3" width="4" height="14" fill="#13283B"/><rect x="12" y="3" width="4" height="14" fill="#13283B"/></svg>':'<svg viewBox="0 0 20 20"><path d="M5 3 L17 10 L5 17Z" fill="#13283B"/></svg>';
+  b.setAttribute('aria-label',state==='playing'?'Pausar narração':'Ouvir capítulo');
+  const s=document.getElementById('playSt'); if(s) s.textContent=!synth?'Seu navegador não tem narração por voz.':state==='playing'?'Narrando…':state==='paused'?'Pausado':'Toque para ouvir o capítulo inteiro';
+}
+
+/* ================= LIGAÇÃO COM O TRIVA CAPACITA ================= */
+var SUPABASE_URL="https://ratkhskpvgvlperrtsvv.supabase.co";
+var ANON="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhdGtoc2twdmd2bHBlcnJ0c3Z2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0MTE5MDAsImV4cCI6MjEwNDk4NzkwMH0.INk9i0RZ_n8OYs85Mh77EaW1vUHN6WszfYKSVe_dQgE";
+var API=SUPABASE_URL+"/functions/v1/capacita-api";
+var CURSO="atendimento", CARGA="7 horas";
+var VALIDAR_URL="nandersonmm-collab.github.io/nmmcadastro/validar.html";
+function lsGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
+function lsSet(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+var TOKEN=lsGet("nmm_portal_token");
+function api(acao,extra){
+  return fetch(API,{method:"POST",headers:{"Content-Type":"application/json",apikey:ANON,Authorization:"Bearer "+ANON},body:JSON.stringify(Object.assign({acao:acao,token:TOKEN},extra||{}))})
+    .then(function(r){return r.json().then(function(b){if(r.status===401){semSessao();throw new Error("sessao")}return b})});
+}
+
+/* ================= ESTADO ================= */
+var FINAL=M.length, cur=0, perfil=null, prog={modulos_ok:[],certificado:null,final_tentativas:0}, teste=null, exam=null;
+var ok=function(i){return prog.modulos_ok.indexOf(i+1)>=0};
+var allDone=function(){return M.every(function(_,i){return ok(i)})};
+try{var c=+lsGet("triva_atend_cur");if(c>=0&&c<=FINAL)cur=c}catch(e){}
+if(/^#m\d$/.test(location.hash)) cur=Math.min(+location.hash.slice(2)-1,FINAL);
+if(location.hash==="#final"||location.hash==="#certificado") cur=FINAL;
+function go(i){cur=i;lsSet("triva_atend_cur",String(i));history.replaceState(null,"",i===FINAL?"#final":"#m"+(i+1));renderTrail();renderModule();}
+
+var $=function(s){return document.querySelector(s)};
+var esc=function(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})};
+
+function semSessao(){
+  $("#trail").innerHTML=""; $("#progTxt").textContent="";
+  $("#main").innerHTML='<div class="center"><h1>Entre para fazer o curso</h1><p class="lead">O curso Atendimento ao Cliente faz parte do TRIVA Capacita. Entre com o mesmo CPF e senha do Portal do Profissional.</p><a class="btn pri" href="capacita.html">Entrar no TRIVA Capacita</a></div>';
+}
+function falhaRede(){ $("#main").innerHTML='<div class="center"><h1>Sem conexão</h1><p class="lead">Não foi possível carregar seu progresso. Verifique a internet e tente de novo.</p><button class="btn pri" onclick="location.reload()">Tentar de novo</button></div>'; }
+
+/* ================= RENDER ================= */
+function renderTrail(){
+  $("#trail").innerHTML='<div class="trail-h">Módulos</div>'+M.map(function(m,i){return '<button class="'+(ok(i)?'done':'')+'" aria-current="'+(i===cur)+'" data-go="'+i+'"><span class="num">'+(ok(i)?'✓':i+1)+'</span><span>'+m.t+'</span></button>'}).join("")+
+   '<button class="'+(prog.certificado?'done':(allDone()?'':'lockd'))+'" aria-current="'+(cur===FINAL)+'" data-go="'+FINAL+'"><span class="num">★</span><span>Avaliação final e certificado</span></button>';
+  var tr=$("#trail"), at=tr.querySelector('[aria-current="true"]'); if(at&&tr.scrollWidth>tr.clientWidth) tr.scrollLeft=at.offsetLeft-tr.offsetLeft-16;
+  var n=prog.modulos_ok.length; $("#progTxt").textContent=n+" de "+M.length+" módulos"; $("#progBar").style.width=(n/M.length*100)+"%";
+}
+function qaHTML(qs,name){return qs.map(function(q,i){return '<fieldset class="qa" data-i="'+i+'"><legend>'+(i+1)+'. '+esc(q.pergunta)+'</legend><div class="opts">'+q.opcoes.map(function(o,j){return '<label class="opt"><input type="radio" name="'+name+i+'" value="'+j+'"><span>'+esc(o)+'</span></label>'}).join("")+'</div><div class="fb" hidden></div></fieldset>'}).join("")}
+function answers(box,n,name){var a=[];for(var i=0;i<n;i++){var r=box.querySelector('input[name="'+name+i+'"]:checked');a.push(r?+r.value:null)}return a}
+
+function renderModule(){
+  stopAudio(); queue=[]; teste=null;
+  if(cur===FINAL) return renderFinal();
+  var m=M[cur];
+  $("#main").innerHTML=
+  '<section class="hero"><div><div class="eyebrow">Módulo '+(cur+1)+' de '+M.length+'</div><h1>'+m.t+'</h1><p class="lead">'+m.lead+'</p>'+
+  '<div class="meta"><span class="chip">'+m.min+' min</span><span class="chip">'+m.steps.length+' passos ilustrados</span><span class="chip">Texto e áudio</span></div></div>'+
+  '<div class="hero-ill">'+svg(m.hero(),m.t)+'</div></section>'+
+  '<div class="player"><button class="play" id="playBtn"></button><div class="player-t"><b>Ouvir o capítulo</b><span id="playSt"></span></div>'+
+  '<div style="display:flex;gap:6px;flex-wrap:wrap" role="group" aria-label="Velocidade">'+[0.85,1,1.2].map(function(r){return '<button class="pbtn" data-rate="'+r+'" aria-pressed="'+(r===rate)+'">'+(r===1?'1x':r+'x')+'</button>'}).join("")+'<button class="pbtn" id="stopBtn">Parar</button></div></div>'+
+  (m.metodo?'<p class="tip" style="margin:-10px 0 24px"><b>Método O.U.V.I.R.</b> Ouça · Use empatia · Verbalize desculpas · Indique a solução · Retorne e agradeça.</p>':'')+
+  '<div class="steps">'+m.steps.map(function(s,i){return '<article class="step" id="st'+i+'"><div class="ill">'+svg(s.ill(),s.h)+'</div><div class="step-b"><div class="step-n">Passo '+(i+1)+' de '+m.steps.length+'</div><h3>'+s.h+'</h3><p>'+s.p+'</p>'+
+    (s.say?'<div class="say"><div class="y"><b>Diga</b>'+esc(s.say.y)+'</div><div class="n"><b>Evite</b>'+esc(s.say.n)+'</div></div>':'')+
+    (s.tip?'<div class="tip"><b>Dica:</b> '+s.tip+'</div>':'')+
+    '<button class="listen" data-listen="'+i+'"><svg width="14" height="14" viewBox="0 0 20 20"><path d="M3 7h4l5-4v14l-5-4H3z" fill="currentColor"/><path d="M15 6c2 2 2 6 0 8" stroke="currentColor" stroke-width="2" fill="none"/></svg>Ouvir este passo</button></div></article>'}).join("")+'</div>'+
+  '<section class="block"><h2>Situação prática</h2><div class="case"><div class="q">'+m.caso.q+'</div><details><summary>Ver como agir</summary><p style="margin:8px 0 0">'+m.caso.r+'</p></details></div></section>'+
+  '<section class="block"><h2>Pontos-chave</h2><ul class="keys">'+m.keys.map(function(k){return '<li>'+k+'</li>'}).join("")+'</ul></section>'+
+  '<section class="block" id="testeSec"><h2>Teste do módulo</h2><div id="modTest"></div></section>'+
+  '<div class="nav-foot">'+(cur>0?'<button class="btn sec" data-go="'+(cur-1)+'">‹ Módulo anterior</button>':'<span></span>')+'<button class="btn pri" id="finish"></button></div>';
+  renderTesteIntro(); paintFinish();
+  queue=buildQueue(m); paintPlayer();
+  window.scrollTo(0,0);
+}
+function renderTesteIntro(){
+  $("#modTest").innerHTML=(ok(cur)?'<p class="note"><span class="pill">Módulo concluído</span> Você pode refazer o teste para praticar.</p>':'')+
+   '<p class="note">3 perguntas sorteadas sobre este módulo. Acerte pelo menos 2 para concluir. Cada tentativa traz perguntas e alternativas em outra ordem.</p>'+
+   '<button class="btn pri" id="startMod">'+(ok(cur)?'Praticar de novo':'Fazer o teste do módulo')+'</button>';
+}
+function startMod(){
+  var b=$("#startMod"); if(b){b.disabled=true;b.textContent="Sorteando perguntas…";}
+  api("sortear",{curso:CURSO,tipo:"modulo",modulo:cur+1}).then(function(r){
+    if(!r.ok){ $("#modTest").innerHTML='<p class="err">'+esc(r.erro||"Não foi possível sortear o teste.")+'</p>'; return; }
+    teste=r;
+    $("#modTest").innerHTML='<div class="quiz" id="mtq">'+qaHTML(r.questoes,"m")+'</div><div class="test-bar"><button class="btn pri" id="checkMod">Corrigir teste</button><span class="note" id="mtRes"></span></div>';
+  }).catch(function(e){ if(e.message!=="sessao") $("#modTest").innerHTML='<p class="err">Sem conexão. Tente de novo.</p>'; });
+}
+function checkMod(){
+  var box=$("#mtq"), a=answers(box,teste.questoes.length,"m");
+  if(a.indexOf(null)>=0){ $("#mtRes").textContent="Responda às "+teste.questoes.length+" perguntas antes de corrigir."; return; }
+  $("#checkMod").disabled=true; $("#checkMod").textContent="Corrigindo…";
+  var modAtual=cur;
+  api("corrigir",{tentativa_id:teste.tentativa_id,respostas:a}).then(function(r){
+    if(!r.ok){ $("#mtRes").textContent=r.erro||"Não foi possível corrigir."; $("#checkMod").disabled=false; $("#checkMod").textContent="Corrigir teste"; return; }
+    r.correcao.forEach(function(c,i){
+      var fs=box.querySelector('[data-i="'+i+'"]'); fs.querySelectorAll("input").forEach(function(x){x.disabled=true});
+      var labs=fs.querySelectorAll(".opt"); labs[c.correta].classList.add("ok"); if(!c.acertou) labs[a[i]].classList.add("no");
+      var fb=fs.querySelector(".fb"); fb.hidden=false; fb.innerHTML=(c.acertou?'<b class="g">Correto.</b> ':'<b class="b">Incorreto.</b> ')+esc(c.explicacao);
+    });
+    if(r.aprovado && prog.modulos_ok.indexOf(modAtual+1)<0){ prog.modulos_ok.push(modAtual+1); prog.modulos_ok.sort(); renderTrail(); }
+    $(".test-bar").innerHTML='<span class="pill '+(r.aprovado?'':'b')+'">'+r.acertos+' de '+r.total+' · '+(r.aprovado?'Aprovado no módulo':'Abaixo de 2 acertos')+'</span><button class="btn sec" id="redoMod">Refazer com novas perguntas</button>';
+    paintFinish();
+  }).catch(function(e){ if(e.message!=="sessao"){ $("#mtRes").textContent="Sem conexão. Tente de novo."; $("#checkMod").disabled=false; $("#checkMod").textContent="Corrigir teste"; } });
+}
+function paintFinish(){var f=$("#finish"); if(!f) return; var o=ok(cur);
+  f.disabled=!o; f.textContent=o?(cur===M.length-1?'Ir para a avaliação final ›':'Próximo módulo ›'):'Passe no teste para avançar';}
+
+/* ---------- Avaliação final ---------- */
+function renderFinal(){
+  if(prog.certificado) return renderCert(false);
+  if(!allDone()){
+    var miss=M.map(function(m,i){return ok(i)?null:'<li><button class="linkbtn" data-go="'+i+'">Módulo '+(i+1)+' · '+m.t+'</button></li>'}).filter(Boolean).join("");
+    $("#main").innerHTML='<section class="hero solo"><div><div class="eyebrow">Etapa final</div><h1>Avaliação final</h1><p class="lead">A avaliação é liberada quando você for aprovado no teste de todos os módulos. Faltam:</p></div></section><ul class="miss">'+miss+'</ul>';
+    return window.scrollTo(0,0);
+  }
+  $("#main").innerHTML='<section class="hero solo"><div><div class="eyebrow">Etapa final'+(prog.final_tentativas?' · Tentativa '+(prog.final_tentativas+1):'')+'</div><h1>Avaliação final</h1>'+
+   '<p class="lead">20 questões sorteadas de todos os módulos. A correção só aparece no fim. Para receber o certificado, acerte pelo menos 14 (70%). Se precisar refazer, as perguntas e a ordem das respostas mudam.</p></div></section>'+
+   '<p class="note">O certificado sai com os dados do seu cadastro: <b>'+esc(perfil.nome)+'</b>'+(perfil.funcao?' · '+esc(perfil.funcao):'')+(perfil.cidade?' · '+esc(perfil.cidade):'')+'. Se algo estiver errado, corrija em <a href="portal.html" style="color:var(--accent);font-weight:700">Meu cadastro</a> antes de começar.</p>'+
+   '<div id="exArea"><button class="btn pri" id="startExam">Iniciar avaliação final</button></div><section class="block" id="result"></section>';
+  window.scrollTo(0,0);
+}
+function startExam(){
+  var b=$("#startExam"); b.disabled=true; b.textContent="Sorteando questões…";
+  api("sortear",{curso:CURSO,tipo:"final"}).then(function(r){
+    if(r.certificado){ prog.certificado=r.certificado; renderTrail(); return renderCert(false); }
+    if(!r.ok){ $("#exArea").innerHTML='<p class="err">'+esc(r.erro||"Não foi possível iniciar.")+'</p>'; return; }
+    exam=r;
+    $("#exArea").innerHTML='<div class="quiz" id="exq">'+qaHTML(r.questoes,"f")+'</div><div class="test-bar sticky-bar"><span class="note" id="exCount">0 de '+r.questoes.length+' respondidas</span><button class="btn pri" id="sendExam" disabled>Enviar avaliação</button></div>';
+    $("#exq").addEventListener("change",function(){var n=answers($("#exq"),exam.questoes.length,"f").filter(function(x){return x!==null}).length;
+      $("#exCount").textContent=n+" de "+exam.questoes.length+" respondidas"; $("#sendExam").disabled=n<exam.questoes.length;});
+  }).catch(function(e){ if(e.message!=="sessao") $("#exArea").innerHTML='<p class="err">Sem conexão. Tente de novo.</p>'; });
+}
+function sendExam(){
+  var a=answers($("#exq"),exam.questoes.length,"f"); if(a.indexOf(null)>=0) return;
+  var b=$("#sendExam"); b.disabled=true; b.textContent="Corrigindo…";
+  api("corrigir",{tentativa_id:exam.tentativa_id,respostas:a}).then(function(r){
+    if(!r.ok){ b.disabled=false; b.textContent="Enviar avaliação"; $("#exCount").textContent=r.erro||"Não foi possível corrigir."; return; }
+    prog.final_tentativas++;
+    if(r.aprovado && r.certificado){ prog.certificado=r.certificado; renderTrail(); return renderCert(true); }
+    document.querySelectorAll("#exq input").forEach(function(x){x.disabled=true}); $(".sticky-bar").hidden=true;
+    var errs=Object.keys(r.erros_por_modulo||{}).map(function(k){return [+k,r.erros_por_modulo[k]]}).sort(function(x,y){return y[1]-x[1]});
+    $("#result").innerHTML='<div class="case"><div class="score b">'+r.nota+'%</div><p style="margin:0">Você acertou '+r.acertos+' de '+r.total+'. O mínimo é '+r.minimo+'. Revise os módulos onde houve erros e tente de novo: a próxima avaliação terá outras perguntas.</p>'+
+     '<ul class="miss">'+errs.map(function(e){return '<li><button class="linkbtn" data-go="'+(e[0]-1)+'">Módulo '+e[0]+' · '+M[e[0]-1].t+'</button> <span class="note">'+e[1]+' erro'+(e[1]>1?'s':'')+'</span></li>'}).join("")+'</ul>'+
+     '<div><button class="btn pri" id="retryExam">Fazer nova avaliação</button></div></div>';
+    $("#result").scrollIntoView({block:"start"});
+  }).catch(function(e){ if(e.message!=="sessao"){ b.disabled=false; b.textContent="Enviar avaliação"; $("#exCount").textContent="Sem conexão. Tente de novo."; } });
+}
+
+/* ---------- Certificado ---------- */
+function renderCert(fresh){
+  var c=prog.certificado;
+  $("#main").innerHTML='<section class="hero solo noprint"><div><div class="eyebrow">'+(fresh?'Aprovado':'Curso concluído')+'</div><h1>'+(fresh?'Parabéns, '+esc(c.nome.split(" ")[0])+'!':'Seu certificado')+'</h1>'+
+   '<p class="lead">Você acertou '+c.acertos+' de '+c.total+' questões ('+c.nota+'%) na avaliação final. O certificado foi gerado com os dados do seu cadastro e registrado na TRIVA.</p></div></section>'+
+   '<div class="cert-wrap"><canvas id="certCv" width="1600" height="1130" hidden></canvas><img id="certImg" alt="Certificado de conclusão de '+esc(c.nome)+'"></div>'+
+   '<div class="test-bar noprint"><a class="btn pri" id="dlCert" download="certificado-atendimento-'+esc(c.codigo)+'.png">Baixar certificado</a><button class="btn sec" id="printCert">Imprimir ou salvar em PDF</button></div>'+
+   '<p class="note noprint">Código de validação: <b class="mono">'+esc(c.codigo)+'</b>. Qualquer empresa pode conferir em <a href="validar.html?c='+encodeURIComponent(c.codigo)+'" style="color:var(--accent);font-weight:700">'+VALIDAR_URL+'</a>.</p>';
+  drawCert(c);
+  window.scrollTo(0,0);
+}
+function drawCert(c){
+  var logo=new Image(); logo.src="logo-triva.png";
+  var fontes=document.fonts?Promise.all([document.fonts.load('800 60px Montserrat'),document.fonts.load('500 30px Montserrat'),document.fonts.load('700 30px Montserrat')]).catch(function(){}):Promise.resolve();
+  Promise.all([fontes,new Promise(function(r){logo.onload=r;logo.onerror=r;})]).then(function(){
+    var cv=$("#certCv"), x=cv.getContext("2d"), W=1600, H=1130, F='Montserrat, "Segoe UI", sans-serif';
+    x.fillStyle="#FFFFFF";x.fillRect(0,0,W,H);
+    x.fillStyle="#0B1F2A";x.fillRect(0,0,W,210);
+    x.fillStyle="#F58220";x.fillRect(0,210,W,8);
+    if(logo.naturalWidth){var lh=70,lw=logo.naturalWidth*lh/logo.naturalHeight;x.drawImage(logo,W/2-lw/2,52,lw,lh);}
+    x.textAlign="center";x.fillStyle="rgba(255,255,255,.8)";x.font="600 22px "+F;x.fillText("T R I V A   C A P A C I T A",W/2,168);
+    x.strokeStyle="#0B1F2A";x.lineWidth=14;x.strokeRect(7,7,W-14,H-14);
+    x.fillStyle="#C8600E";x.font="700 24px "+F;x.fillText("C E R T I F I C A D O   D E   C O N C L U S Ã O",W/2,300);
+    x.fillStyle="#5F646B";x.font="500 28px "+F;x.fillText("Certificamos que",W/2,370);
+    var fs=74;x.font="800 "+fs+"px "+F;while(x.measureText(c.nome).width>W-240&&fs>38){fs-=4;x.font="800 "+fs+"px "+F}
+    x.fillStyle="#0B1F2A";x.fillText(c.nome,W/2,455);
+    x.fillStyle="#F58220";x.fillRect(W/2-160,490,320,5);
+    var info=["CPF "+c.cpf]; if(c.funcao)info.push(c.funcao); if(c.cidade)info.push(c.cidade);
+    x.fillStyle="#5F646B";x.font="500 25px "+F;x.fillText(info.join("  ·  "),W/2,545);
+    x.fillStyle="#0B1F2A";x.font="500 29px "+F;
+    ["concluiu o curso Atendimento ao Cliente, com carga horária de "+(c.carga_horaria||CARGA)+",","composto por 8 módulos, e obteve "+c.nota+"% de aproveitamento na avaliação final."].forEach(function(l,i){x.fillText(l,W/2,622+i*46)});
+    var dt=new Date(c.emitido_em).toLocaleDateString("pt-BR",{day:"2-digit",month:"long",year:"numeric"});
+    x.fillStyle="#1F7A3A";x.font="700 26px "+F;x.fillText("Emitido em "+dt,W/2,732);
+    x.strokeStyle="#0B1F2A";x.lineWidth=2;x.beginPath();x.moveTo(W/2-240,870);x.lineTo(W/2+240,870);x.stroke();
+    x.fillStyle="#0B1F2A";x.font="700 26px "+F;x.fillText("Nanderson Meurer Michels",W/2,908);
+    x.fillStyle="#5F646B";x.font="500 21px "+F;x.fillText("Gestor Administrativo · TRIVA Soluções Operacionais",W/2,942);
+    x.textAlign="left";x.font="600 19px "+F;x.fillStyle="#5F646B";x.fillText("Código de validação: "+c.codigo,72,H-62);
+    x.textAlign="right";x.fillText("Valide em "+VALIDAR_URL,W-72,H-62);
+    var url=cv.toDataURL("image/png"); $("#certImg").src=url; var dl=$("#dlCert"); if(dl) dl.href=url;
+  });
+}
+
+/* ---------- Eventos ---------- */
+document.addEventListener("click",function(e){
+  var g=e.target.closest("[data-go]"); if(g){ go(+g.dataset.go); return; }
+  if(e.target.closest("#playBtn")) return togglePlay();
+  if(e.target.closest("#stopBtn")) return stopAudio();
+  var rb=e.target.closest("[data-rate]"); if(rb){rate=+rb.dataset.rate;document.querySelectorAll("[data-rate]").forEach(function(b){b.setAttribute("aria-pressed",b===rb)}); if(state==="playing") speakFrom(qi,stopAt); return;}
+  var li=e.target.closest("[data-listen]"); if(li){var el=document.getElementById("st"+li.dataset.listen);var i=queue.findIndex(function(q){return q.el===el});
+    if(i>=0){var end=queue.findIndex(function(q,k){return k>i&&q.el!==el});speakFrom(i,end<0?queue.length:end);} return;}
+  if(e.target.closest("#startMod")) return startMod();
+  if(e.target.closest("#checkMod")) return checkMod();
+  if(e.target.closest("#redoMod")){ renderTesteIntro(); startMod(); $("#testeSec").scrollIntoView({block:"start"}); return; }
+  if(e.target.closest("#startExam")) return startExam();
+  if(e.target.closest("#sendExam")) return sendExam();
+  if(e.target.closest("#retryExam")){ renderFinal(); return; }
+  if(e.target.closest("#printCert")) return window.print();
+  var f=e.target.closest("#finish"); if(f&&!f.disabled) go(Math.min(cur+1,FINAL));
+});
+
+/* ---------- Início ---------- */
+if(!TOKEN) semSessao();
+else api("resumo").then(function(r){
+  if(!r.ok) return semSessao();
+  perfil=r.perfil; prog=(r.cursos&&r.cursos[CURSO])||prog;
+  renderTrail(); renderModule();
+}).catch(function(e){ if(e.message!=="sessao") falhaRede(); });
+
+</script>
+</body>
+</html>

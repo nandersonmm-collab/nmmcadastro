@@ -155,6 +155,8 @@ h1,h2,h3{line-height:1.2;text-wrap:balance;margin:0}
   var usuario = null;      // {nome, chave, funcoes, admin}
   var cursos = [], aulas = [], questoes = [];
   var progresso = {};
+  var CAPACITA_API = SUPABASE_URL + "/functions/v1/capacita-api";
+  var paginaProg = {};     // progresso dos cursos com página própria (vem do servidor)
 
   function $(s){ return document.querySelector(s); }
   function esc(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
@@ -182,6 +184,12 @@ h1,h2,h3{line-height:1.2;text-wrap:balance;margin:0}
   function aulasDo(cursoId){ return aulas.filter(function(a){ return a.curso_id === cursoId; }); }
   function questoesDo(cursoId){ return questoes.filter(function(q){ return q.curso_id === cursoId; }); }
   function estado(c){
+    if (c.pagina){
+      var pp = paginaProg[c.slug] || { modulos_ok:[], certificado:null };
+      var tm = c.modulos_total || 0, fm = (pp.modulos_ok || []).length, cert = !!pp.certificado;
+      var pg = tm ? Math.round((fm + (cert ? 1 : 0)) / (tm + 1) * 100) : 0;
+      return { feitas:fm, totalAulas:tm, pct:pg, aulasOk: fm === tm, quizOk: cert, temQuiz:true, concluido: cert, pagina:true };
+    }
     var as = aulasDo(c.id), p = progresso[c.id] || { aulas:{} };
     var feitas = as.filter(function(a){ return p.aulas && p.aulas[a.id]; }).length;
     var temQuiz = questoesDo(c.id).length > 0;
@@ -247,6 +255,10 @@ h1,h2,h3{line-height:1.2;text-wrap:balance;margin:0}
     ]).then(function(rs){
       if (rs[0].error) throw rs[0].error;
       cursos = rs[0].data || []; aulas = rs[1].data || []; questoes = rs[2].data || [];
+      if (usuario.admin || !cursos.some(function(c){ return c.pagina; })) return;
+      // progresso dos cursos com página própria fica no servidor
+      return fetch(CAPACITA_API, { method:"POST", headers:{ "Content-Type":"application/json", "apikey":SUPABASE_ANON_KEY, "Authorization":"Bearer "+SUPABASE_ANON_KEY }, body: JSON.stringify({ acao:"resumo", token: lsGet(TOKEN_KEY) }) })
+        .then(function(r){ return r.json(); }).then(function(b){ if (b && b.ok) paginaProg = b.cursos || {}; }).catch(function(){});
     });
   }
 
@@ -273,7 +285,7 @@ h1,h2,h3{line-height:1.2;text-wrap:balance;margin:0}
     return '<button class="card" style="--c:' + esc(c.cor || "#F58220") + '" data-curso="' + c.id + '"><span class="bar"></span><span class="in">' +
       '<span>' + st + (recomendado(c) && !e.concluido ? ' <span class="pill p-rec">Para você</span>' : '') + (c.publicado ? '' : ' <span class="pill p-new">Rascunho</span>') + '</span>' +
       '<h3>' + esc(c.titulo) + '</h3>' +
-      '<span class="meta"><span>' + e.totalAulas + ' aula' + (e.totalAulas === 1 ? '' : 's') + '</span>' + (c.carga_horaria ? '<span>' + esc(c.carga_horaria) + '</span>' : '') + (c.funcao ? '<span>' + esc(c.funcao) + '</span>' : '') + '</span>' +
+      '<span class="meta"><span>' + e.totalAulas + (e.pagina ? ' módulo' : ' aula') + (e.totalAulas === 1 ? '' : 's') + (e.pagina ? ' · áudio e certificado' : '') + '</span>' + (c.carga_horaria ? '<span>' + esc(c.carga_horaria) + '</span>' : '') + (c.funcao ? '<span>' + esc(c.funcao) + '</span>' : '') + '</span>' +
       '<span class="prog' + (e.concluido ? ' done' : '') + '"><i style="width:' + e.pct + '%"></i></span></span></button>';
   }
   function telaInicio(){
@@ -291,7 +303,11 @@ h1,h2,h3{line-height:1.2;text-wrap:balance;margin:0}
       (andamento.length ? '<h2 class="sec">Continue de onde parou</h2><div class="cards">' + andamento.map(cardCurso).join("") + '</div>' : '') +
       (outros.length ? '<h2 class="sec">Cursos disponíveis</h2><div class="cards">' + outros.map(cardCurso).join("") + '</div>' : '') +
       (concl.length ? '<h2 class="sec">Concluídos</h2><div class="cards">' + concl.map(cardCurso).join("") + '</div>' : '');
-    app.querySelectorAll("[data-curso]").forEach(function(b){ b.onclick = function(){ location.hash = "#/curso/" + b.dataset.curso; }; });
+    app.querySelectorAll("[data-curso]").forEach(function(b){ b.onclick = function(){
+      var c = cursos.filter(function(x){ return x.id === b.dataset.curso; })[0];
+      if (c && c.pagina){ location.href = c.pagina; return; }
+      location.hash = "#/curso/" + b.dataset.curso;
+    }; });
   }
 
   function telaCurso(c){
@@ -403,7 +419,7 @@ h1,h2,h3{line-height:1.2;text-wrap:balance;margin:0}
     if (!usuario) return;
     var h = location.hash.replace(/^#\/?/, "").split("/");
     var achar = function(lista, id){ return lista.filter(function(x){ return x.id === id; })[0]; };
-    if (h[0] === "curso" && achar(cursos, h[1])) return telaCurso(achar(cursos, h[1]));
+    if (h[0] === "curso" && achar(cursos, h[1])){ var cp = achar(cursos, h[1]); if (cp.pagina){ location.href = cp.pagina; return; } return telaCurso(cp); }
     if (h[0] === "aula" && achar(aulas, h[1])) return telaAula(achar(aulas, h[1]));
     if (h[0] === "exercicios" && achar(cursos, h[1])) return telaQuiz(achar(cursos, h[1]));
     if (h[0] === "certificado" && achar(cursos, h[1])) return telaCert(achar(cursos, h[1]));

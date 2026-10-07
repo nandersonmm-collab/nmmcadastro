@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Validar certificado · TRIVA Capacita</title>
+<meta name="theme-color" content="#0B1F2A">
+<link rel="icon" href="icone-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: cartão único centralizado — consulta do código e resultado logo abaixo */
+:root{
+  --navy:#0B1F2A; --orange:#F58220; --bg:#FAF8F5; --surface:#FFFFFF; --line:#E4DED6;
+  --fg:#0B1F2A; --muted:#5F646B; --accent:#C8600E;
+  --ok:#1F7A3A; --ok-soft:#DCF1E2; --crit:#B3261E; --crit-soft:#F8DEDB;
+  --font:"Montserrat",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0A1821; --surface:#11242F; --line:#203642; --fg:#EEF1F3; --muted:#A5ADB4; --accent:#FF9A45;
+  --ok:#6FD08A; --ok-soft:#173424; --crit:#FF8A80; --crit-soft:#3D1C1A; color-scheme:dark}}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--fg);font:400 16px/1.6 var(--font);padding-inline:16px}
+.card{max-width:520px;margin:40px auto;background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.top{background:var(--navy);padding:20px 22px;border-bottom:3px solid var(--orange)}
+.top img{height:34px;width:auto;display:block}
+.in{padding:22px;display:grid;gap:14px}
+h1{margin:0;font-size:1.3rem;line-height:1.25}
+p{margin:0;color:var(--muted);font-size:.92rem}
+form{display:flex;gap:8px;flex-wrap:wrap}
+input{flex:1;min-width:180px;font:inherit;font-size:16px;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--fg);text-transform:uppercase;letter-spacing:.06em}
+button{font:inherit;font-weight:700;border:0;border-radius:10px;padding:12px 18px;background:var(--orange);color:var(--navy);cursor:pointer}
+:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
+.res{border-radius:12px;padding:16px}
+.res.ok{background:var(--ok-soft)} .res.no{background:var(--crit-soft);color:var(--crit);font-weight:600}
+.res h2{margin:0 0 8px;font-size:1rem;color:var(--ok)}
+dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 14px;margin:0;font-size:.95rem}
+dt{color:var(--muted);font-weight:600} dd{margin:0;font-weight:600}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="top"><img src="logo-triva.png" alt="TRIVA Soluções Operacionais" width="126" height="34"></div>
+  <div class="in">
+    <h1>Validar certificado TRIVA Capacita</h1>
+    <p>Digite o código que aparece no rodapé do certificado (formato TC-XXXX-XXXX).</p>
+    <form id="f"><label for="cod" hidden>Código</label><input id="cod" placeholder="TC-XXXX-XXXX" autocomplete="off" maxlength="12"><button type="submit">Validar</button></form>
+    <div id="out" aria-live="polite"></div>
+  </div>
+</div>
+<script>
+(function(){
+  var API="https://ratkhskpvgvlperrtsvv.supabase.co/functions/v1/capacita-api";
+  var ANON="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhdGtoc2twdmd2bHBlcnJ0c3Z2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0MTE5MDAsImV4cCI6MjEwNDk4NzkwMH0.INk9i0RZ_n8OYs85Mh77EaW1vUHN6WszfYKSVe_dQgE";
+  var inp=document.getElementById("cod"), out=document.getElementById("out");
+  function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+  function validar(){
+    var c=inp.value.trim().toUpperCase(); if(!c) return;
+    out.innerHTML='<p>Consultando…</p>';
+    fetch(API,{method:"POST",headers:{"Content-Type":"application/json",apikey:ANON,Authorization:"Bearer "+ANON},body:JSON.stringify({acao:"validar",codigo:c})})
+      .then(function(r){return r.json()}).then(function(r){
+        if(!r.valido){ out.innerHTML='<div class="res no">Nenhum certificado encontrado com o código '+esc(c)+'. Confira se digitou corretamente.</div>'; return; }
+        var d=r.certificado, dt=new Date(d.emitido_em).toLocaleDateString("pt-BR",{day:"2-digit",month:"long",year:"numeric"});
+        out.innerHTML='<div class="res ok"><h2>Certificado válido</h2><dl><dt>Nome</dt><dd>'+esc(d.nome)+'</dd><dt>CPF</dt><dd>'+esc(d.cpf)+'</dd><dt>Curso</dt><dd>'+esc(d.curso_titulo)+'</dd><dt>Carga horária</dt><dd>'+esc(d.carga_horaria||"")+'</dd><dt>Aproveitamento</dt><dd>'+d.nota+'%</dd><dt>Emitido em</dt><dd>'+dt+'</dd><dt>Código</dt><dd>'+esc(d.codigo)+'</dd></dl></div>';
+      }).catch(function(){ out.innerHTML='<div class="res no">Sem conexão. Tente novamente.</div>'; });
+  }
+  document.getElementById("f").addEventListener("submit",function(e){e.preventDefault();validar();});
+  var q=new URLSearchParams(location.search).get("c"); if(q){inp.value=q;validar();}
+})();
+</script>
+</body>
+</html>
