@@ -1,0 +1,745 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Operador(a) de Caixa · TRIVA Capacita</title>
+<link rel="manifest" href="contato.webmanifest">
+<meta name="theme-color" content="#0B1F2A">
+<link rel="icon" href="icone-192.png">
+<link rel="apple-touch-icon" href="icone-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: trilha lateral de módulos + coluna de leitura; cada passo é uma ficha com ilustração e texto. Identidade TRIVA (navy + laranja, Montserrat). */
+:root{
+  --bg:#FAF8F5; --surface:#FFFFFF; --surface2:#F2EDE6; --ink:#0B1F2A; --muted:#5F646B; --line:#E4DED6;
+  --navy:#0B1F2A; --orange:#F58220; --accent:#C8600E; --accent-soft:#FCEBDA;
+  --teal:#1F7A3A; --teal-soft:#DCF1E2; --good:#1F7A3A; --bad:#B3261E; --bad-soft:#F8DEDB;
+  --ill:#EEE8E0;
+  --display:"Montserrat", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --body:"Montserrat", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --r:14px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0A1821; --surface:#11242F; --surface2:#0E1F29; --ink:#EEF1F3; --muted:#A5ADB4; --line:#203642;
+  --accent:#FF9A45; --accent-soft:#3A2614; --teal:#6FD08A; --teal-soft:#173424; --good:#6FD08A; --bad:#FF8A80; --bad-soft:#3D1C1A;
+  --ill:#D9DEE2; color-scheme:dark}}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6;margin:0}
+h1,h2,h3{font-family:var(--display);line-height:1.2;text-wrap:balance;margin:0}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
+
+header.top{background:var(--navy);color:#fff;border-bottom:3px solid var(--orange);position:sticky;top:0;z-index:10;padding-top:env(safe-area-inset-top,0px)}
+.top-in{max-width:1180px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:12px 16px;flex-wrap:wrap}
+.top-in img{height:28px;width:auto}
+.top-in .t{font-weight:700;padding-left:12px;border-left:1px solid rgba(255,255,255,.25);white-space:nowrap}
+.prog{flex:1;min-width:170px;display:flex;align-items:center;gap:10px;font-size:13px;color:rgba(255,255,255,.75)}
+.bar{flex:1;height:8px;border-radius:99px;background:rgba(255,255,255,.18);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--orange);width:0;transition:width .4s}
+.toplink{color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.3);border-radius:8px;padding:6px 10px;font-size:.8rem;font-weight:600;white-space:nowrap}
+
+.wrap{max-width:1180px;margin:0 auto;padding-inline:16px;padding-block:24px 64px;display:grid;grid-template-columns:270px minmax(0,1fr);gap:32px}
+nav.trail{position:sticky;top:84px;align-self:start;display:flex;flex-direction:column;gap:4px}
+.trail-h{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:0 0 6px 10px}
+.trail button{display:grid;grid-template-columns:30px 1fr;gap:10px;align-items:center;text-align:left;background:none;border:0;border-radius:10px;padding:8px 10px;color:var(--ink);font-size:14px;line-height:1.3}
+.trail button:hover{background:var(--surface)}
+.trail button[aria-current="true"]{background:var(--surface);box-shadow:inset 3px 0 0 var(--orange);font-weight:700}
+.num{width:28px;height:28px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:12.5px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums}
+.done .num{background:var(--teal);border-color:var(--teal);color:var(--surface)}
+.lockd .num{border-style:dashed}
+
+main{min-width:0}
+.hero{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:24px;align-items:center;margin-bottom:28px}
+.hero.solo{grid-template-columns:minmax(0,1fr)}
+.eyebrow{font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--accent)}
+.hero h1{font-size:clamp(28px,4.2vw,42px);font-weight:800;margin:6px 0 12px}
+.lead{font-size:17.5px;color:var(--muted);max-width:62ch;margin:0}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.chip{font-size:13px;padding:4px 11px;border-radius:99px;background:var(--surface);border:1px solid var(--line);color:var(--muted)}
+.hero-ill{background:var(--ill);border-radius:18px;overflow:hidden}
+.hero-ill svg,.step .ill svg{display:block;width:100%;height:auto}
+
+.player{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;background:var(--navy);color:#fff;border-radius:var(--r);padding:14px 16px;margin-bottom:28px;border-left:6px solid var(--orange)}
+.play{width:46px;height:46px;border-radius:50%;border:0;background:var(--orange);display:grid;place-items:center;flex:none}
+.play svg{width:20px;height:20px}
+.player-t{flex:1;min-width:150px;line-height:1.3}
+.player-t b{display:block;font-size:15px}
+.player-t span{font-size:13px;opacity:.8}
+.pbtn{background:transparent;border:1.5px solid rgba(255,255,255,.6);color:#fff;border-radius:99px;padding:5px 12px;font-size:13px;font-weight:600}
+.pbtn[aria-pressed="true"]{background:var(--orange);border-color:var(--orange);color:#0B1F2A}
+
+.steps{display:flex;flex-direction:column;gap:18px}
+.step{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:22px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;transition:box-shadow .3s,border-color .3s}
+.step.reading{border-color:var(--orange);box-shadow:0 0 0 3px var(--accent-soft)}
+.step .ill{background:var(--ill);border-radius:12px;overflow:hidden;align-self:start}
+.step-b{min-width:0;display:flex;flex-direction:column;gap:8px;padding-block:4px}
+.step-n{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--teal)}
+.step h3{font-size:20px;font-weight:700}
+.step p{margin:0;max-width:64ch}
+.say{display:grid;gap:6px;margin-top:4px}
+.say div{font-size:14.5px;padding:7px 12px;border-radius:10px;line-height:1.45}
+.say .y{background:var(--teal-soft)} .say .n{background:var(--bad-soft)}
+.say b{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;margin-right:6px}
+.say .y b{color:var(--good)} .say .n b{color:var(--bad)}
+.tip{font-size:14.5px;background:var(--accent-soft);border-radius:10px;padding:8px 12px}
+.listen{align-self:flex-start;background:none;border:1px solid var(--line);color:var(--muted);border-radius:99px;padding:4px 12px 4px 9px;font-size:13px;display:inline-flex;gap:6px;align-items:center}
+.listen:hover{color:var(--ink);border-color:var(--muted)}
+
+.block{margin-top:32px}
+.block h2{font-size:24px;font-weight:800;margin-bottom:12px}
+.case{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px;display:grid;gap:10px}
+.case .q{font-size:17px}
+.case details{border-top:1px solid var(--line);padding-top:10px}
+.case summary{cursor:pointer;font-weight:700;color:var(--teal)}
+.keys{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;padding:0;margin:0;list-style:none}
+.keys li{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px 12px 40px;position:relative;font-size:15px}
+.keys li::before{content:"";position:absolute;left:14px;top:17px;width:14px;height:14px;border-radius:50%;background:var(--teal);box-shadow:inset 0 0 0 4px var(--teal-soft)}
+
+.quiz{display:grid;gap:14px}
+fieldset.qa{margin:0;min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+fieldset.qa legend{font-weight:600;font-size:16px;padding:0;margin-bottom:10px;float:left;width:100%}
+.opts{display:grid;gap:8px;clear:both}
+.opt{display:flex;gap:10px;align-items:flex-start;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:9px 12px;font-size:15px;cursor:pointer}
+.opt input{margin-top:4px;accent-color:var(--orange);flex:none}
+.opt:has(input:checked){border-color:var(--orange)}
+.opts .opt.ok{border-color:var(--good);background:var(--teal-soft)}
+.opts .opt.no{border-color:var(--bad);background:var(--bad-soft)}
+.block,#result{scroll-margin-top:90px}
+.fb{font-size:14px;margin-top:8px;color:var(--muted)}
+.g{color:var(--good)} .b{color:var(--bad)}
+.test-bar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:16px}
+.sticky-bar{position:sticky;bottom:0;background:var(--bg);padding-block:12px calc(12px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);justify-content:space-between;z-index:5}
+.pill{font-size:13.5px;font-weight:700;padding:5px 12px;border-radius:99px;background:var(--teal-soft);color:var(--good)}
+.pill.b{color:var(--bad);background:var(--bad-soft)}
+.note{font-size:14px;color:var(--muted)}
+.err{background:var(--bad-soft);color:var(--bad);border-radius:10px;padding:10px 12px;font-size:14.5px;font-weight:600}
+
+.nav-foot{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:36px;padding-top:20px;border-top:1px solid var(--line)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:10px;padding:12px 18px;font-weight:700;font-size:15px;text-decoration:none}
+.btn.pri{background:var(--orange);color:#0B1F2A}
+.btn.sec{background:var(--surface);border:1px solid var(--line);color:var(--ink)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.score{font-family:var(--display);font-size:44px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1}
+.miss{list-style:none;padding:0;margin:12px 0;display:grid;gap:8px}
+.linkbtn{background:none;border:0;padding:0;color:var(--accent);font-weight:700;text-decoration:underline;text-underline-offset:3px;text-align:left}
+.cert-wrap{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px;margin-bottom:12px}
+.cert-wrap img{display:block;width:100%;height:auto;border-radius:6px}
+.mono{font-variant-numeric:tabular-nums;letter-spacing:.04em}
+.center{max-width:520px;margin:40px auto;text-align:center;display:grid;gap:14px;justify-items:center}
+
+@media (max-width:900px){
+  .wrap{grid-template-columns:minmax(0,1fr);gap:16px}
+  nav.trail{position:static;flex-direction:row;overflow-x:auto;gap:6px;padding-bottom:6px}
+  .trail-h{display:none}
+  .trail button{grid-template-columns:28px auto;white-space:nowrap;background:var(--surface);border:1px solid var(--line)}
+  .hero{grid-template-columns:minmax(0,1fr)}
+  .hero-ill{max-width:420px}
+}
+@media (max-width:640px){
+  .step{grid-template-columns:minmax(0,1fr)}
+  .prog{order:3;flex-basis:100%}
+}
+@media print{
+  header.top,nav.trail,.noprint{display:none!important}
+  .wrap{display:block;padding:0}
+  .cert-wrap{border:0;padding:0}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <img src="logo-triva.png" alt="TRIVA" width="104" height="28">
+    <span class="t">Capacita</span>
+    <div class="prog"><span id="progTxt">Carregando…</span><div class="bar"><i id="progBar"></i></div></div>
+    <a class="toplink" href="capacita.html">‹ Meus cursos</a>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="trail" id="trail" aria-label="Módulos do curso"></nav>
+  <main id="main"><p class="note">Carregando o curso…</p></main>
+</div>
+
+<script>
+/* ================= ILUSTRAÇÕES ================= */
+const SK=['#E9B48A','#C68A5E','#8D5A3B','#F2CBA6'], HR=['#3B2A20','#1E1A18','#7A4A28','#C9A063'];
+function person(x,o={}){
+  const att=o.role==='att', s=o.skin||SK[0], h=o.hair||HR[0];
+  const shirt=o.shirt||(att?'#14324A':'#2C8C80');
+  const f=o.flip?-1:1, mood=o.mood||'smile';
+  let a='';
+  const arm=(x1,y1,x2,y2)=>`<path d="M${x1} ${y1} L${x2} ${y2}" stroke="${shirt}" stroke-width="10" stroke-linecap="round"/><circle cx="${x2}" cy="${y2}" r="5.5" fill="${s}"/>`;
+  // braço esquerdo sempre para baixo
+  a+=arm(x-19*f,124,x-26*f,160);
+  const R={down:[x+26*f,160],wave:[x+38*f,90],point:[x+50*f,116],open:[x+44*f,140],phone:[x+12*f,96],hold:[x+34*f,140]}[o.arm||'down'];
+  a+=arm(x+19*f,124,R[0],R[1]);
+  if(o.arm==='open') a+=arm(x-19*f,124,x-44*f,140);
+  let mouth={smile:`<path d="M${x-6} 99 Q${x} 105 ${x+6} 99" stroke="#5A2E1E" stroke-width="2" fill="none" stroke-linecap="round"/>`,
+    neutral:`<path d="M${x-5} 101 L${x+5} 101" stroke="#5A2E1E" stroke-width="2" stroke-linecap="round"/>`,
+    sad:`<path d="M${x-6} 103 Q${x} 98 ${x+6} 103" stroke="#5A2E1E" stroke-width="2" fill="none" stroke-linecap="round"/>`,
+    angry:`<path d="M${x-6} 103 Q${x} 98 ${x+6} 103" stroke="#5A2E1E" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M${x-10} 84 L${x-3} 87 M${x+10} 84 L${x+3} 87" stroke="#3B2A20" stroke-width="2.2" stroke-linecap="round"/>`,
+    open:`<ellipse cx="${x}" cy="101" rx="4.5" ry="3.5" fill="#5A2E1E"/>`}[mood];
+  const badge=att?`<rect x="${x+5*f-(f<0?9:0)}" y="128" width="9" height="6" rx="1.5" fill="#F58220"/><path d="M${x-8} 112 L${x} 122 L${x+8} 112" stroke="#fff" stroke-width="2" fill="none" opacity=".75"/>`:'';
+  const legs=`<rect x="${x-17}" y="164" width="14" height="8" rx="3" fill="#2B3440"/><rect x="${x+3}" y="164" width="14" height="8" rx="3" fill="#2B3440"/>`;
+  return `<g>${legs}<path d="M${x-23} 168 L${x-21} 120 Q${x} 106 ${x+21} 120 L${x+23} 168 Z" fill="${shirt}"/>${badge}${a}
+  <rect x="${x-5}" y="104" width="10" height="8" fill="${s}"/>
+  <circle cx="${x}" cy="92" r="17" fill="${s}"/>
+  <path d="M${x-17} 90 Q${x-16} 72 ${x} 73 Q${x+17} 72 ${x+17} 90 Q${x+9} 80 ${x-4} 81 Q${x-12} 82 ${x-17} 90Z" fill="${h}"/>
+  <circle cx="${x-6}" cy="92" r="2" fill="#2B2420"/><circle cx="${x+6}" cy="92" r="2" fill="#2B2420"/>${mouth}
+  ${att?`<text x="${x}" y="152" text-anchor="middle" font-size="7" font-weight="700" fill="#F58220" font-family="Montserrat,sans-serif" letter-spacing=".5">TRIVA</text>`:''}</g>`;
+}
+function bubble(x,y,w,txt,o={}){
+  const h=o.h||30, tail=o.tail||'left', fill=o.fill||'#FFFFFF', col=o.color||'#13283B';
+  const tx=tail==='left'?x+14:x+w-14;
+  const t=tail==='none'?'':`<path d="M${tx-6} ${y+h-1} L${tx+(tail==='left'?-8:8)} ${y+h+10} L${tx+6} ${y+h-1}Z" fill="${fill}"/>`;
+  const strike=o.strike?`<path d="M${x+8} ${y+h/2} L${x+w-8} ${y+h/2}" stroke="#C2453A" stroke-width="2.5"/>`:'';
+  return `<g><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${h/2}" fill="${fill}" stroke="${o.stroke||'#C9D5DE'}" stroke-width="1.2"/>${t}
+  <text x="${x+w/2}" y="${y+h/2+5}" text-anchor="middle" font-size="${o.fs||13}" font-weight="700" fill="${col}" font-family="Montserrat,sans-serif">${txt}</text>${strike}</g>`;
+}
+const I={
+  heart:(x,y,s=1)=>`<path transform="translate(${x} ${y}) scale(${s})" d="M0 6 C0 -2 10 -2 10 5 C10 -2 20 -2 20 6 C20 13 10 18 10 20 C10 18 0 13 0 6Z" fill="#E0574A"/>`,
+  star:(x,y,s=1,c='#F58220')=>`<path transform="translate(${x} ${y}) scale(${s})" d="M10 0 L13 7 L20 7.5 L14.5 12 L16.5 19 L10 15 L3.5 19 L5.5 12 L0 7.5 L7 7Z" fill="${c}"/>`,
+  check:(x,y,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><circle cx="12" cy="12" r="12" fill="#2C8C80"/><path d="M6.5 12.5 L10.5 16.5 L17.5 8.5" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>`,
+  cross:(x,y,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><circle cx="12" cy="12" r="12" fill="#C2453A"/><path d="M8 8 L16 16 M16 8 L8 16" stroke="#fff" stroke-width="3" stroke-linecap="round"/></g>`,
+  clock:(x,y,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><circle cx="18" cy="18" r="17" fill="#fff" stroke="#14324A" stroke-width="3"/><path d="M18 8 L18 18 L25 22" stroke="#F58220" stroke-width="3" fill="none" stroke-linecap="round"/></g>`,
+  ear:(x,y,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><path d="M14 2 C4 2 2 12 4 18 C6 24 10 24 10 30 C10 36 18 36 18 30 C18 26 24 24 24 14 C24 6 20 2 14 2Z" fill="#E9B48A" stroke="#14324A" stroke-width="2"/><path d="M10 14 C10 8 18 8 18 14 C18 18 14 18 14 22" stroke="#14324A" stroke-width="2" fill="none"/><path d="M30 8 Q36 16 30 24 M35 4 Q44 16 35 28" stroke="#2C8C80" stroke-width="2.5" fill="none" stroke-linecap="round"/></g>`,
+  phone:(x,y,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><rect x="0" y="0" width="34" height="60" rx="7" fill="#14324A"/><rect x="3" y="7" width="28" height="44" rx="2" fill="#F2F5F7"/><circle cx="17" cy="55" r="2.2" fill="#F58220"/></g>`,
+  chat:(x,y)=>`<g transform="translate(${x} ${y})"><rect x="0" y="0" width="74" height="124" rx="12" fill="#14324A"/><rect x="5" y="12" width="64" height="100" rx="4" fill="#ECF3F1"/><rect x="10" y="20" width="40" height="14" rx="7" fill="#fff"/><rect x="24" y="40" width="40" height="14" rx="7" fill="#BFE6DA"/><rect x="10" y="60" width="46" height="14" rx="7" fill="#fff"/><rect x="20" y="80" width="44" height="14" rx="7" fill="#BFE6DA"/><circle cx="37" cy="117" r="2.5" fill="#F58220"/></g>`,
+  handset:(x,y,s=1)=>`<path transform="translate(${x} ${y}) scale(${s})" d="M4 2 L11 1 L14 9 L10 12 C12 17 15 20 20 22 L23 18 L31 21 L30 28 C30 31 27 32 24 32 C12 31 1 20 0 8 C0 5 1 2 4 2Z" fill="#14324A"/>`,
+  lock:(x,y,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><path d="M8 18 V11 C8 3 26 3 26 11 V18" stroke="#14324A" stroke-width="4" fill="none"/><rect x="2" y="17" width="30" height="24" rx="5" fill="#F58220"/><circle cx="17" cy="27" r="3.5" fill="#14324A"/><rect x="15.5" y="28" width="3" height="7" fill="#14324A"/></g>`,
+  gift:(x,y,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><rect x="0" y="12" width="36" height="28" rx="3" fill="#2C8C80"/><rect x="-2" y="6" width="40" height="9" rx="2" fill="#3BA596"/><rect x="15" y="6" width="6" height="34" fill="#F58220"/><path d="M18 6 C10 -4 4 4 18 6 C32 4 26 -4 18 6Z" fill="none" stroke="#F58220" stroke-width="3"/></g>`,
+  shelf:(x,y,empty=false)=>{let g=`<g transform="translate(${x} ${y})"><rect x="0" y="0" width="92" height="132" rx="4" fill="#C9D5DE"/><rect x="4" y="4" width="84" height="124" fill="#F4F7F9"/>`;
+    const C=['#F58220','#2C8C80','#C2453A','#14324A','#7FA7C9'];
+    [0,1,2,3].forEach(r=>{const yy=8+r*31;g+=`<rect x="4" y="${yy+24}" width="84" height="4" fill="#9FB1BF"/>`;
+      if(!(empty&&r===1)) for(let i=0;i<5;i++) g+=`<rect x="${9+i*16}" y="${yy+(i%2?6:2)}" width="12" height="${i%2?18:22}" rx="2" fill="${C[(i+r)%5]}"/>`;
+      else g+=`<text x="46" y="${yy+19}" text-anchor="middle" font-size="9" font-weight="700" fill="#C2453A" font-family="Montserrat,sans-serif">EM FALTA</text>`;});
+    return g+'</g>';},
+  register:(x,y)=>`<g transform="translate(${x} ${y})"><rect x="0" y="40" width="110" height="52" rx="4" fill="#14324A"/><rect x="0" y="34" width="110" height="10" rx="3" fill="#24465F"/><rect x="62" y="2" width="38" height="28" rx="3" fill="#2B3440"/><rect x="65" y="5" width="32" height="18" rx="2" fill="#8FE0CF"/><rect x="78" y="30" width="6" height="6" fill="#2B3440"/><text x="81" y="18" text-anchor="middle" font-size="8" font-weight="700" fill="#14324A" font-family="Montserrat,sans-serif">R$</text><rect x="10" y="22" width="30" height="14" rx="2" fill="#F58220"/></g>`,
+  counter:(x,y,w=140,label='')=>`<g transform="translate(${x} ${y})"><rect x="0" y="0" width="${w}" height="12" rx="3" fill="#24465F"/><rect x="6" y="12" width="${w-12}" height="44" fill="#14324A"/>${label?`<text x="${w/2}" y="40" text-anchor="middle" font-size="11" font-weight="700" fill="#F58220" font-family="Montserrat,sans-serif" letter-spacing="1">${label}</text>`:''}</g>`,
+  cart:(x,y,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><path d="M0 4 L10 4 L16 32 L50 32 L56 12 L13 12" stroke="#14324A" stroke-width="3.5" fill="none" stroke-linejoin="round"/><rect x="17" y="2" width="12" height="12" rx="2" fill="#F58220"/><rect x="31" y="0" width="10" height="14" rx="2" fill="#2C8C80"/><circle cx="20" cy="40" r="4" fill="#14324A"/><circle cx="46" cy="40" r="4" fill="#14324A"/></g>`,
+  waves:(x,y)=>`<g transform="translate(${x} ${y})" stroke="#2C8C80" stroke-width="3" fill="none" stroke-linecap="round"><path d="M0 20 Q8 0 16 20 T32 20 T48 20"/><path d="M0 34 Q8 26 16 34 T32 34 T48 34" stroke="#F58220"/></g>`,
+  bread:(x,y)=>`<g transform="translate(${x} ${y})"><ellipse cx="22" cy="14" rx="22" ry="12" fill="#D9A15A"/><path d="M10 8 L16 18 M20 5 L26 16 M30 7 L35 15" stroke="#A86F2E" stroke-width="2.5" stroke-linecap="round"/></g>`,
+  ticket:(x,y,n='27')=>`<g transform="translate(${x} ${y})"><rect x="0" y="0" width="40" height="30" rx="4" fill="#fff" stroke="#F58220" stroke-width="2"/><text x="20" y="21" text-anchor="middle" font-size="15" font-weight="800" fill="#14324A" font-family="Montserrat,sans-serif">${n}</text></g>`,
+  sparkle:(x,y,s=1,c='#F58220')=>`<path transform="translate(${x} ${y}) scale(${s})" d="M8 0 L10 6 L16 8 L10 10 L8 16 L6 10 L0 8 L6 6Z" fill="${c}"/>`,
+  board:(x,y,items)=>{let g=`<g transform="translate(${x} ${y})"><rect x="0" y="0" width="96" height="${items.length*24+18}" rx="6" fill="#fff" stroke="#C9D5DE"/><rect x="34" y="-5" width="28" height="10" rx="3" fill="#14324A"/>`;
+    items.forEach((t,i)=>{g+=`<g transform="translate(10 ${14+i*24})"><rect width="14" height="14" rx="3" fill="#2C8C80"/><path d="M3 7 L6 10 L11 4" stroke="#fff" stroke-width="2" fill="none"/><text x="22" y="12" font-size="11" font-weight="600" fill="#13283B" font-family="Montserrat,sans-serif">${t}</text></g>`});return g+'</g>';},
+  arrow:(x1,y1,x2,y2)=>`<path d="M${x1} ${y1} Q${(x1+x2)/2} ${Math.min(y1,y2)-24} ${x2} ${y2}" stroke="#F58220" stroke-width="3" fill="none" stroke-dasharray="6 5" stroke-linecap="round"/><circle cx="${x2}" cy="${y2}" r="4.5" fill="#F58220"/>`,
+  meat:(x,y)=>`<g transform="translate(${x} ${y})"><path d="M2 14 C0 2 22 -2 30 6 C38 14 28 26 16 24 C8 23 3 20 2 14Z" fill="#C2453A"/><path d="M8 12 C10 6 22 6 24 12" stroke="#F3C9C2" stroke-width="3" fill="none"/></g>`,
+  nophone:(x,y)=>`<g transform="translate(${x} ${y})"><rect x="14" y="6" width="26" height="44" rx="5" fill="#14324A"/><rect x="17" y="11" width="20" height="32" rx="2" fill="#F2F5F7"/><circle cx="27" cy="28" r="26" fill="none" stroke="#C2453A" stroke-width="5"/><path d="M9 46 L45 10" stroke="#C2453A" stroke-width="5"/></g>`,
+};
+const floor=`<rect x="0" y="171" width="320" height="29" fill="#000" opacity=".06"/>`;
+const svg=(inner,label)=>`<svg viewBox="0 0 320 200" role="img" aria-label="${label}">${floor}${inner}</svg>`;
+
+/* ================= ILUSTRAÇÕES DO CAIXA ================= */
+const FT='font-family="Montserrat,sans-serif"';
+Object.assign(I,{
+  note:(x,y,v='50',c='#9FC3E3',s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><rect width="66" height="32" rx="3" fill="${c}" stroke="#14324A" stroke-width="1.5"/><circle cx="16" cy="16" r="9" fill="#fff" opacity=".55"/><text x="44" y="21" text-anchor="middle" font-size="12" font-weight="800" fill="#14324A" ${FT}>R$${v}</text></g>`,
+  coin:(x,y)=>`<g transform="translate(${x} ${y})"><circle r="9" fill="#E3B341" stroke="#A8801E" stroke-width="2"/><circle r="5" fill="none" stroke="#A8801E" stroke-width="1.2"/></g>`,
+  pos:(x,y,s=1,txt='')=>`<g transform="translate(${x} ${y}) scale(${s})"><rect width="40" height="66" rx="7" fill="#24465F"/><rect x="5" y="6" width="30" height="20" rx="2" fill="#8FE0CF"/>${txt?`<text x="20" y="19" text-anchor="middle" font-size="7" font-weight="800" fill="#14324A" ${FT}>${txt}</text>`:''}${[0,1,2].map(r=>[0,1,2].map(c=>`<rect x="${7+c*9.5}" y="${32+r*9}" width="7" height="6" rx="1.5" fill="#C9D5DE"/>`).join('')).join('')}</g>`,
+  scanner:(x,y)=>`<g transform="translate(${x} ${y})"><path d="M34 6 L76 -8 L76 22 Z" fill="#C2453A" opacity=".25"/><line x1="34" y1="7" x2="76" y2="7" stroke="#C2453A" stroke-width="2"/><path d="M0 0 L34 0 L34 14 L14 14 L10 40 L0 40 Z" fill="#2B3440"/></g>`,
+  barcode:(x,y,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><rect width="44" height="30" fill="#fff" stroke="#9FB1BF"/>${[3,6,8,12,14,17,21,23,26,30,32,35,38,40].map((b,i)=>`<rect x="${b}" y="3" width="${i%3?1.4:2.4}" height="18" fill="#14324A"/>`).join('')}<text x="22" y="28" text-anchor="middle" font-size="5" fill="#14324A" ${FT}>7 891234 567890</text></g>`,
+  scale:(x,y,kg='0,750')=>`<g transform="translate(${x} ${y})"><rect x="0" y="22" width="90" height="10" rx="3" fill="#C9D5DE"/><rect x="5" y="32" width="80" height="24" rx="3" fill="#24465F"/><rect x="18" y="36" width="54" height="15" rx="2" fill="#8FE0CF"/><text x="45" y="47" text-anchor="middle" font-size="9" font-weight="800" fill="#14324A" ${FT}>${kg} kg</text></g>`,
+  receipt:(x,y,h=60)=>`<g transform="translate(${x} ${y})"><path d="M0 0 H40 V${h} l-5 -4 l-5 4 l-5 -4 l-5 4 l-5 -4 l-5 4 l-5 -4 l-5 4 Z" fill="#fff" stroke="#9FB1BF"/>${Array.from({length:Math.floor((h-12)/8)},(_,i)=>`<rect x="6" y="${8+i*8}" width="${i%2?22:28}" height="3" rx="1" fill="#9FB1BF"/>`).join('')}</g>`,
+  qr:(x,y,s=1)=>{let g=`<g transform="translate(${x} ${y}) scale(${s})"><rect width="40" height="40" rx="2" fill="#fff" stroke="#C9D5DE"/>`;
+    [[4,2],[5,3],[3,4],[4,5],[6,4],[2,6],[5,6],[6,7],[3,7],[7,5],[4,7]].forEach(([a,b])=>g+=`<rect x="${a*4+2}" y="${b*4+2}" width="4" height="4" fill="#14324A"/>`);
+    [[3,3],[25,3],[3,25]].forEach(([a,b])=>g+=`<rect x="${a}" y="${b}" width="11" height="11" fill="none" stroke="#14324A" stroke-width="2.6"/>`);return g+'</g>';},
+  bag:(x,y,c='#F58220')=>`<g transform="translate(${x} ${y})"><path d="M10 12 Q10 0 20 0 Q30 0 30 12" stroke="#14324A" stroke-width="2.5" fill="none"/><path d="M2 12 H38 L35 52 H5 Z" fill="${c}"/></g>`,
+  envelope:(x,y)=>`<g transform="translate(${x} ${y})"><rect width="58" height="36" rx="3" fill="#E9D8B8" stroke="#A88B5A"/><path d="M0 0 L29 21 L58 0" stroke="#A88B5A" fill="none" stroke-width="1.5"/></g>`,
+  doc:(x,y)=>`<g transform="translate(${x} ${y})"><rect width="60" height="40" rx="4" fill="#DDF0EC" stroke="#2C8C80"/><rect x="5" y="7" width="17" height="24" rx="2" fill="#9FB1BF"/><rect x="27" y="9" width="27" height="3" fill="#2C8C80"/><rect x="27" y="17" width="20" height="3" fill="#2C8C80"/><rect x="27" y="25" width="24" height="3" fill="#2C8C80"/></g>`,
+  lens:(x,y)=>`<g transform="translate(${x} ${y})"><circle r="16" fill="#fff" fill-opacity=".4" stroke="#14324A" stroke-width="4"/><path d="M11 11 L26 26" stroke="#14324A" stroke-width="6" stroke-linecap="round"/></g>`,
+  belt:(x,y,w=150)=>`<g transform="translate(${x} ${y})"><rect y="16" x="4" width="${w-8}" height="${171-y-16}" fill="#24465F"/><rect width="${w}" height="16" rx="8" fill="#2B3440"/>${Array.from({length:Math.floor((w-8)/14)},(_,i)=>`<rect x="${6+i*14}" y="4" width="6" height="8" rx="2" fill="#4A5868"/>`).join('')}</g>`,
+  drawer:(x,y)=>`<g transform="translate(${x} ${y})"><rect width="104" height="40" rx="3" fill="#24465F"/><rect x="6" y="6" width="92" height="28" fill="#14324A"/>${['#9FC3E3','#E9B48A','#9BD08C','#E39A9A'].map((c,i)=>`<rect x="${10+i*22}" y="10" width="18" height="20" rx="2" fill="${c}"/>`).join('')}</g>`,
+  bottle:(x,y)=>`<g transform="translate(${x} ${y})"><rect x="6" y="0" width="8" height="14" fill="#2C6E3F"/><path d="M2 14 H18 V58 Q18 62 14 62 H6 Q2 62 2 58 Z" fill="#3E8E55"/><rect x="4" y="30" width="12" height="14" fill="#F2EDE6"/></g>`,
+  plus18:(x,y)=>`<g transform="translate(${x} ${y})"><circle r="20" fill="#fff" stroke="#C2453A" stroke-width="4"/><text y="6" text-anchor="middle" font-size="15" font-weight="800" fill="#C2453A" ${FT}>18+</text></g>`,
+  tag:(x,y,txt,c='#F58220')=>`<g transform="translate(${x} ${y})"><rect width="64" height="26" rx="4" fill="#fff" stroke="${c}" stroke-width="2"/><text x="32" y="18" text-anchor="middle" font-size="11" font-weight="800" fill="#14324A" ${FT}>${txt}</text></g>`,
+  key:(x,y)=>`<g transform="translate(${x} ${y})"><circle cx="10" cy="10" r="9" fill="none" stroke="#F58220" stroke-width="4"/><path d="M18 14 L36 32 M28 24 L33 19 M32 28 L37 23" stroke="#F58220" stroke-width="4" stroke-linecap="round"/></g>`,
+  box:(x,y,w=34,h=28,c='#D9A15A')=>`<g transform="translate(${x} ${y})"><rect width="${w}" height="${h}" rx="2" fill="${c}"/><rect x="${w/2-3}" width="6" height="${h}" fill="#000" opacity=".12"/></g>`,
+  apple:(x,y)=>`<g transform="translate(${x} ${y})"><circle cx="9" cy="10" r="9" fill="#C2453A"/><path d="M9 1 Q11 -4 14 -3" stroke="#3E8E55" stroke-width="2" fill="none"/></g>`,
+  eggs:(x,y)=>`<g transform="translate(${x} ${y})"><rect width="44" height="16" rx="3" fill="#C9B79C"/>${[0,1,2].map(i=>`<ellipse cx="${8+i*14}" cy="4" rx="5" ry="6" fill="#F7EBD8"/>`).join('')}</g>`,
+  cleaner:(x,y)=>`<g transform="translate(${x} ${y})"><rect x="4" y="0" width="10" height="8" fill="#2C8C80"/><path d="M14 2 H22 V5 H14 Z" fill="#2C8C80"/><rect x="0" y="8" width="20" height="38" rx="4" fill="#6EC1E4"/><rect x="3" y="20" width="14" height="10" fill="#fff"/></g>`,
+  chair:(x,y)=>`<g transform="translate(${x} ${y})"><rect x="0" y="0" width="36" height="8" rx="3" fill="#2B3440"/><rect x="16" y="8" width="5" height="24" fill="#4A5868"/><path d="M4 36 H34" stroke="#4A5868" stroke-width="5" stroke-linecap="round"/></g>`,
+  water:(x,y)=>`<g transform="translate(${x} ${y})"><path d="M2 0 H22 L19 40 H5 Z" fill="#BFE3F2" stroke="#6EC1E4" stroke-width="2"/><path d="M4 14 H20 L18 38 H6 Z" fill="#6EC1E4"/></g>`,
+  warn:(x,y)=>`<g transform="translate(${x} ${y})"><path d="M18 0 L36 32 H0 Z" fill="#F58220"/><rect x="16" y="10" width="4" height="12" fill="#14324A"/><rect x="16" y="25" width="4" height="4" fill="#14324A"/></g>`,
+  wifiOff:(x,y)=>`<g transform="translate(${x} ${y})" fill="none" stroke-linecap="round"><path d="M2 12 Q20 -4 38 12" stroke="#9FB1BF" stroke-width="4"/><path d="M9 20 Q20 10 31 20" stroke="#9FB1BF" stroke-width="4"/><circle cx="20" cy="28" r="3" fill="#9FB1BF" stroke="none"/><path d="M4 2 L36 32" stroke="#C2453A" stroke-width="4"/></g>`,
+});
+// balcão do caixa: esteira + registradora atrás
+const checkout=(x=10,w=150)=>I.belt(x,112,w);
+
+/* ================= CONTEÚDO ================= */
+const M=[
+{t:"A função do operador de caixa",min:50,
+ lead:"O caixa é o último contato do cliente com a loja e o lugar por onde passa o dinheiro da empresa. Neste módulo você entende a importância da função, quem é quem no checkout e o que se espera de um bom operador.",
+ hero:()=>checkout(10,160)+I.register(30,22)+person(120,{role:'att',arm:'hold'})+person(250,{skin:SK[1],hair:HR[2],flip:true,arm:'hold'})+I.cart(178,128,.75)+I.star(196,40,.9)+I.star(220,28,.7),
+ steps:[
+  {h:"O que faz o operador de caixa",
+   p:"Registra os produtos, recebe os pagamentos, entrega o troco e a nota fiscal e atende cada cliente com cortesia. Também cuida do dinheiro e dos equipamentos do caixa durante todo o turno. Para o cliente, você é a última impressão que ele leva da loja.",
+   tip:"Uma compra boa pode ser estragada em 30 segundos no caixa. E uma compra difícil pode terminar bem por causa de um bom operador.",
+   ill:()=>checkout(8,170)+I.register(20,22)+I.barcode(140,80,.9)+person(110,{role:'att',arm:'hold'})+person(250,{skin:SK[3],hair:HR[3],flip:true})+I.receipt(190,40,46)},
+  {h:"Você responde pelos valores do seu caixa",
+   p:"No início do turno você recebe um valor para troco e, no fim, entrega tudo o que entrou. Qualquer diferença aparece no fechamento e é verificada. Por isso, cada operação precisa de atenção, conferência e honestidade, do primeiro ao último cliente.",
+   tip:"Nunca empreste, troque ou guarde dinheiro do caixa fora das regras da loja, nem por um minuto.",
+   ill:()=>I.drawer(30,110)+I.note(40,70,'100','#9FC3E3')+I.note(112,62,'50','#E9B48A')+I.coin(70,58)+I.coin(92,50)+person(230,{role:'att',arm:'point',mood:'neutral'})+I.lock(170,40,1)},
+  {h:"Quem é quem no checkout",
+   p:"O fiscal de caixa autoriza cancelamentos, faz as sangrias, abre e fecha caixas e resolve problemas. A tesouraria recebe o dinheiro no fechamento. O encarregado ou gerente cuida da loja. Sempre que tiver dúvida, chame o fiscal: ele está ali justamente para isso.",
+   say:{y:"Por favor, pode chamar o fiscal para mim?",n:"(Tentar resolver sozinho no sistema sem saber)"},
+   ill:()=>person(80,{role:'att',arm:'wave'})+person(170,{shirt:'#24465F',hair:HR[1],skin:SK[2],arm:'point'})+I.key(200,40)+I.board(220,60,['Cancelar','Sangria','Abrir'])},
+  {h:"O perfil do bom operador",
+   p:"Atenção aos detalhes, agilidade sem pressa, cordialidade, paciência e conta de cabeça básica. Também discrição: valores, dados e conversas dos clientes ficam no caixa. Essas qualidades se treinam, e é para isso que este curso existe.",
+   say:{y:"Bom dia! Encontrou tudo o que precisava?",n:"(Começar a passar os produtos sem olhar para o cliente)"},
+   ill:()=>checkout(8,170)+I.register(20,22)+person(110,{role:'att',arm:'wave'})+bubble(140,26,130,'Bom dia!',{tail:'left'})+person(255,{skin:SK[0],hair:HR[0],flip:true,mood:'smile'})}
+ ],
+ caso:{q:"É seu primeiro turno em uma loja nova e um cliente pede para tirar um item que já foi registrado. Você não sabe como cancelar no sistema. O que fazer?",
+  r:"Peça um momento ao cliente e chame o fiscal. Cancelamento precisa da autorização dele e, no primeiro turno, você está justamente aprendendo a rotina da loja. Nunca tente 'dar um jeito' sozinho no sistema."},
+ keys:["O caixa é a última impressão da loja","Você responde pelos valores do seu caixa","Fiscal autoriza e resolve: chame sempre que precisar","Atenção vem antes da velocidade"]},
+
+{t:"Abertura do caixa",min:60,
+ lead:"Um turno tranquilo começa antes do primeiro cliente. Aqui você aprende a se preparar, conferir o fundo de troco, organizar o checkout e testar os equipamentos.",
+ hero:()=>I.drawer(20,120)+I.note(28,80,'20','#E9B48A')+I.note(100,74,'10','#E39A9A')+I.coin(60,66)+person(200,{role:'att',arm:'hold'})+I.board(232,40,['Troco','Bobina','Sacolas']),
+ steps:[
+  {h:"Chegue antes e prepare-se",
+   p:"Chegue alguns minutos antes, com uniforme limpo, crachá visível, cabelo preso e unhas limpas. Guarde bolsa e celular no armário. Muitas lojas não permitem dinheiro pessoal no checkout, justamente para não misturar com os valores do caixa.",
+   tip:"Chegar 10 minutos antes evita começar o turno correndo, que é quando mais acontecem erros.",
+   ill:()=>I.clock(40,40,1.6)+person(170,{role:'att',arm:'down'})+I.nophone(220,60)+I.check(120,40)},
+  {h:"Confira o fundo de troco",
+   p:"O fiscal entrega um valor em notas e moedas para o troco. Conte tudo na frente dele, separando por valor, e compare com o que está anotado. Só assine depois de conferir. Encontrou diferença? Avise na hora, antes de atender o primeiro cliente.",
+   say:{y:"Contei R$ 150 e aqui está anotado R$ 160. Podemos recontar juntos?",n:"(Assinar sem contar para não atrasar)"},
+   ill:()=>person(70,{role:'att',arm:'hold'})+I.note(104,120,'50','#E9B48A',.8)+I.note(104,96,'20','#E39A9A',.8)+I.coin(160,140)+I.coin(176,132)+person(250,{shirt:'#24465F',hair:HR[1],skin:SK[2],flip:true,arm:'point'})+I.envelope(176,60)},
+  {h:"Organize o checkout",
+   p:"Arrume as notas na gaveta por valor, da menor para a maior, e as moedas separadas. Deixe à mão a bobina de papel reserva, sacolas e caneta. Limpe a esteira e o prato da balança. Um caixa organizado deixa o troco mais rápido e diminui erros.",
+   tip:"Notas sempre viradas para o mesmo lado ajudam a conferir num relance.",
+   ill:()=>I.drawer(30,110)+I.receipt(150,96,50)+I.bag(200,104,'#F58220')+I.bag(236,110,'#2C8C80')+I.sparkle(90,70)+I.sparkle(120,56,.7,'#2C8C80')},
+  {h:"Teste equipamentos e entre no sistema",
+   p:"Entre no sistema com a sua senha pessoal. Nunca use a senha de outro operador e nunca passe a sua: tudo o que acontece no caixa fica registrado no seu nome. Teste o leitor, confira se a balança está zerada, se a maquininha tem bateria e papel, e se a gaveta abre e fecha.",
+   say:{y:"Minha senha é só minha. Cada um entra com a sua.",n:"Usa a minha senha aí que é mais rápido."},
+   ill:()=>I.register(20,80)+I.scale(150,110,'0,000')+I.pos(260,96,1,'OK')+I.lock(60,30,1)+I.check(250,60)}
+ ],
+ caso:{q:"Ao contar o fundo de troco, você encontra R$ 10 a menos do que o valor anotado. O fiscal está com pressa e diz: 'deve estar certo, pode assinar'. O que fazer?",
+  r:"Com educação, peça para recontarem juntos antes de assinar. Se a diferença continuar, ela precisa ser anotada. Assinar sem conferir faz a diferença virar responsabilidade sua no fechamento."},
+ keys:["Chegue antes e guarde celular e bolsa","Conte o fundo de troco antes de assinar","Gaveta organizada: menos erros","Senha pessoal é intransferível"]},
+
+{t:"Registro dos produtos",min:70,
+ lead:"Registrar certo é a base de tudo: preço errado gera reclamação e diferença de caixa. Aqui você aprende a usar o leitor, a balança, as quantidades e a conferir preço e produto.",
+ hero:()=>checkout(8,200)+I.register(20,22)+I.scanner(150,70)+I.barcode(230,64,.9)+person(110,{role:'att',arm:'point'}),
+ steps:[
+  {h:"Código de barras: passe e confira",
+   p:"Aponte o código de barras para o leitor e espere o bip. Olhe a tela: o nome e o preço do produto apareceram? Se o código não ler (amassado ou molhado), digite os números que ficam embaixo das barras. Nunca passe um produto diferente 'que tem o mesmo preço'.",
+   tip:"O bip diz que leu. A tela diz o que leu. Confira sempre a tela.",
+   ill:()=>checkout(8,200)+I.register(20,22)+I.scanner(140,72)+I.barcode(222,66,1)+I.check(270,30)+person(110,{role:'att',arm:'point'})},
+  {h:"Produtos pesados na balança",
+   p:"Frutas, verduras e produtos a granel vão na balança do caixa. Confira se ela está zerada, coloque o produto sem encostar a mão, espere o peso estabilizar e digite o código certo do produto. Itens que já vêm com etiqueta de peso do setor (açougue, padaria, frios) são registrados pela etiqueta.",
+   say:{y:"Deu 1,250 kg de laranja, ok?",n:"(Apoiar a mão na balança enquanto pesa)"},
+   ill:()=>I.scale(120,96,'1,250')+I.apple(140,98)+I.apple(158,96)+I.apple(176,100)+person(70,{role:'att',arm:'hold'})+person(260,{skin:SK[1],hair:HR[0],flip:true})+I.tag(220,40,'1,250 kg')},
+  {h:"Vários itens iguais",
+   p:"Para vários produtos iguais, use a tecla de multiplicar: digite a quantidade, a tecla de vezes, e passe um item só. Conte junto com o cliente. Atenção ao fardo ou caixa fechada: ela costuma ter um código próprio, diferente da unidade.",
+   tip:"Seis iogurtes iguais: digite 6, tecla de vezes e passe um. Confira na tela se apareceu 6 x.",
+   ill:()=>checkout(8,200)+I.register(20,22)+[0,1,2,3,4,5].map(i=>I.box(140+(i%3)*24,92-Math.floor(i/3)*22,20,18,'#9FC3E3')).join('')+I.tag(220,40,'6 x')+person(110,{role:'att',arm:'point'})},
+  {h:"Confira preço, validade e embalagem",
+   p:"Se o preço da tela for diferente da etiqueta da gôndola, não discuta nem altere por conta: chame o fiscal para conferir. Pela lei, se a loja tiver dois preços para o mesmo produto, o cliente paga o menor. Veja também se a embalagem está violada ou vencida, e separe para o fiscal.",
+   say:{y:"Vou chamar o fiscal para conferir o preço da gôndola.",n:"No sistema é esse preço, não posso fazer nada."},
+   ill:()=>I.shelf(20,40)+I.tag(118,50,'R$ 22,90','#2C8C80')+I.tag(118,90,'R$ 24,90','#C2453A')+person(220,{role:'att',arm:'wave'})+bubble(232,30,80,'Fiscal!',{tail:'left'})},
+  {h:"Olhe o carrinho inteiro",
+   p:"Antes de fechar a compra, olhe o fundo do carrinho, a parte de baixo e os produtos grandes (água, fardos, ração) que ficam no carrinho. Pergunte com gentileza se tem mais algum item. Esquecer um produto é prejuízo para a loja e diferença para você.",
+   say:{y:"Tem mais algum item aí embaixo do carrinho?",n:"(Fechar a compra sem olhar o carrinho)"},
+   ill:()=>I.cart(100,110,1.6)+I.box(130,150,30,22,'#D9A15A')+I.lens(220,130)+person(270,{role:'att',arm:'point',flip:true})}
+ ],
+ caso:{q:"O cliente diz que o arroz estava R$ 22,90 na gôndola, mas no caixa passou R$ 24,90. A fila está grande. O que fazer?",
+  r:"Não discuta e não altere o preço sozinho. Peça licença, chame o fiscal para conferir a etiqueta e explique ao cliente, com calma, que vai ser verificado. Se a etiqueta estiver mesmo com o preço menor, a lei garante ao cliente o menor preço, e o fiscal faz a correção."},
+ keys:["O bip diz que leu, a tela diz o que leu","Balança zerada e sem encostar a mão","Use a multiplicação para itens iguais","Preço diferente: chame o fiscal","Olhe o carrinho inteiro antes de fechar"]},
+
+{t:"Formas de pagamento",min:70,
+ lead:"Dinheiro, cartão, PIX, vale-alimentação ou tudo junto. Cada forma de pagamento tem um cuidado. Aqui você aprende a receber com segurança, sem prejuízo para você, para o cliente e para a loja.",
+ hero:()=>I.note(110,30,'100','#9FC3E3')+I.pos(140,80,1,'APROV.')+I.qr(196,96,1.1)+person(70,{role:'att',arm:'hold'})+person(275,{skin:SK[2],hair:HR[1],flip:true,arm:'hold'}),
+ steps:[
+  {h:"Dinheiro: anuncie e conte o troco",
+   p:"Ao receber, diga em voz alta o valor: 'Recebi R$ 100'. Deixe a nota sobre a gaveta, sem guardar, até entregar o troco. Conte o troco na mão do cliente, junto com a nota fiscal. Só depois guarde a nota recebida. Isso evita a discussão 'eu te dei uma nota de 100'.",
+   say:{y:"Recebi R$ 100. O total deu R$ 63,40, seu troco é R$ 36,60.",n:"(Guardar a nota direto na gaveta e entregar o troco calado)"},
+   ill:()=>I.note(130,60,'100','#9FC3E3')+I.drawer(110,120)+person(70,{role:'att',arm:'hold'})+bubble(150,24,110,'Recebi R$ 100',{tail:'left',fs:12})+person(260,{skin:SK[3],hair:HR[2],flip:true})},
+  {h:"Cartão de débito e crédito",
+   p:"O cliente insere, aproxima ou passa o cartão e digita a senha ele mesmo. Nunca peça a senha e nunca fique com o cartão na mão sem necessidade. Espere a palavra 'aprovado' na tela antes de liberar a compra. No crédito, pergunte se é à vista ou parcelado, conforme a regra da loja.",
+   tip:"Senha de cartão é do cliente. Se ele pedir para você digitar, oriente com gentileza que ele mesmo digite.",
+   ill:()=>I.pos(140,70,1.2,'APROV.')+person(80,{role:'att',arm:'open'})+person(250,{skin:SK[0],hair:HR[3],flip:true,arm:'point'})+I.lock(120,40,.8)+I.check(196,60)},
+  {h:"PIX: só libere com o pagamento confirmado",
+   p:"Gere o QR code no sistema ou na maquininha e mostre ao cliente. Ele paga pelo celular. Só libere a compra quando o seu sistema ou a maquininha mostrar 'pagamento confirmado'. Nunca aceite apenas a tela do comprovante no celular do cliente: ela pode ser falsa ou de um PIX agendado.",
+   say:{y:"Só um instante, estou aguardando a confirmação aqui no sistema.",n:"(Liberar a compra só olhando a tela do celular do cliente)"},
+   ill:()=>I.qr(120,70,1.4)+I.phone(200,70,1)+I.check(130,30)+person(70,{role:'att',arm:'point'})+person(270,{skin:SK[1],hair:HR[0],flip:true,arm:'hold'})+I.warn(240,30)},
+  {h:"Vale-alimentação e vale-refeição",
+   p:"Esses cartões servem para alimentos. Produtos que não são aceitos nesse tipo de cartão, como os de limpeza e higiene, precisam ser pagos de outra forma. O sistema da loja costuma separar sozinho. Na dúvida, chame o fiscal e explique ao cliente com calma.",
+   tip:"Avise antes de passar: 'Os itens de limpeza vão em outra forma de pagamento, tudo bem?'",
+   ill:()=>I.apple(110,110)+I.apple(128,112)+I.eggs(100,140)+I.check(108,80)+I.cleaner(200,110)+I.cross(196,80)+person(270,{role:'att',arm:'point',flip:true})+person(50,{skin:SK[2],hair:HR[1]})},
+  {h:"Pagamento dividido",
+   p:"Cliente quer pagar uma parte em dinheiro e o resto no cartão? Use a opção de pagamento misto do sistema. Lance cada parte com o valor exato e confira o saldo que falta antes de passar para a próxima forma de pagamento.",
+   say:{y:"R$ 50 em dinheiro, e os R$ 32,80 que faltam no débito, certo?",n:"(Passar o valor total no cartão e devolver o dinheiro depois)"},
+   ill:()=>I.note(110,90,'50','#E9B48A')+I.pos(190,74,1,'R$ 32,80')+person(60,{role:'att',arm:'hold'})+person(270,{skin:SK[3],hair:HR[3],flip:true})+I.tag(150,40,'Misto')}
+ ],
+ caso:{q:"O cliente mostra no celular a tela 'PIX enviado', mas a maquininha ainda não confirmou. A fila está grande e ele diz que está com pressa. O que fazer?",
+  r:"Não libere a compra. Explique com educação que o pagamento ainda não apareceu no sistema e peça para ele aguardar um instante ao lado, se a loja permitir. Chame o fiscal. Só finalize quando o pagamento aparecer como confirmado no sistema da loja."},
+ keys:["Dinheiro: anuncie o valor e conte o troco","Senha do cartão é só do cliente","PIX: confirme no sistema, nunca pelo celular do cliente","Vale-alimentação só para os itens aceitos"]},
+
+{t:"Dinheiro e segurança",min:60,
+ lead:"O dinheiro do caixa é responsabilidade sua durante o turno. Aqui você aprende a reconhecer nota falsa, como funciona a sangria e como se proteger dos golpes mais comuns no checkout.",
+ hero:()=>I.note(110,70,'100','#9FC3E3',1.3)+I.lens(132,92)+person(60,{role:'att',arm:'hold'})+I.lock(240,50,1.2)+I.envelope(230,120),
+ steps:[
+  {h:"Toque, olhe e incline",
+   p:"É o método do Banco Central. Toque: sinta o alto-relevo nas laterais e nos números. Olhe contra a luz: aparecem a marca-d'água (o animal e o valor) e o fio de segurança. Incline: nas notas mais novas, o número muda de cor e há uma faixa holográfica. Nota com papel liso ou sem esses sinais merece atenção.",
+   tip:"Confira com calma as notas de valor alto, principalmente em momentos de fila e pressa.",
+   ill:()=>I.note(90,70,'100','#9FC3E3',1.6)+I.lens(116,96)+I.sparkle(230,56,1,'#F58220')+person(270,{role:'att',arm:'hold',flip:true})+I.check(40,40)},
+  {h:"Desconfiou da nota? Aja com calma",
+   p:"Não acuse o cliente: ele pode ter recebido a nota sem saber. Com educação, peça outra nota ou outra forma de pagamento e chame o fiscal, discretamente. Não devolva a nota suspeita para circular sem que o fiscal veja, e siga a orientação dele.",
+   say:{y:"O senhor teria outra nota? Vou pedir para o fiscal dar uma olhada nesta.",n:"Essa nota é falsa! O senhor tá querendo me enganar?"},
+   ill:()=>I.note(130,80,'50','#E9B48A',1.2)+I.warn(150,30)+person(70,{role:'att',arm:'hold',mood:'neutral'})+person(260,{skin:SK[2],hair:HR[0],flip:true,mood:'open'})},
+  {h:"Sangria",
+   p:"Sangria é a retirada do dinheiro que passou do limite da gaveta. Ela é feita com o fiscal: vocês contam juntos, registram no sistema, colocam no envelope e assinam. Quanto menos dinheiro na gaveta, menor o risco para você e para a loja.",
+   tip:"Não espere a gaveta 'estourar'. Viu que está cheia? Peça a sangria ao fiscal.",
+   ill:()=>I.drawer(20,120)+I.note(130,110,'50','#E9B48A')+I.note(130,80,'100','#9FC3E3')+I.envelope(210,100)+I.arrow(180,96,212,108)+person(270,{shirt:'#24465F',hair:HR[1],skin:SK[2],flip:true,arm:'point'})},
+  {h:"Golpes comuns no caixa",
+   p:"Golpe do troco: a pessoa troca notas várias vezes e confunde as contas. Faça uma operação por vez e feche a gaveta entre elas. Distração: alguém puxa conversa enquanto outro mexe nos produtos ou no dinheiro. Nunca deixe a gaveta aberta nem o sistema ligado quando sair do caixa.",
+   say:{y:"Vamos fazer uma coisa de cada vez: primeiro finalizo esta compra.",n:"(Ir trocando notas enquanto o cliente fala rápido)"},
+   ill:()=>I.drawer(110,120)+I.lock(146,74,1)+person(60,{role:'att',arm:'open',mood:'neutral'})+person(250,{skin:SK[1],hair:HR[2],flip:true,arm:'point',mood:'open'})+I.note(150,40,'20','#E39A9A',.8)+I.note(176,20,'50','#E9B48A',.8)}
+ ],
+ caso:{q:"Você entrega o troco de R$ 100 e o cliente diz: 'Ah, me dá uma nota de 50 no lugar dessas duas de 20 e eu te dou mais 10'. Ele começa a misturar notas no balcão. O que fazer?",
+  r:"Pare e feche a gaveta. Confira o que está no balcão e faça uma operação por vez, com calma. Se a pessoa insistir em misturar as trocas, chame o fiscal. Esse é um dos golpes mais comuns no caixa."},
+ keys:["Toque, olhe e incline","Nota suspeita: calma, sem acusar","Sangria sempre com o fiscal","Uma operação por vez, gaveta fechada"]},
+
+{t:"Cancelamentos e situações especiais",min:60,
+ lead:"Cancelar um item, faltar dinheiro, CPF na nota, venda de bebida alcoólica e sistema fora do ar. Situações que acontecem todo dia e precisam ser resolvidas do jeito certo.",
+ hero:()=>I.receipt(30,50,80)+I.wifiOff(100,40)+I.plus18(170,120)+person(270,{role:'att',arm:'wave',flip:true}),
+ steps:[
+  {h:"Cancelamento de item",
+   p:"Passou um produto errado ou o cliente desistiu? Chame o fiscal. Cancelamento precisa da autorização dele, com senha ou cartão próprio. Nunca cancele por conta, nunca 'passe outro produto no lugar' e nunca deixe para resolver no fechamento.",
+   say:{y:"Vou chamar o fiscal para tirar esse item, só um instante.",n:"Deixa que eu passo outro produto no lugar."},
+   ill:()=>I.receipt(120,40,90)+I.cross(170,70)+person(60,{role:'att',arm:'wave'})+person(250,{shirt:'#24465F',hair:HR[1],skin:SK[2],flip:true,arm:'point'})+I.key(186,140)},
+  {h:"Quando o dinheiro não dá",
+   p:"Fale baixo e sem constranger. Mostre o valor total e pergunte quais itens o cliente prefere deixar. Chame o fiscal para cancelar esses itens. Tratar a situação com discrição faz o cliente voltar.",
+   say:{y:"Sem problema. Quais itens o senhor prefere deixar para outro dia?",n:"Tá faltando dinheiro, vai ter que tirar coisa."},
+   ill:()=>person(80,{role:'att',arm:'open'})+person(240,{skin:SK[0],hair:HR[3],flip:true,mood:'sad'})+bubble(110,28,110,'Sem problema',{tail:'left',fs:12})+I.box(150,130,30,22)+I.box(184,136,26,16,'#9FC3E3')},
+  {h:"CPF na nota e nota fiscal",
+   p:"Pergunte 'CPF na nota?' antes de finalizar a venda. Depois que a nota é emitida, não dá para incluir. Sempre entregue a nota fiscal (o cupom) ao cliente, junto com o troco.",
+   say:{y:"CPF na nota?",n:"(Perguntar só depois que a nota já saiu)"},
+   ill:()=>I.receipt(150,50,90)+person(80,{role:'att',arm:'hold'})+bubble(100,24,100,'CPF na nota?',{tail:'left',fs:12})+person(260,{skin:SK[2],hair:HR[1],flip:true})},
+  {h:"Bebida alcoólica e cigarro: só para maiores de 18",
+   p:"É proibido vender bebida alcoólica e cigarro para menores de 18 anos, mesmo que digam que é para outra pessoa. Se a pessoa parecer jovem, peça um documento com foto, com educação. Sem documento, não venda esses itens e chame o fiscal se houver insistência.",
+   say:{y:"Para bebida alcoólica preciso ver um documento com foto, por favor.",n:"(Vender porque a pessoa disse que é para o pai)"},
+   ill:()=>I.bottle(140,100)+I.plus18(200,70)+I.doc(180,120)+person(70,{role:'att',arm:'point',mood:'neutral'})+person(275,{skin:SK[3],hair:HR[3],flip:true})},
+  {h:"Sistema fora do ar ou sem sinal",
+   p:"Se o sistema travar ou a maquininha ficar sem sinal, avise o fiscal na hora. Explique com calma aos clientes da fila e siga a orientação da loja, como mudar de caixa ou aguardar. Nunca anote vendas no papel por conta própria.",
+   tip:"Clientes aceitam bem a espera quando são avisados. O que irrita é ficar sem saber o que está acontecendo.",
+   ill:()=>I.register(20,80)+I.wifiOff(40,30)+person(170,{role:'att',arm:'wave'})+person(260,{skin:SK[1],hair:HR[2],flip:true,mood:'neutral'})+I.clock(220,20,.9)}
+ ],
+ caso:{q:"Um adolescente com uniforme da escola passa no seu caixa com uma lata de cerveja e um pacote de biscoito. Diz que a cerveja é para o pai, que está no carro. O que fazer?",
+  r:"Não venda a cerveja. Explique com educação que a lei proíbe a venda de bebida alcoólica para menores de 18 anos, mesmo para outra pessoa. Ofereça passar o biscoito normalmente. Se houver insistência, chame o fiscal."},
+ keys:["Cancelamento só com o fiscal","Falta de dinheiro: discrição","CPF na nota antes de finalizar","Álcool e cigarro: só para maiores de 18"]},
+
+{t:"Atendimento, fila e empacotamento",min:55,
+ lead:"Ser rápido sem deixar de ser gentil. Neste módulo: como receber cada cliente, as regras do atendimento preferencial, como empacotar as compras e como lidar com a fila.",
+ hero:()=>checkout(8,170)+I.register(20,22)+person(110,{role:'att',arm:'wave'})+person(220,{skin:SK[0],hair:HR[3],flip:true})+person(285,{skin:SK[2],hair:HR[1],flip:true,shirt:'#9C7BB0'})+I.bag(160,74),
+ steps:[
+  {h:"Receba cada cliente",
+   p:"Olhe para o cliente, sorria e cumprimente, mesmo com a fila grande. Um 'Bom dia, encontrou tudo?' leva dois segundos e muda a experiência. Durante o atendimento, a atenção é do cliente: nada de conversa paralela com colegas.",
+   say:{y:"Boa tarde! Encontrou tudo o que procurava?",n:"(Chamar o próximo sem olhar: 'Próximo!')"},
+   ill:()=>checkout(8,170)+I.register(20,22)+person(110,{role:'att',arm:'wave'})+bubble(140,24,120,'Boa tarde!',{tail:'left'})+person(255,{skin:SK[3],hair:HR[2],flip:true})},
+  {h:"Atendimento preferencial",
+   p:"Pela lei, têm atendimento prioritário: pessoas com 60 anos ou mais, gestantes, lactantes, pessoas com criança de colo, pessoas com deficiência (inclusive autismo) e pessoas obesas. Entre os idosos, quem tem 80 anos ou mais vem primeiro. Indique o caixa preferencial com gentileza e siga a regra da loja.",
+   tip:"Na dúvida se a pessoa tem prioridade, atenda com gentileza e chame o fiscal. Nunca exija explicações na frente da fila.",
+   ill:()=>I.counter(84,116,110,'PREFERENCIAL')+person(45,{role:'att',arm:'point'})+person(228,{skin:SK[3],hair:'#C9C9C9',flip:true,shirt:'#9C7BB0'})+person(288,{skin:SK[1],hair:HR[0],flip:true,shirt:'#E39A9A'})+I.heart(130,50)},
+  {h:"Empacote com cuidado",
+   p:"Pesados embaixo e frágeis por cima (ovos, pães, vidros). Produtos de limpeza separados dos alimentos. Frios e congelados juntos. Carne crua em sacola separada para não vazar nos outros itens. Ofereça ajuda a quem tem dificuldade.",
+   tip:"Pergunte: 'Prefere que eu separe os produtos de limpeza?' O cliente percebe o cuidado.",
+   ill:()=>I.bag(60,100,'#F58220')+I.box(66,124,22,14,'#9FC3E3')+I.eggs(56,90)+I.bag(140,100,'#2C8C80')+I.cleaner(150,104)+I.bag(220,100,'#C2453A')+I.meat(224,112)+I.check(66,60)+I.check(146,60)+I.check(226,60)},
+  {h:"Agilidade sem pressa",
+   p:"Mantenha o ritmo: registrar, conferir, receber, entregar. Pressa gera troco errado e produto esquecido. Se a fila crescer muito, avise o fiscal: é ele quem decide abrir outro caixa. Não peça aos clientes que andem mais rápido.",
+   say:{y:"Fiscal, a fila aqui está grande, consegue abrir mais um caixa?",n:"Pessoal, vamos agilizar aí!"},
+   ill:()=>checkout(8,130)+I.register(16,22)+person(100,{role:'att',arm:'wave'})+person(180,{skin:SK[0],hair:HR[0],flip:true})+person(232,{skin:SK[2],hair:HR[1],flip:true,shirt:'#9C7BB0'})+person(285,{skin:SK[1],hair:HR[3],flip:true,shirt:'#7FA7C9'})+I.clock(150,20,.8)},
+  {h:"Despedida",
+   p:"Entregue a nota e o troco na mão, agradeça e se despeça olhando para o cliente. A última frase é a que o cliente leva para casa.",
+   say:{y:"Obrigado pela preferência, tenha um ótimo dia!",n:"(Virar para o próximo cliente sem falar nada)"},
+   ill:()=>checkout(8,170)+I.register(20,22)+person(110,{role:'att',arm:'wave'})+bubble(130,24,120,'Volte sempre!',{tail:'left'})+person(260,{skin:SK[0],hair:HR[2],flip:true,arm:'wave'})+I.bag(205,120)+I.heart(270,40,.9)}
+ ],
+ caso:{q:"Sua fila está grande e uma gestante, com várias compras, entra no fim dela. O caixa preferencial está fechado. O que fazer?",
+  r:"Ela tem direito ao atendimento prioritário. Com gentileza, explique aos próximos da fila que vai atender a gestante e chame-a para frente, ou chame o fiscal para orientar, conforme a regra da loja. Nunca deixe a situação sem resposta."},
+ keys:["Olhe, sorria e cumprimente","Prioridade é lei: 60+, gestantes, lactantes, criança de colo, PcD e obesos","Pesado embaixo, limpeza separada","Fila grande: avise o fiscal"]},
+
+{t:"Fechamento do caixa e cuidados com você",min:55,
+ lead:"O turno só termina quando o caixa fecha certo. E um bom operador também cuida da própria saúde e da sua reputação. Último módulo antes da avaliação final.",
+ hero:()=>I.drawer(20,120)+I.envelope(140,110)+I.receipt(210,80,70)+person(280,{role:'att',arm:'hold',flip:true})+I.check(150,60),
+ steps:[
+  {h:"Fechamento do caixa",
+   p:"No horário combinado, encerre no sistema e conte o dinheiro separado por valor, junto com o fiscal ou a tesouraria. Confira com o relatório do sistema, que mostra o que entrou em cada forma de pagamento. Assine só depois de conferir.",
+   tip:"Siga a mesma ordem todo dia: notas de maior valor primeiro, depois as menores, depois as moedas.",
+   ill:()=>I.drawer(20,120)+I.note(132,120,'100','#9FC3E3')+I.note(140,92,'50','#E9B48A')+I.receipt(206,60,80)+person(280,{role:'att',arm:'hold',flip:true})+I.check(214,24)},
+  {h:"Diferença de caixa",
+   p:"Faltou ou sobrou dinheiro? Informe ao fiscal. Nunca complete com dinheiro seu e nunca guarde a sobra: sobra também é erro, normalmente um troco dado a menos para algum cliente. Diferenças frequentes mostram onde você precisa ter mais atenção.",
+   say:{y:"Fechou com R$ 20 sobrando. Vou informar ao fiscal.",n:"Sobrou? Então fica comigo."},
+   ill:()=>I.note(110,90,'20','#E39A9A',1.2)+I.warn(140,40)+person(60,{role:'att',arm:'point',mood:'neutral'})+person(250,{shirt:'#24465F',hair:HR[1],skin:SK[2],flip:true})},
+  {h:"Cuide do seu corpo",
+   p:"Ajuste a cadeira para os pés ficarem apoiados e os braços na altura da esteira. Produtos pesados: arraste em vez de levantar. Use as pausas para alongar pescoço, ombros e punhos, e beba água. Um caixa dura muitas horas: cuidar do corpo é parte do trabalho.",
+   tip:"Fardos de água e sacos de ração podem ser registrados no carrinho, com o leitor de mão, sem levantar.",
+   ill:()=>I.chair(80,130)+person(98,{role:'att',arm:'hold'})+I.water(170,120)+I.sparkle(200,60,1.2,'#2C8C80')+I.box(230,140,40,30)+I.arrow(240,130,200,150)},
+  {h:"Postura e honestidade",
+   p:"Celular guardado, nada de conversa paralela, valores e dados dos clientes em sigilo. Nunca pegue um produto ou dinheiro sem pagar, nem 'emprestado'. Honestidade é o que faz a loja confiar em você e a TRIVA chamar você de novo.",
+   tip:"Seu nome e o nome da TRIVA estão no seu crachá. Cada turno bem feito abre portas para os próximos.",
+   ill:()=>person(110,{role:'att',arm:'down'})+I.nophone(170,60)+I.lock(240,70,1.1)+I.star(60,40)+I.star(40,64,.7)}
+ ],
+ caso:{q:"No fechamento, sobram R$ 20 no seu caixa. Um colega diz: 'Fica pra você, ninguém vai saber'. O que fazer?",
+  r:"Informe a sobra ao fiscal. Sobra também é diferença de caixa e quase sempre significa que algum cliente recebeu troco a menos. Ficar com o dinheiro é desonesto e pode encerrar sua relação com a loja e com a TRIVA."},
+ keys:["Feche contando junto com o fiscal","Sobra e falta: sempre informar","Arraste, não levante","Honestidade abre as portas"]}
+];
+
+/* ================= ÁUDIO (narração em português) ================= */
+const synth=window.speechSynthesis; let voice=null, rate=1, queue=[], qi=0, state='idle';
+function pickVoice(){ if(!synth) return; const v=synth.getVoices();
+  voice=v.find(x=>/pt-BR/i.test(x.lang)&&/Google|Natural|Luciana|Francisca|Thalita/i.test(x.name))||v.find(x=>/pt-BR/i.test(x.lang))||v.find(x=>/^pt/i.test(x.lang))||null; }
+if(synth){pickVoice(); synth.onvoiceschanged=pickVoice;}
+function chunks(t){return t.match(/[^.!?]+[.!?]*/g)?.reduce((a,s)=>{if(a.length&&(a[a.length-1]+s).length<220)a[a.length-1]+=s;else a.push(s);return a},[])||[t]}
+function buildQueue(m){
+  const q=[{el:null,text:`Módulo ${cur+1}. ${m.t}. ${m.lead}`}];
+  if(m.metodo) q.push({el:null,text:m.metodo});
+  m.steps.forEach((s,i)=>{const el=document.getElementById('st'+i);
+    let t=`Passo ${i+1}. ${s.h.replace(/^[A-Z] · /,'')}. ${s.p}`;
+    if(s.say) t+=` Diga: ${s.say.y}. Evite: ${s.say.n}.`; if(s.tip) t+=` Dica: ${s.tip}`;
+    chunks(t).forEach(c=>q.push({el,text:c}));});
+  q.push({el:null,text:`Situação prática. ${m.caso.q} Pense na sua resposta e depois confira a sugestão na página.`});
+  return q;
+}
+let stopAt=0, gen=0;
+function speakFrom(i,end){ if(!synth) return; state='idle'; synth.cancel(); qi=i; stopAt=end??queue.length; gen++; state='playing'; next(); paintPlayer(); }
+function next(){
+  document.querySelectorAll('.step.reading').forEach(e=>e.classList.remove('reading'));
+  if(qi>=stopAt){state='idle';paintPlayer();return;}
+  const it=queue[qi]; if(it.el){it.el.classList.add('reading'); if(qi===0||queue[qi-1].el!==it.el) it.el.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth',block:'center'});}
+  const u=new SpeechSynthesisUtterance(it.text); u.lang='pt-BR'; if(voice)u.voice=voice; u.rate=rate;
+  const g=gen; u.onend=()=>{if(g===gen&&state==='playing'){qi++;next();}}; u.onerror=()=>{};
+  synth.speak(u);
+}
+function togglePlay(){
+  if(!synth){return}
+  if(state==='playing'){synth.pause();state='paused';}
+  else if(state==='paused'){synth.resume();state='playing';}
+  else speakFrom(0);
+  paintPlayer();
+}
+function stopAudio(){ gen++; if(synth){state='idle';synth.cancel();} document.querySelectorAll('.step.reading').forEach(e=>e.classList.remove('reading')); paintPlayer(); }
+function paintPlayer(){
+  const b=document.getElementById('playBtn'); if(!b) return;
+  b.innerHTML=state==='playing'?'<svg viewBox="0 0 20 20"><rect x="4" y="3" width="4" height="14" fill="#13283B"/><rect x="12" y="3" width="4" height="14" fill="#13283B"/></svg>':'<svg viewBox="0 0 20 20"><path d="M5 3 L17 10 L5 17Z" fill="#13283B"/></svg>';
+  b.setAttribute('aria-label',state==='playing'?'Pausar narração':'Ouvir capítulo');
+  const s=document.getElementById('playSt'); if(s) s.textContent=!synth?'Seu navegador não tem narração por voz.':state==='playing'?'Narrando…':state==='paused'?'Pausado':'Toque para ouvir o capítulo inteiro';
+}
+
+/* ================= LIGAÇÃO COM O TRIVA CAPACITA ================= */
+var SUPABASE_URL="https://ratkhskpvgvlperrtsvv.supabase.co";
+var ANON="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhdGtoc2twdmd2bHBlcnJ0c3Z2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0MTE5MDAsImV4cCI6MjEwNDk4NzkwMH0.INk9i0RZ_n8OYs85Mh77EaW1vUHN6WszfYKSVe_dQgE";
+var API=SUPABASE_URL+"/functions/v1/capacita-api";
+var CURSO="caixa", CARGA="8 horas", TITULO="Operador(a) de Caixa";
+var VALIDAR_URL="nandersonmm-collab.github.io/nmmcadastro/validar.html";
+function lsGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
+function lsSet(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+var TOKEN=lsGet("nmm_portal_token");
+function api(acao,extra){
+  return fetch(API,{method:"POST",headers:{"Content-Type":"application/json",apikey:ANON,Authorization:"Bearer "+ANON},body:JSON.stringify(Object.assign({acao:acao,token:TOKEN},extra||{}))})
+    .then(function(r){return r.json().then(function(b){if(r.status===401){semSessao();throw new Error("sessao")}return b})});
+}
+
+/* ================= ESTADO ================= */
+var FINAL=M.length, cur=0, perfil=null, prog={modulos_ok:[],certificado:null,final_tentativas:0}, teste=null, exam=null;
+var ok=function(i){return prog.modulos_ok.indexOf(i+1)>=0};
+var allDone=function(){return M.every(function(_,i){return ok(i)})};
+try{var c=+lsGet("triva_caixa_cur");if(c>=0&&c<=FINAL)cur=c}catch(e){}
+if(/^#m\d$/.test(location.hash)) cur=Math.min(+location.hash.slice(2)-1,FINAL);
+if(location.hash==="#final"||location.hash==="#certificado") cur=FINAL;
+function go(i){cur=i;lsSet("triva_caixa_cur",String(i));history.replaceState(null,"",i===FINAL?"#final":"#m"+(i+1));renderTrail();renderModule();}
+
+var $=function(s){return document.querySelector(s)};
+var esc=function(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})};
+
+function semSessao(){
+  $("#trail").innerHTML=""; $("#progTxt").textContent="";
+  $("#main").innerHTML='<div class="center"><h1>Entre para fazer o curso</h1><p class="lead">O curso '+TITULO+' faz parte do TRIVA Capacita. Entre com o mesmo CPF e senha do Portal do Profissional.</p><a class="btn pri" href="capacita.html">Entrar no TRIVA Capacita</a></div>';
+}
+function falhaRede(){ $("#main").innerHTML='<div class="center"><h1>Sem conexão</h1><p class="lead">Não foi possível carregar seu progresso. Verifique a internet e tente de novo.</p><button class="btn pri" onclick="location.reload()">Tentar de novo</button></div>'; }
+
+/* ================= RENDER ================= */
+function renderTrail(){
+  $("#trail").innerHTML='<div class="trail-h">Módulos</div>'+M.map(function(m,i){return '<button class="'+(ok(i)?'done':'')+'" aria-current="'+(i===cur)+'" data-go="'+i+'"><span class="num">'+(ok(i)?'✓':i+1)+'</span><span>'+m.t+'</span></button>'}).join("")+
+   '<button class="'+(prog.certificado?'done':(allDone()?'':'lockd'))+'" aria-current="'+(cur===FINAL)+'" data-go="'+FINAL+'"><span class="num">★</span><span>Avaliação final e certificado</span></button>';
+  var tr=$("#trail"), at=tr.querySelector('[aria-current="true"]'); if(at&&tr.scrollWidth>tr.clientWidth) tr.scrollLeft=at.offsetLeft-tr.offsetLeft-16;
+  var n=prog.modulos_ok.length; $("#progTxt").textContent=n+" de "+M.length+" módulos"; $("#progBar").style.width=(n/M.length*100)+"%";
+}
+function qaHTML(qs,name){return qs.map(function(q,i){return '<fieldset class="qa" data-i="'+i+'"><legend>'+(i+1)+'. '+esc(q.pergunta)+'</legend><div class="opts">'+q.opcoes.map(function(o,j){return '<label class="opt"><input type="radio" name="'+name+i+'" value="'+j+'"><span>'+esc(o)+'</span></label>'}).join("")+'</div><div class="fb" hidden></div></fieldset>'}).join("")}
+function answers(box,n,name){var a=[];for(var i=0;i<n;i++){var r=box.querySelector('input[name="'+name+i+'"]:checked');a.push(r?+r.value:null)}return a}
+
+function renderModule(){
+  stopAudio(); queue=[]; teste=null;
+  if(cur===FINAL) return renderFinal();
+  var m=M[cur];
+  $("#main").innerHTML=
+  '<section class="hero"><div><div class="eyebrow">Módulo '+(cur+1)+' de '+M.length+'</div><h1>'+m.t+'</h1><p class="lead">'+m.lead+'</p>'+
+  '<div class="meta"><span class="chip">'+m.min+' min</span><span class="chip">'+m.steps.length+' passos ilustrados</span><span class="chip">Texto e áudio</span></div></div>'+
+  '<div class="hero-ill">'+svg(m.hero(),m.t)+'</div></section>'+
+  '<div class="player"><button class="play" id="playBtn"></button><div class="player-t"><b>Ouvir o capítulo</b><span id="playSt"></span></div>'+
+  '<div style="display:flex;gap:6px;flex-wrap:wrap" role="group" aria-label="Velocidade">'+[0.85,1,1.2].map(function(r){return '<button class="pbtn" data-rate="'+r+'" aria-pressed="'+(r===rate)+'">'+(r===1?'1x':r+'x')+'</button>'}).join("")+'<button class="pbtn" id="stopBtn">Parar</button></div></div>'+
+  (m.metodo?'<p class="tip" style="margin:-10px 0 24px"><b>Método O.U.V.I.R.</b> Ouça · Use empatia · Verbalize desculpas · Indique a solução · Retorne e agradeça.</p>':'')+
+  '<div class="steps">'+m.steps.map(function(s,i){return '<article class="step" id="st'+i+'"><div class="ill">'+svg(s.ill(),s.h)+'</div><div class="step-b"><div class="step-n">Passo '+(i+1)+' de '+m.steps.length+'</div><h3>'+s.h+'</h3><p>'+s.p+'</p>'+
+    (s.say?'<div class="say"><div class="y"><b>Diga</b>'+esc(s.say.y)+'</div><div class="n"><b>Evite</b>'+esc(s.say.n)+'</div></div>':'')+
+    (s.tip?'<div class="tip"><b>Dica:</b> '+s.tip+'</div>':'')+
+    '<button class="listen" data-listen="'+i+'"><svg width="14" height="14" viewBox="0 0 20 20"><path d="M3 7h4l5-4v14l-5-4H3z" fill="currentColor"/><path d="M15 6c2 2 2 6 0 8" stroke="currentColor" stroke-width="2" fill="none"/></svg>Ouvir este passo</button></div></article>'}).join("")+'</div>'+
+  '<section class="block"><h2>Situação prática</h2><div class="case"><div class="q">'+m.caso.q+'</div><details><summary>Ver como agir</summary><p style="margin:8px 0 0">'+m.caso.r+'</p></details></div></section>'+
+  '<section class="block"><h2>Pontos-chave</h2><ul class="keys">'+m.keys.map(function(k){return '<li>'+k+'</li>'}).join("")+'</ul></section>'+
+  '<section class="block" id="testeSec"><h2>Teste do módulo</h2><div id="modTest"></div></section>'+
+  '<div class="nav-foot">'+(cur>0?'<button class="btn sec" data-go="'+(cur-1)+'">‹ Módulo anterior</button>':'<span></span>')+'<button class="btn pri" id="finish"></button></div>';
+  renderTesteIntro(); paintFinish();
+  queue=buildQueue(m); paintPlayer();
+  window.scrollTo(0,0);
+}
+function renderTesteIntro(){
+  $("#modTest").innerHTML=(ok(cur)?'<p class="note"><span class="pill">Módulo concluído</span> Você pode refazer o teste para praticar.</p>':'')+
+   '<p class="note">3 perguntas sorteadas sobre este módulo. Acerte pelo menos 2 para concluir. Cada tentativa traz perguntas e alternativas em outra ordem.</p>'+
+   '<button class="btn pri" id="startMod">'+(ok(cur)?'Praticar de novo':'Fazer o teste do módulo')+'</button>';
+}
+function startMod(){
+  var b=$("#startMod"); if(b){b.disabled=true;b.textContent="Sorteando perguntas…";}
+  api("sortear",{curso:CURSO,tipo:"modulo",modulo:cur+1}).then(function(r){
+    if(!r.ok){ $("#modTest").innerHTML='<p class="err">'+esc(r.erro||"Não foi possível sortear o teste.")+'</p>'; return; }
+    teste=r;
+    $("#modTest").innerHTML='<div class="quiz" id="mtq">'+qaHTML(r.questoes,"m")+'</div><div class="test-bar"><button class="btn pri" id="checkMod">Corrigir teste</button><span class="note" id="mtRes"></span></div>';
+  }).catch(function(e){ if(e.message!=="sessao") $("#modTest").innerHTML='<p class="err">Sem conexão. Tente de novo.</p>'; });
+}
+function checkMod(){
+  var box=$("#mtq"), a=answers(box,teste.questoes.length,"m");
+  if(a.indexOf(null)>=0){ $("#mtRes").textContent="Responda às "+teste.questoes.length+" perguntas antes de corrigir."; return; }
+  $("#checkMod").disabled=true; $("#checkMod").textContent="Corrigindo…";
+  var modAtual=cur;
+  api("corrigir",{tentativa_id:teste.tentativa_id,respostas:a}).then(function(r){
+    if(!r.ok){ $("#mtRes").textContent=r.erro||"Não foi possível corrigir."; $("#checkMod").disabled=false; $("#checkMod").textContent="Corrigir teste"; return; }
+    r.correcao.forEach(function(c,i){
+      var fs=box.querySelector('[data-i="'+i+'"]'); fs.querySelectorAll("input").forEach(function(x){x.disabled=true});
+      var labs=fs.querySelectorAll(".opt"); labs[c.correta].classList.add("ok"); if(!c.acertou) labs[a[i]].classList.add("no");
+      var fb=fs.querySelector(".fb"); fb.hidden=false; fb.innerHTML=(c.acertou?'<b class="g">Correto.</b> ':'<b class="b">Incorreto.</b> ')+esc(c.explicacao);
+    });
+    if(r.aprovado && prog.modulos_ok.indexOf(modAtual+1)<0){ prog.modulos_ok.push(modAtual+1); prog.modulos_ok.sort(); renderTrail(); }
+    $(".test-bar").innerHTML='<span class="pill '+(r.aprovado?'':'b')+'">'+r.acertos+' de '+r.total+' · '+(r.aprovado?'Aprovado no módulo':'Abaixo de 2 acertos')+'</span><button class="btn sec" id="redoMod">Refazer com novas perguntas</button>';
+    paintFinish();
+  }).catch(function(e){ if(e.message!=="sessao"){ $("#mtRes").textContent="Sem conexão. Tente de novo."; $("#checkMod").disabled=false; $("#checkMod").textContent="Corrigir teste"; } });
+}
+function paintFinish(){var f=$("#finish"); if(!f) return; var o=ok(cur);
+  f.disabled=!o; f.textContent=o?(cur===M.length-1?'Ir para a avaliação final ›':'Próximo módulo ›'):'Passe no teste para avançar';}
+
+/* ---------- Avaliação final ---------- */
+function renderFinal(){
+  if(prog.certificado) return renderCert(false);
+  if(!allDone()){
+    var miss=M.map(function(m,i){return ok(i)?null:'<li><button class="linkbtn" data-go="'+i+'">Módulo '+(i+1)+' · '+m.t+'</button></li>'}).filter(Boolean).join("");
+    $("#main").innerHTML='<section class="hero solo"><div><div class="eyebrow">Etapa final</div><h1>Avaliação final</h1><p class="lead">A avaliação é liberada quando você for aprovado no teste de todos os módulos. Faltam:</p></div></section><ul class="miss">'+miss+'</ul>';
+    return window.scrollTo(0,0);
+  }
+  $("#main").innerHTML='<section class="hero solo"><div><div class="eyebrow">Etapa final'+(prog.final_tentativas?' · Tentativa '+(prog.final_tentativas+1):'')+'</div><h1>Avaliação final</h1>'+
+   '<p class="lead">20 questões sorteadas de todos os módulos. A correção só aparece no fim. Para receber o certificado, acerte pelo menos 14 (70%). Se precisar refazer, as perguntas e a ordem das respostas mudam.</p></div></section>'+
+   '<p class="note">O certificado sai com os dados do seu cadastro: <b>'+esc(perfil.nome)+'</b>'+(perfil.funcao?' · '+esc(perfil.funcao):'')+(perfil.cidade?' · '+esc(perfil.cidade):'')+'. Se algo estiver errado, corrija em <a href="portal.html" style="color:var(--accent);font-weight:700">Meu cadastro</a> antes de começar.</p>'+
+   '<div id="exArea"><button class="btn pri" id="startExam">Iniciar avaliação final</button></div><section class="block" id="result"></section>';
+  window.scrollTo(0,0);
+}
+function startExam(){
+  var b=$("#startExam"); b.disabled=true; b.textContent="Sorteando questões…";
+  api("sortear",{curso:CURSO,tipo:"final"}).then(function(r){
+    if(r.certificado){ prog.certificado=r.certificado; renderTrail(); return renderCert(false); }
+    if(!r.ok){ $("#exArea").innerHTML='<p class="err">'+esc(r.erro||"Não foi possível iniciar.")+'</p>'; return; }
+    exam=r;
+    $("#exArea").innerHTML='<div class="quiz" id="exq">'+qaHTML(r.questoes,"f")+'</div><div class="test-bar sticky-bar"><span class="note" id="exCount">0 de '+r.questoes.length+' respondidas</span><button class="btn pri" id="sendExam" disabled>Enviar avaliação</button></div>';
+    $("#exq").addEventListener("change",function(){var n=answers($("#exq"),exam.questoes.length,"f").filter(function(x){return x!==null}).length;
+      $("#exCount").textContent=n+" de "+exam.questoes.length+" respondidas"; $("#sendExam").disabled=n<exam.questoes.length;});
+  }).catch(function(e){ if(e.message!=="sessao") $("#exArea").innerHTML='<p class="err">Sem conexão. Tente de novo.</p>'; });
+}
+function sendExam(){
+  var a=answers($("#exq"),exam.questoes.length,"f"); if(a.indexOf(null)>=0) return;
+  var b=$("#sendExam"); b.disabled=true; b.textContent="Corrigindo…";
+  api("corrigir",{tentativa_id:exam.tentativa_id,respostas:a}).then(function(r){
+    if(!r.ok){ b.disabled=false; b.textContent="Enviar avaliação"; $("#exCount").textContent=r.erro||"Não foi possível corrigir."; return; }
+    prog.final_tentativas++;
+    if(r.aprovado && r.certificado){ prog.certificado=r.certificado; renderTrail(); return renderCert(true); }
+    document.querySelectorAll("#exq input").forEach(function(x){x.disabled=true}); $(".sticky-bar").hidden=true;
+    var errs=Object.keys(r.erros_por_modulo||{}).map(function(k){return [+k,r.erros_por_modulo[k]]}).sort(function(x,y){return y[1]-x[1]});
+    $("#result").innerHTML='<div class="case"><div class="score b">'+r.nota+'%</div><p style="margin:0">Você acertou '+r.acertos+' de '+r.total+'. O mínimo é '+r.minimo+'. Revise os módulos onde houve erros e tente de novo: a próxima avaliação terá outras perguntas.</p>'+
+     '<ul class="miss">'+errs.map(function(e){return '<li><button class="linkbtn" data-go="'+(e[0]-1)+'">Módulo '+e[0]+' · '+M[e[0]-1].t+'</button> <span class="note">'+e[1]+' erro'+(e[1]>1?'s':'')+'</span></li>'}).join("")+'</ul>'+
+     '<div><button class="btn pri" id="retryExam">Fazer nova avaliação</button></div></div>';
+    $("#result").scrollIntoView({block:"start"});
+  }).catch(function(e){ if(e.message!=="sessao"){ b.disabled=false; b.textContent="Enviar avaliação"; $("#exCount").textContent="Sem conexão. Tente de novo."; } });
+}
+
+/* ---------- Certificado ---------- */
+function renderCert(fresh){
+  var c=prog.certificado;
+  $("#main").innerHTML='<section class="hero solo noprint"><div><div class="eyebrow">'+(fresh?'Aprovado':'Curso concluído')+'</div><h1>'+(fresh?'Parabéns, '+esc(c.nome.split(" ")[0])+'!':'Seu certificado')+'</h1>'+
+   '<p class="lead">Você acertou '+c.acertos+' de '+c.total+' questões ('+c.nota+'%) na avaliação final. O certificado foi gerado com os dados do seu cadastro e registrado na TRIVA.</p></div></section>'+
+   '<div class="cert-wrap"><canvas id="certCv" width="1600" height="1130" hidden></canvas><img id="certImg" alt="Certificado de conclusão de '+esc(c.nome)+'"></div>'+
+   '<div class="test-bar noprint"><a class="btn pri" id="dlCert" download="certificado-caixa-'+esc(c.codigo)+'.png">Baixar certificado</a><button class="btn sec" id="printCert">Imprimir ou salvar em PDF</button></div>'+
+   '<p class="note noprint">Código de validação: <b class="mono">'+esc(c.codigo)+'</b>. Qualquer empresa pode conferir em <a href="validar.html?c='+encodeURIComponent(c.codigo)+'" style="color:var(--accent);font-weight:700">'+VALIDAR_URL+'</a>.</p>';
+  drawCert(c);
+  window.scrollTo(0,0);
+}
+function drawCert(c){
+  var logo=new Image(); logo.src="logo-triva.png";
+  var fontes=document.fonts?Promise.all([document.fonts.load('800 60px Montserrat'),document.fonts.load('500 30px Montserrat'),document.fonts.load('700 30px Montserrat')]).catch(function(){}):Promise.resolve();
+  Promise.all([fontes,new Promise(function(r){logo.onload=r;logo.onerror=r;})]).then(function(){
+    var cv=$("#certCv"), x=cv.getContext("2d"), W=1600, H=1130, F='Montserrat, "Segoe UI", sans-serif';
+    x.fillStyle="#FFFFFF";x.fillRect(0,0,W,H);
+    x.fillStyle="#0B1F2A";x.fillRect(0,0,W,210);
+    x.fillStyle="#F58220";x.fillRect(0,210,W,8);
+    if(logo.naturalWidth){var lh=70,lw=logo.naturalWidth*lh/logo.naturalHeight;x.drawImage(logo,W/2-lw/2,52,lw,lh);}
+    x.textAlign="center";x.fillStyle="rgba(255,255,255,.8)";x.font="600 22px "+F;x.fillText("T R I V A   C A P A C I T A",W/2,168);
+    x.strokeStyle="#0B1F2A";x.lineWidth=14;x.strokeRect(7,7,W-14,H-14);
+    x.fillStyle="#C8600E";x.font="700 24px "+F;x.fillText("C E R T I F I C A D O   D E   C O N C L U S Ã O",W/2,300);
+    x.fillStyle="#5F646B";x.font="500 28px "+F;x.fillText("Certificamos que",W/2,370);
+    var fs=74;x.font="800 "+fs+"px "+F;while(x.measureText(c.nome).width>W-240&&fs>38){fs-=4;x.font="800 "+fs+"px "+F}
+    x.fillStyle="#0B1F2A";x.fillText(c.nome,W/2,455);
+    x.fillStyle="#F58220";x.fillRect(W/2-160,490,320,5);
+    var info=["CPF "+c.cpf]; if(c.funcao)info.push(c.funcao); if(c.cidade)info.push(c.cidade);
+    x.fillStyle="#5F646B";x.font="500 25px "+F;x.fillText(info.join("  ·  "),W/2,545);
+    x.fillStyle="#0B1F2A";x.font="500 29px "+F;
+    ["concluiu o curso "+TITULO+", com carga horária de "+(c.carga_horaria||CARGA)+",","composto por 8 módulos, e obteve "+c.nota+"% de aproveitamento na avaliação final."].forEach(function(l,i){x.fillText(l,W/2,622+i*46)});
+    var dt=new Date(c.emitido_em).toLocaleDateString("pt-BR",{day:"2-digit",month:"long",year:"numeric"});
+    x.fillStyle="#1F7A3A";x.font="700 26px "+F;x.fillText("Emitido em "+dt,W/2,732);
+    x.strokeStyle="#0B1F2A";x.lineWidth=2;x.beginPath();x.moveTo(W/2-240,870);x.lineTo(W/2+240,870);x.stroke();
+    x.fillStyle="#0B1F2A";x.font="700 26px "+F;x.fillText("Nanderson Meurer Michels",W/2,908);
+    x.fillStyle="#5F646B";x.font="500 21px "+F;x.fillText("Gestor Administrativo · TRIVA Soluções Operacionais",W/2,942);
+    x.textAlign="left";x.font="600 19px "+F;x.fillStyle="#5F646B";x.fillText("Código de validação: "+c.codigo,72,H-62);
+    x.textAlign="right";x.fillText("Valide em "+VALIDAR_URL,W-72,H-62);
+    var url=cv.toDataURL("image/png"); $("#certImg").src=url; var dl=$("#dlCert"); if(dl) dl.href=url;
+  });
+}
+
+/* ---------- Eventos ---------- */
+document.addEventListener("click",function(e){
+  var g=e.target.closest("[data-go]"); if(g){ go(+g.dataset.go); return; }
+  if(e.target.closest("#playBtn")) return togglePlay();
+  if(e.target.closest("#stopBtn")) return stopAudio();
+  var rb=e.target.closest("[data-rate]"); if(rb){rate=+rb.dataset.rate;document.querySelectorAll("[data-rate]").forEach(function(b){b.setAttribute("aria-pressed",b===rb)}); if(state==="playing") speakFrom(qi,stopAt); return;}
+  var li=e.target.closest("[data-listen]"); if(li){var el=document.getElementById("st"+li.dataset.listen);var i=queue.findIndex(function(q){return q.el===el});
+    if(i>=0){var end=queue.findIndex(function(q,k){return k>i&&q.el!==el});speakFrom(i,end<0?queue.length:end);} return;}
+  if(e.target.closest("#startMod")) return startMod();
+  if(e.target.closest("#checkMod")) return checkMod();
+  if(e.target.closest("#redoMod")){ renderTesteIntro(); startMod(); $("#testeSec").scrollIntoView({block:"start"}); return; }
+  if(e.target.closest("#startExam")) return startExam();
+  if(e.target.closest("#sendExam")) return sendExam();
+  if(e.target.closest("#retryExam")){ renderFinal(); return; }
+  if(e.target.closest("#printCert")) return window.print();
+  var f=e.target.closest("#finish"); if(f&&!f.disabled) go(Math.min(cur+1,FINAL));
+});
+
+/* ---------- Início ---------- */
+if(!TOKEN) semSessao();
+else api("resumo").then(function(r){
+  if(!r.ok) return semSessao();
+  perfil=r.perfil; prog=(r.cursos&&r.cursos[CURSO])||prog;
+  renderTrail(); renderModule();
+}).catch(function(e){ if(e.message!=="sessao") falhaRede(); });
+
+</script>
+</body>
+</html>
